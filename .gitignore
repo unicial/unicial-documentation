@@ -10,8 +10,8 @@
 /test/version_tmp/
 /tmp/
 
-.jekyll-cache/
-_site/
+/.jekyll-cache/
+/_site/
 # Used by dotenv library to load environment variables.
 # .env
 
