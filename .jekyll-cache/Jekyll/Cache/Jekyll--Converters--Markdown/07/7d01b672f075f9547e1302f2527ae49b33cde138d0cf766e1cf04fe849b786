@@ -1,0 +1,79 @@
+I"�<p><em>How do scene limits work? What are triangles? How about materials? What’s going on?</em></p>
+
+<p>Genesis City is a really, really big place. In order to make sure everyone has a smooth experience, there’s a limit to how much stuff each scene can hold.</p>
+
+<p>In the bottom left corner of the Builder, if you click on the set of squares, you’ll find a little list explaining what each of these limits are, and how far along you are to reaching each one. Let’s take a look at each of these:</p>
+
+<ul>
+  <li><strong>Geometries:</strong> these define different simple shapes, like a box or a wheel.</li>
+  <li><strong>Bodies:</strong> a body is just a copy of a geometry. For example, a bike might have three bodies: the frame and two wheels. By copying similar geometries, we can save resources.</li>
+  <li><strong>Triangles:</strong> each surface of a body is shaped like a triangle. More complex models have more triangles than simpler models.</li>
+  <li><strong>Materials:</strong> materials make your scenes more realistic by describing how a model or shape should look. They change the way light is reflected (or emitted) from different models, and can include one or more textures.</li>
+  <li><strong>Textures:</strong> these are the images used in materials. Textures are images of different patterns and colors - like wood, stone, or grass.</li>
+  <li><strong>Entities:</strong> an entity can include one or more bodies, like the bike in the example above. Entities include everything you need for an asset: the geometries, bodies, materials, and textures.</li>
+</ul>
+
+<h2 id="i-cant-upload-my-scene-because-it-says-something-is-out-of-bounds-what-does-that-mean">I can’t upload my scene because it says something is out of bounds, what does that mean?</h2>
+
+<p>This is likely because some of your models are falling off the edges of your scene. Even if it’s barely out-of-bounds, it’ll still be marked in red. Watch out! Some of these troubled models might be hiding in other objects you’ve put on the edge of your parcel (like trees!).</p>
+
+<h2 id="can-i-upload-custom-assets">Can I upload custom assets?</h2>
+
+<p>Yes, you can import 3D models in <code class="language-plaintext highlighter-rouge">.gltf</code> and <code class="language-plaintext highlighter-rouge">.glb</code> formats. To do so, either click the plus sign at the top of the Asset list, or click the <strong>NEW ASSET PACK</strong> button at the bottom of the list. Then follow the instructions to import one or more 3d models. You will then find your assets in their own asset pack on the right-hand menu.</p>
+
+<h2 id="can-i-deploy-my-scene-to-my-land">Can I deploy my scene to my land?</h2>
+
+<p>Yes, you can deploy to land you own, or land where you have deploy permissions. To do so, click the <strong>UPDATE SCENE</strong> button on the top-right, then you can choose what parcels to deploy it to, and orient the scene in the right direction to fit these.</p>
+
+<p>To do so, you need to have the Metamask or Dapper account that owns the parcels or the permissions open on your browser.</p>
+
+<h2 id="can-i-move-items-underground">Can I move items underground?</h2>
+
+<p>Yes, you can place an object underground, or partially underground. However, the floor on the scene can’t be removed, so you can’t do tunnels or holes for players to see what’s underground.</p>
+
+<h2 id="how-do-i-add-images-to-my-scene">How do I add images to my scene?</h2>
+
+<p>You can’t import, upload, or paste images into the Builder right now. You can however import a custom 3D model that has an image on as a texture.</p>
+
+<h2 id="can-i-share-my-scenes-with-other-builder-users">Can I share my scenes with other Builder users?</h2>
+
+<p>Yes, the <em>Share</em> button on the top-right of the screen lets you share a link or a post on Twitter or Facebook that can let others view and explore the scene as players.</p>
+
+<h2 id="how-do-i-save-projects">How do I save projects?</h2>
+
+<p>Projects are saved automatically to your account.</p>
+
+<h2 id="can-i-export-my-scenes">Can I export my scenes?</h2>
+
+<p>Yes, just click the <strong>Download scene</strong> icon on the top-right corner. You can either import that scene back into the builder, or work on it to add extra functionality to it, by writing code with the SDK.</p>
+
+<h2 id="can-i-import-scenes-from-the-sdk">Can I import scenes from the SDK?</h2>
+
+<p>No, you can export scenes <em>to</em> the SDK, but not the other way round.</p>
+
+<h2 id="can-i-group-objects">Can I group objects?</h2>
+
+<p>You can multi-select objects by pressing <em>control</em> and keeping it pressed while selecting more, and then apply actions to that group.</p>
+
+<h2 id="can-i-snapattach-items-to-other-items">Can I snap/attach items to other items?</h2>
+
+<p>No, but you can press and hold Shift for more precise placement when moving objects.</p>
+
+<h2 id="how-does-preview-mode-work">How does Preview mode work?</h2>
+
+<p>Use the W, A, S, and D keys to move around in Preview mode, and Space to jump. If you can’t move, you may be stuck in an object. Changing where you spawn (enter the scene) is a feature we have planned for the future.</p>
+
+<h2 id="can-i-pick-the-color-or-texture-of-items">Can I pick the color or texture of items?</h2>
+
+<p>Right now, all of the models come with one texture, but we agree that it’d be awesome to have more control over each model’s appearance. You can however export a 3D model, edit it in a 3D modeling tool, and import it again into a custom asset pack.</p>
+
+<h2 id="where-can-i-find-the-default-builder-3d-models-if-i-want-to-edit-them">Where can I find the default Builder 3D models if I want to edit them?</h2>
+
+<p>You can find all of these models in <a href="https://github.com/decentraland/builder-assets/tree/master/assets">this repo</a>. You can also add the models you wish to a scene in the Builder and then export that scene, and you’ll find the used models in a folder.</p>
+
+<p>Before editing the models, see the <a href="/3d-modeling/3d-models/">3D Modeling section of our docs</a>.</p>
+
+<h2 id="can-i-create-my-own-smart-items">Can I create my own smart items?</h2>
+
+<p>Yes. Doing that requires using code and being familiar with the Decentraland SDK. You can find details <a href="/development-guide/smart-items/">here</a>.</p>
+:ET

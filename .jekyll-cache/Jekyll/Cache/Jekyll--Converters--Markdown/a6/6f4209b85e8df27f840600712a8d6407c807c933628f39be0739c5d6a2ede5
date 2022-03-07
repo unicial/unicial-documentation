@@ -1,0 +1,383 @@
+I"==<h2 id="table-of-contents">Table of Contents</h2>
+
+<ul>
+  <li><a href="#Where-can-I find-the-documentation-for-version-2.0?">Where can I find the documentation for version 2.0?</a></li>
+  <li><a href="#Where-can-I-find-the-documentation-for-version-1.0?">Where can I find the documentation for version 1.0?</a></li>
+  <li><a href="#Version-2.0-Migration-Guide">Version 2.0 Migration Guide</a></li>
+</ul>
+
+<h2 id="where-can-i-find-the-documentation-for-version-20">Where can I find the documentation for version 2.0?</h2>
+
+<p>Current documentation (including configuration details) for the LAND API v2.0 <a href="https://github.com/decentraland/atlas-server">can be found here</a>. After version 1.0 has been fully deprecated on February 1st, 2021, all of the v2.0 documentation will be migrated to this URL within the Decentraland documentation.</p>
+
+<h2 id="where-can-i-find-the-documentation-for-version-10">Where can I find the documentation for version 1.0?</h2>
+
+<p>You can still find the docs for version 1.0 <a href="https://docs.decentraland.org/market/api/">here</a>. These docs will remain available until February 1st, 2021. After that date, full documentation will be available on this page.</p>
+
+<h2 id="version-20-migration-guide">Version 2.0 Migration Guide</h2>
+
+<p>Following is a side-by-side comparison of v1 and v2 of the LAND API. Any version 1 endpoints with the tag <strong>Deprecated</strong> will be unavailable starting February 1st, 2021.</p>
+
+<p>Any version 1 endpoints <strong>without</strong> the deprecation tag will remain working and supported, as there is no replacement in version 2.0.</p>
+
+<p>There are several v1 endpoints without a v2 counterpart, but the corresponding data can still be found via a query to <a href="https://thegraph.com/explorer/subgraph/decentraland/marketplace">Decentraland’s subgraph on The Graph</a>. Example queries are included for each endpoint group, where applicable.</p>
+
+<h3 id="tiles">Tiles</h3>
+
+<p>The v1 tiles endpoint has been replaced with an improved v2 endpoint. The v2 endpoint returns a more readable and more easily parsed object. For an in depth discussion of these improvements, <a href="https://decentraland.org/blog/technology/land-api-v2/">see this blogpost</a>.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>V1 Endpoint</th>
+      <th>Description</th>
+      <th>V2 Endpoint</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">GET /v1/tiles</code></td>
+      <td>Returns all tiles in the map, using the legacy format. <strong>Deprecated.</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">GET /v2/tiles</code></td>
+      <td>Returns all tiles in the map, using the new v2 format. This replaces v1 of the same endpoint, returning an object with a new, more useful shape.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="bids">Bids</h3>
+
+<p>All of the v1 bid endpoints have been replaced with queries to the Graph. See the chart and example below for details.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>V1 Endpoint</th>
+      <th>Description</th>
+      <th>V2 Endpoint</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">GET /bids/:id</code></td>
+      <td>Returns a bid by the bid’s ID. <strong>Deprecated</strong></td>
+      <td>See example subgraph query below.</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">GET /addresses/:address/bids</code></td>
+      <td>Returns list of bids by the seller or bidder’s Ethereum address. <strong>Deprecated</strong></td>
+      <td>See example subgraph query below.</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">GET /parcels/:x/:y/bids</code></td>
+      <td>Returns a list of bids placed on a given parcel. <strong>Deprecated</strong></td>
+      <td>See example subgraph query below.</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">GET /estates/:id/bids</code></td>
+      <td>Returns a list of bids placed on a given estate. <strong>Deprecated</strong></td>
+      <td>See example subgraph query below.</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">GET /bids/:address/assets</code></td>
+      <td>Returns a list of bid assets by the seller or bidder’s Ethereum address. <strong>Deprecated</strong></td>
+      <td>See example subgraph query below.</td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>To list open and non-expired bids where the expiration date is specified as a unix timestamp:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+  bids(where:{ status: open, expiresAt_gt: 1611082372  }) {
+    nft {
+      name
+      contractAddress
+      tokenId
+    }
+    price
+    bidder
+    seller
+  }
+}
+</code></pre></div></div>
+
+<h3 id="districts-and-district-contributions">Districts and District Contributions</h3>
+
+<p>V2 endpoints to expose data about Districts and District contributions are under active development. Until February 1st, 2021, you may still call the v1 endpoint. After that date, new documentation for the v2 endpoints will be published on this page.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>V1 Endpoint</th>
+      <th>Description</th>
+      <th>V2 Endpoint</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">GET /addresses/:address/contributions</code></td>
+      <td>Returns all contributions to districts by the contributor’s Ethereum address. <strong>Deprecated</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">GET /v2/addresses/:address/contributions</code></td>
+      <td>This v2 endpoint is under active development, and will be functional on February 1st, 2021 when v1 is deprecated.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">GET /districts</code></td>
+      <td>Returns a list of all districts in Genesis City. <strong>Deprecated</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">GET /v2/addresses/:address/contributions</code></td>
+      <td>This v2 endpoint is under active development, and will be functional on February 1st, 2021 when v1 is deprecated.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="estates">Estates</h3>
+
+<p>While two v1 estate endpoints are replaced with Graph queries, version 2.0 introduces a new estate endpoint that allows you to return data about an estate based on the estates ID.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>V1 Endpoint</th>
+      <th>Description</th>
+      <th>V2 Endpoint</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">GET /estates</code></td>
+      <td>Returns a list of Estates. <strong>Deprecated</strong></td>
+      <td>See example subgraph query below.</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">GET /addresses/:address/estates</code></td>
+      <td>Returns all Estates belonging to the given Ethereum address. <strong>Deprecated</strong></td>
+      <td>See example subgraph query below.</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td> </td>
+      <td><code class="language-plaintext highlighter-rouge">GET /v2/estates/:id</code></td>
+      <td>New v2 endpoint that returns metadata about an estate with the given ID.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>To obtain estate data, query the Graph for NFT entities with the condition:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+  category: estate
+}
+</code></pre></div></div>
+
+<h3 id="map">Map</h3>
+
+<p>The v1 map endpoint remains unchanged and supported.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>V1 Endpoint</th>
+      <th>Description</th>
+      <th>V2 Endpoint</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">GET /map</code></td>
+      <td>Returns all parcels and estates in a given area. This endpoint is <strong>depcrecated</strong> and is replaced by <code class="language-plaintext highlighter-rouge">GET /v1/map.png</code></td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">GET /map.png</code></td>
+      <td>Returns a PNG image of a section of the map.</td>
+      <td><code class="language-plaintext highlighter-rouge">GET /v1/map.png</code></td>
+      <td>Returns a PNG image of a section of the map. This endpoint is still supported and functional! There is no v2 version of this endpoint, keep calling the v1 endpoint to get the same data.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">GET /parcels/:x/:y/map.png</code></td>
+      <td>Returns a PNG image of a piece of the map centered on the given parcel.</td>
+      <td><code class="language-plaintext highlighter-rouge">GET /v1/parcels/:x/:y/map.png</code></td>
+      <td>Returns a PNG image of a map centered on a highlighted parcel with the given coordinates.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">GET /estates/:id/map.png</code></td>
+      <td>Returns a PNG image of a piece of the map centered on an estate specified by the estate’s ID.</td>
+      <td><code class="language-plaintext highlighter-rouge">GET /v1/estates/:id/map.png</code></td>
+      <td>Returns a PNG image of a map centered on a highlighted estate with the given ID.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="mortgages">Mortgages</h3>
+
+<p>The mortgage endpoints are all deprecated with the v2 release. Since mortgages are no longer supported in the marketplace, there’s no longer any data in this category to expose via an API or Graph query.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>V1 Endpoint</th>
+      <th>Description</th>
+      <th>V2 Endpoint</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">GET /mortgages/:address/parcels</code></td>
+      <td>Returns list of parcels with an active mortgage requested by a given Ethereum address. <strong>Deprecated</strong></td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">GET /addresses/:address/mortgages</code></td>
+      <td>Returns all mortgages requested by a given Ethereum address. <strong>Deprecated</strong></td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">GET /parcels/:x/:y/mortgages</code></td>
+      <td>Returns all mortgages requested for a given parcel. <strong>Deprecated</strong></td>
+      <td> </td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="parcels">parcels</h3>
+
+<p>Some of the parcel endpoints have v2 counterparts, while others are replaced with queries to the Graph. See the chart below for details.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>V1 Endpoint</th>
+      <th>Description</th>
+      <th>V2 Endpoint</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">GET /parcels</code></td>
+      <td>Returns a list of all parcels. <strong>Deprecated.</strong></td>
+      <td>See the example subgraph query below.</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">GET /addresses/:address/parcels</code></td>
+      <td>Returns a list of all parcels belonging to a given address. <strong>Deprecated.</strong></td>
+      <td>See the example subgraph query below.</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">GET /parcels/:x/:y</code></td>
+      <td>Returns a single parcel with the given coordinates. <strong>Deprecated.</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">GET /v2/parcels/:x/:y</code></td>
+      <td>Returns metadata about a parcel with the given coordinates. This new v2 endpoint queries The Graph instead of looking at the deprecated v1 server.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">GET /parcels/:tokenId</code></td>
+      <td>Returns a single parcel based on its blockchain ID (also called a token ID). <strong>Deprecated.</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">GET /v2/contracts/:address/tokens/:id</code></td>
+      <td>Returns metadata about a parcel or estate with the given contract address and token/blockchain ID.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">GET /parcels/:x/:y/encodedId</code></td>
+      <td>Returns the blockchain/token ID of a parcel based on its coordinates. <strong>Deprecated</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">GET /v2/tiles?x1&amp;x2&amp;y1&amp;y2&amp;include=tokenId</code></td>
+      <td>By setting both x1 and x2 to X and y1 and y2 to Y value, and including only the tokenId property you can find the same data using the new /v2/tiles endpoint.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>To list all parcels owned by one specific address, submit this query to the Graph:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+  nfts(where:{ category: parcel, owner: "0x..."  }) {
+    parcel {
+      x
+      y
+    }
+  }
+}
+</code></pre></div></div>
+
+<h3 id="publications">Publications</h3>
+
+<p>The publications endpoints are all replaced with corresponding queries to the Graph.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>V1 Endpoint</th>
+      <th>Description</th>
+      <th>V2 Endpoint</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">GET /parcels/:x/:y/publications</code></td>
+      <td>Returns all previous publications for a given parcel. <strong>Deprecated</strong></td>
+      <td>See example subgraph query below.</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">GET /publications/:txHash</code></td>
+      <td>Returns a specific publication based on the publication’s transaction hash. <strong>Deprecated.</strong></td>
+      <td>See example subgraph query below.</td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>To list all open and non-expired orders, submit this query to the Graph:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+  orders(where:{ status: open, expiresAt_gt: 1611082372  }) {
+    nft {
+      name
+      contractAddress
+      tokenId
+    }
+    price
+  }
+}
+
+</code></pre></div></div>
+
+<h3 id="translations">Translations</h3>
+
+<p>This is a legacy endpoint that is only used by the UI. It remains supported and unchanged with the v2 release.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>V1 Endpoint</th>
+      <th>Description</th>
+      <th>V2 Endpoint</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">GET /translations/:locale</code></td>
+      <td>Returns all available translations for a given ‘locale’ where ‘locale’ can be ‘en’, ‘es’, ‘fr’, ‘ko’, or ‘zh’.</td>
+      <td> </td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+:ET

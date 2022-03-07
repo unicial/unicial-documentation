@@ -1,0 +1,163 @@
+I"�=<p>Add text to a scene using the <code class="language-plaintext highlighter-rouge">TextShape</code> component. This text sits in a position</p>
+
+<p>Text in Decentraland supports all <em>utf8</em> characters, this includes oriental and special characters.</p>
+
+<blockquote>
+  <p>Note: This component is useful for in-world labels and UIs that exist in the 3D space of the scene, not for the player’s 2D HUD UI.</p>
+</blockquote>
+
+<p>The <code class="language-plaintext highlighter-rouge">TextShape</code> component is mutually exclusive with other shape components like primitive shapes and glTF 3D models, see <a href="/development-guide/shape-components/">Shape components</a> for more details.</p>
+
+<p>To add text as a label on an existing entity, you create a second entity that has the <code class="language-plaintext highlighter-rouge">TextShape</code> component and set it as a child of the other entity.</p>
+
+<h2 id="create-a-text-component">Create a text component</h2>
+
+<p>The following example shows how to create a <code class="language-plaintext highlighter-rouge">TextShape</code> component and add it to an entity.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">myEntity</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+<span class="kd">const</span> <span class="nx">myText</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TextShape</span><span class="p">(</span><span class="dl">"</span><span class="s2">Hello World!</span><span class="dl">"</span><span class="p">)</span>
+<span class="nx">myEntity</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="nx">myText</span><span class="p">)</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>Note: If the entity with the text component is a child of another entity, then it will be affected by the parent’s scale. If the parent is scaled unevenly, this will result in the text also being stretched or compressed.</p>
+</blockquote>
+
+<h2 id="change-the-text-value">Change the text value</h2>
+
+<p>When creating a new text component, you assign it a string to display. This string is stored in the <code class="language-plaintext highlighter-rouge">value</code> field.</p>
+
+<p>If you want to change the string displayed by the component, you can do so at any time by changing the <code class="language-plaintext highlighter-rouge">value</code> field.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">myEntity</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">TextShape</span><span class="p">).</span><span class="nx">value</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">new string</span><span class="dl">"</span>
+</code></pre></div></div>
+
+<h2 id="basic-text-properties">Basic text properties</h2>
+
+<p>The <code class="language-plaintext highlighter-rouge">TextShape</code> component has several properties that can be set to style the text. Below are some of the most common:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">font</code>: <em>Font object</em>. Font objects are initiated with a value from the <em>Fonts</em> enum, which contains all supported fonts. By default uses <em>LiberationSans</em>.</li>
+  <li><code class="language-plaintext highlighter-rouge">fontSize</code>: <em>number</em>.</li>
+  <li><code class="language-plaintext highlighter-rouge">color</code>: <em>Color3</em> object. <em>Color3</em> objects store an <em>RBG</em> color as three numbers from 0 to 1.</li>
+</ul>
+
+<!--
+- `fontFamily`: _string_. Can be a specific font (like _Arial_) or a type of font (_serif_/_sans-serif_). If you list several different fonts, it will attempt with the first and progressively fall back to the next ones. If you are using an uncommon font, it's always recommendable to also list a more generic one, in case a player can't access it.
+- `fontWeight`: _string_. Can be _normal_, _bold_, _bolder_, or _lighter_.
+-->
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">opacity</code>: <em>number</em>. Set it to less than 1 to make the text translucid.</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">myText</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TextShape</span><span class="p">(</span><span class="dl">"</span><span class="s2">Hello World!</span><span class="dl">"</span><span class="p">)</span>
+<span class="nx">myText</span><span class="p">.</span><span class="nx">fontSize</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="nx">myText</span><span class="p">.</span><span class="nx">color</span> <span class="o">=</span> <span class="nx">Color3</span><span class="p">.</span><span class="nx">Blue</span><span class="p">()</span>
+<span class="nx">myText</span><span class="p">.</span><span class="nx">font</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Font</span><span class="p">(</span><span class="nx">Fonts</span><span class="p">.</span><span class="nx">SansSerif</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="fonts">Fonts</h2>
+
+<p>By default, text in Decenrtaland uses the font <code class="language-plaintext highlighter-rouge">LiberationSans</code>. To use another font, you need to instance a new <code class="language-plaintext highlighter-rouge">Font</code> object and assign it to the <code class="language-plaintext highlighter-rouge">font</code> property of the <code class="language-plaintext highlighter-rouge">TextShape</code> object.</p>
+
+<p>When instancing a <code class="language-plaintext highlighter-rouge">Font</code>, you need to pass it a value from the <code class="language-plaintext highlighter-rouge">Fonts</code> enum. This enum is a list that contains all the supported fonts.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">myText</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TextShape</span><span class="p">(</span><span class="dl">"</span><span class="s2">Hello World!</span><span class="dl">"</span><span class="p">)</span>
+<span class="nx">myText</span><span class="p">.</span><span class="nx">font</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Font</span><span class="p">(</span><span class="nx">Fonts</span><span class="p">.</span><span class="nx">SansSerif</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>The following fonts are currently supported:</p>
+
+<ul>
+  <li>LiberationSans</li>
+  <li>SansSerif</li>
+  <li>SansSerif_Bold</li>
+  <li>SansSerif_Heavy</li>
+  <li>SansSerif_Semibold</li>
+</ul>
+
+<blockquote>
+  <p>TIP: If using VS studio or some other IDE, type <code class="language-plaintext highlighter-rouge">Font.</code> and you should see a list of suggestions with all of the available fonts.</p>
+</blockquote>
+
+<p>You can share a same instanced <code class="language-plaintext highlighter-rouge">Font</code> object accross multiple <code class="language-plaintext highlighter-rouge">TextShape</code> components.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">sfFont</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Font</span><span class="p">(</span><span class="nx">Fonts</span><span class="p">.</span><span class="nx">SansSerif</span><span class="p">)</span>
+
+<span class="kd">const</span> <span class="nx">myText</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TextShape</span><span class="p">(</span><span class="dl">"</span><span class="s2">Hello World!</span><span class="dl">"</span><span class="p">)</span>
+<span class="nx">myText</span><span class="p">.</span><span class="nx">font</span> <span class="o">=</span> <span class="nx">sfFont</span>
+
+<span class="kd">const</span> <span class="nx">myText2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TextShape</span><span class="p">(</span><span class="dl">"</span><span class="s2">Bye World!</span><span class="dl">"</span><span class="p">)</span>
+<span class="nx">myText2</span><span class="p">.</span><span class="nx">font</span> <span class="o">=</span> <span class="nx">sfFont</span>
+</code></pre></div></div>
+
+<h2 id="text-alignment-and-padding-properties">Text alignment and padding properties</h2>
+
+<p>The <code class="language-plaintext highlighter-rouge">TextShape</code> component creates a text box that has a size, padding, etc.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">hTextAlign</code>: <em>string</em>. Either <em>left</em>, <em>right</em> or <em>center</em> (default).</li>
+  <li><code class="language-plaintext highlighter-rouge">vTextAlign</code>: string. Either <em>top</em>, <em>bottom</em> or <em>center</em> (default).</li>
+  <li><code class="language-plaintext highlighter-rouge">width</code>: <em>number</em>. The width of the text box.</li>
+  <li><code class="language-plaintext highlighter-rouge">height</code>: <em>number</em>. The height of the text box.</li>
+  <li><code class="language-plaintext highlighter-rouge">resizeToFit</code>: <em>boolean</em>. If <em>true</em>, the font size is adjusted to fit as large as possible in the text box.</li>
+  <li><code class="language-plaintext highlighter-rouge">paddingTop</code>: <em>number</em>. Space between the text and the outline of the text box.</li>
+  <li><code class="language-plaintext highlighter-rouge">paddingRight</code>: <em>number</em>. Space between the text and the outline of the text box.</li>
+  <li><code class="language-plaintext highlighter-rouge">paddingBottom</code>: <em>number</em>. Space between the text and the outline of the text box.</li>
+  <li><code class="language-plaintext highlighter-rouge">paddingLeft</code>: <em>number</em>. Space between the text and the outline of the text box.</li>
+  <li><code class="language-plaintext highlighter-rouge">zIndex</code>: <em>number</em>. Useful for when multiple flat entities occupy the same space, it determines which one to show in front.</li>
+</ul>
+
+<blockquote>
+  <p>Tip: If a text is meant to float in space, it’s a good idea to add a <a href="/development-guide/entity-positioning/#face-the-user"><code class="language-plaintext highlighter-rouge">Billboard</code> component</a> so that the text rotates to always face the player and be legible.</p>
+</blockquote>
+
+<h2 id="text-shadow-and-outline-properties">Text shadow and outline properties</h2>
+
+<p>The text has no shadow by default, but you can set the following values to give it a shadow-like effect.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">shadowBlur</code>: <em>number</em></li>
+  <li><code class="language-plaintext highlighter-rouge">shadowOffsetX</code>: <em>number</em></li>
+  <li><code class="language-plaintext highlighter-rouge">shadowOffsetY</code>: <em>number</em></li>
+  <li><code class="language-plaintext highlighter-rouge">shadowColor</code>: <em>Color3</em> object. <em>Color3</em> objects store an <em>RBG</em> color as three numbers from 0 to 1.</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">myEntity</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">TextShape</span><span class="p">(</span><span class="dl">"</span><span class="s2">Text with shadow</span><span class="dl">"</span><span class="p">))</span>
+<span class="nx">myEntity</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">TextShape</span><span class="p">).</span><span class="nx">shadowColor</span> <span class="o">=</span> <span class="nx">Color3</span><span class="p">.</span><span class="nx">Gray</span><span class="p">()</span>
+<span class="nx">myEntity</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">TextShape</span><span class="p">).</span><span class="nx">shadowOffsetY</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="nx">myEntity</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">TextShape</span><span class="p">).</span><span class="nx">shadowOffsetX</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+</code></pre></div></div>
+
+<p>Every letter can also have an outline in a different color surrounding its perimeter.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">outlineWidth</code>: <em>number</em>. How many pixels wide the text outline will be, in all directions. By default <em>0</em>, which makes it invisible.</li>
+  <li><code class="language-plaintext highlighter-rouge">outlineColor</code>: <em>Color3</em> object. <em>Color3</em> objects store an <em>RBG</em> color as three numbers from 0 to 1.</li>
+</ul>
+
+<h2 id="multiple-lines">Multiple lines</h2>
+
+<p>If you want your text to span multiple lines, use <code class="language-plaintext highlighter-rouge">\n</code> as part of the string. The following example has two separate lines of text:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">myEntity</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">TextShape</span><span class="p">(</span><span class="dl">"</span><span class="s2">This is one line. </span><span class="se">\n</span><span class="s2">This is another line</span><span class="dl">"</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>You can also set up the following properties related to texts with multiple lines:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">lineCount</code>: <em>number</em>. How many lines of text to fit into the textbox as a maximum. By default <em>1</em>. The <code class="language-plaintext highlighter-rouge">textWrapping</code> property must be <em>true</em> to use more than one line.</li>
+  <li><code class="language-plaintext highlighter-rouge">lineSpacing</code>: <em>string</em>. How much space between each line.</li>
+</ul>
+
+<h2 id="clicking-text">Clicking text</h2>
+
+<p><code class="language-plaintext highlighter-rouge">TextShape</code> components aren’t clickable by default.</p>
+
+<p>If you want to place a text label over a button, the text will not allow you to click the button behind it. In these cases, you can set the <code class="language-plaintext highlighter-rouge">isPickable</code> field of the <code class="language-plaintext highlighter-rouge">TextShape</code> to <em>false</em>.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">myEntity</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">TextShape</span><span class="p">(</span><span class="dl">"</span><span class="s2">Text</span><span class="dl">"</span><span class="p">))</span>
+<span class="nx">myEntity</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">TextShape</span><span class="p">).</span><span class="nx">isPickable</span> <span class="o">=</span> <span class="kc">false</span>
+</code></pre></div></div>
+:ET

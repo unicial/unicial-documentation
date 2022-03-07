@@ -1,0 +1,71 @@
+I"�<p>You can import your own 3D models into the Builder. This allows you to pick models from a wide selection of free sources on the internet, or to create your own custom models.</p>
+
+<h2 id="upload-a-model">Upload a model</h2>
+
+<p>All custom items are stored in user-created <em>asset packs</em>. Each asset pack holds one or many assets.</p>
+
+<p>To create a new asset pack:</p>
+
+<ol>
+  <li>Open the editor for any scene and click <em>New Asset Pack</em> at the bottom of the item catalogue, or the <em>plus sign</em> at the top of the categories list.</li>
+  <li>Drag a 3D model file into the window, or multiple files at once.</li>
+  <li>Press <em>Import assets</em>.</li>
+  <li>Name each asset, and potentially add tags to better identify them.</li>
+  <li>Name the asset pack and press <em>Create Asset Pack</em>.</li>
+</ol>
+
+<p>Now you’ll see a new folder in the items catalogue with your new asset pack, and you can use your new assets in any scene, just like the default items.</p>
+
+<p>Once created, a custom asset pack is be available in every scene you edit as long as you log in with the same account.</p>
+
+<h2 id="supported-models">Supported models</h2>
+
+<p>All 3D models need to be in <em>.glTF</em> or <em>.glb</em> format. You can convert other formats into these formats with various different editors and tools. See <a href="/3d-modeling/3d-models/">3D modeling</a> for recommendations and tips.</p>
+
+<p>All materials in the models need to be either <em>basic material</em> or <em>PBR</em>, and all textures need to be in sizes that are powers of two (ex: 256, 512). See <a href="/builder/scene-limitations/">Scene limitations</a> for details.</p>
+
+<p>If a 3D model relies on external files besides the <em>.gltf</em> file (like <em>.bin</em> or <em>.png</em> files) compress all the relevant files for the 3D model into a <em>.zip</em> file. Then import only this <em>.zip</em> file into the Builder.</p>
+
+<p>All 3D model files must occupy less than 5mb to be imported into the Builder. Larger files aren’t supported.</p>
+
+<h4 id="free-libraries-for-3d-models">Free libraries for 3D models</h4>
+
+<p>Instead of building your own 3D models, you can also download them from several free or paid libraries.</p>
+
+<p>To get you started, below is a list of libraries that have free or relatively inexpensive content:</p>
+
+<ul>
+  <li><a href="https://sketchfab.com/">SketchFab</a></li>
+  <li><a href="https://clara.io/">Clara.io</a></li>
+  <li><a href="https://archive3d.net/">Archive3D</a></li>
+  <li><a href="https://3dwarehouse.sketchup.com/">SketchUp 3D Warehouse</a></li>
+  <li><a href="https://www.thingiverse.com/">Thingiverse</a> (3D models made primarily for 3D printing, but adaptable to Virtual Worlds)</li>
+  <li><a href="https://www.sharecg.com/">ShareCG</a></li>
+</ul>
+
+<blockquote>
+  <p>Note: Pay attention to the license restrictions that the content you download has.</p>
+</blockquote>
+
+<p>Note that in several of these sites, you can choose what format to download the model in. Always choose <em>.glTF</em> format if available. If not available, you must convert them to <em>.glTF</em> before you can use them in a scene. For that, we recommend importing them into Blender and exporting them with one of the available <em>.glTF</em> export add-ons.</p>
+
+<h2 id="colliders">Colliders</h2>
+
+<p>You might find that when running a preview the player can walk through your imported 3D models. This is likely because the models are missing a <em>collider mesh</em> to define a collision geometry. See <a href="/3d-modeling/colliders/">colliders</a> for more details and instructions.</p>
+
+<blockquote>
+  <p>Tip: Instead of editing the model to add a <em>collider mesh</em>, a simpler alternative is to an <em>Invisible wall</em> smart item with approximately the same shape to stand in its place.</p>
+</blockquote>
+
+<h2 id="animations">Animations</h2>
+
+<p>If an imported model includes animations, the first animation that’s packed into the model will be played in a loop.</p>
+
+<p>Note that you don’t have any control over when the animation starts or stops, or which one is played in case of several animations.</p>
+
+<p>If there are multiple players in the scene, they may be seeing the animation out of sync from each other.</p>
+
+<h2 id="smart-items">Smart items</h2>
+
+<p>You can also import your own custom smart items that have built-in interactive behavior, following the same steps as for uploading a model. See <a href="/development-guide/smart-items/">smart items</a>.</p>
+:ET

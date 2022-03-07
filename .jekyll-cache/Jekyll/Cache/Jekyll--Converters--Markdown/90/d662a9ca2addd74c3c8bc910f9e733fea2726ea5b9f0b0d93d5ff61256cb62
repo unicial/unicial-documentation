@@ -1,0 +1,379 @@
+I"_�<h2 id="track-player-position-and-rotation">Track player position and rotation</h2>
+
+<p>The <code class="language-plaintext highlighter-rouge">Camera</code> object exposes information about the player’s point of view in your scene.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">Camera.instance.position</code> returns a 3D vector with the coordinates of the avatar’s center, relative to the scene. When the player is on the ground, the height of this point is approximately <em>1.177</em> m. In 3rd person camera mode, this value refers also to the avatar’s center, not to the position of the 3rd person camera.</li>
+  <li><code class="language-plaintext highlighter-rouge">Camera.instance.feetPosition</code> returns a 3D vector with the coordinates of the player’s feet relative to the scene. When the player is at ground level, the height is nearly 0.155.</li>
+  <li><code class="language-plaintext highlighter-rouge">Camera.instance.worldPosition</code> returns a 3D vector with the coordinates of the player’s center, relative to the whole of Genesis City. For example, if the scene is in coordinates <em>100,-100</em>, and the player is standing on the bottom-left corner of that scene, the player’s world position will be about <em>1600, 1.177, -1600</em></li>
+  <li><code class="language-plaintext highlighter-rouge">Camera.instance.rotation</code> returns a quaternion with the player’s rotation. In 3rd person camera mode, this refers to the 3rd person camera angle, not the direction faced by the avatar.</li>
+  <li><code class="language-plaintext highlighter-rouge">Camera.instance.rotation.eulerAngles</code> returns a Vector3 with the player’s rotation. In 3rd person camera mode, this refers to the 3rd person camera angle, not the direction faced by the avatar.</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">log</span><span class="p">(</span><span class="nx">Camera</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">feetPosition</span><span class="p">)</span>
+<span class="nx">log</span><span class="p">(</span><span class="nx">Camera</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">rotation</span><span class="p">.</span><span class="nx">eulerAngles</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>The example above logs the player’s position and rotation.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">CubeRotateSystem</span> <span class="k">implements</span> <span class="nx">ISystem</span> <span class="p">{</span>
+  <span class="nl">entity</span><span class="p">:</span> <span class="nx">Entity</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="nx">entity</span><span class="p">:</span> <span class="nx">Entity</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">entity</span> <span class="o">=</span> <span class="nx">entity</span>
+  <span class="p">}</span>
+
+  <span class="nx">update</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">transform</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">entity</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">Transform</span><span class="p">)</span>
+    <span class="nx">transform</span><span class="p">.</span><span class="nx">rotation</span> <span class="o">=</span> <span class="nx">Camera</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">rotation</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">cube</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+<span class="nx">cube</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">BoxShape</span><span class="p">())</span>
+<span class="nx">cube</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">Transform</span><span class="p">({</span> <span class="na">position</span><span class="p">:</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="p">}))</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">cube</span><span class="p">)</span>
+
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addSystem</span><span class="p">(</span><span class="k">new</span> <span class="nx">CubeRotateSystem</span><span class="p">(</span><span class="nx">cube</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>The example above uses the player’s rotation to set that of a cube in the scene.</p>
+
+<blockquote>
+  <p>Note: The <code class="language-plaintext highlighter-rouge">Camera.instance</code> data is updated at a throttled rate of 10 times per second. Due to this, positions &amp; rotations may lag slightly in relation to the scene that runs at 30 FPS under ideal conditions.</p>
+</blockquote>
+
+<!--
+See [Event Listeners](/development-guide/event-listeners/#player-moves) for a more efficient approach where updates are only made in the event of the player moving, and not while the player stands still.
+-->
+
+<h2 id="get-player-data">Get player data</h2>
+
+<p>The following data can be fetched from a player:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">displayName</code>: <em>(string)</em> The player’s user name, as others see in-world</li>
+  <li><code class="language-plaintext highlighter-rouge">userId</code>: <em>(string)</em> A UUID string that identifies the player. If the player has a public key, this field will have the same value as the public key.</li>
+  <li><code class="language-plaintext highlighter-rouge">publicKey</code>: <em>(string)</em> The public key of the player’s Ethereum wallet. If the player logs in as a guest, with no linked wallet, this field will be <code class="language-plaintext highlighter-rouge">null</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">hasConnectedWeb3</code>: <em>(boolean)</em> Indicates if the player has a public key. <em>True</em> if the player has one.</li>
+  <li><code class="language-plaintext highlighter-rouge">avatar</code>: A nested object with data about the player’s appearance.</li>
+  <li><code class="language-plaintext highlighter-rouge">version</code>: <em>(number)</em> A version number that increases by one every time the player changes any of their settings. Use this if you encounter conflicting data, to know what version is more recent.</li>
+</ul>
+
+<blockquote>
+  <p>Note: For any Ethereum transactions with the player, always use the <code class="language-plaintext highlighter-rouge">publicKey</code> field, instead of the <code class="language-plaintext highlighter-rouge">userId</code>, to avoid dealing with non-existing wallets.</p>
+</blockquote>
+
+<p>The <code class="language-plaintext highlighter-rouge">avatar</code> object has the following nested information:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">wearables</code>: <code class="language-plaintext highlighter-rouge">WearableId[]</code> An array of identifiers for each of the wearables that the player is currently wearing. For example <code class="language-plaintext highlighter-rouge">urn:decentraland:off-chain:base-avatars:green_hoodie</code>. All wearables have a similar identifier, even if they’re NFTs.</li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">bodyShape</code>: An identifier for the avatar’s general body shape. Either <code class="language-plaintext highlighter-rouge">urn:decentraland:off-chain:base-avatars:BaseFemale</code> for female or <code class="language-plaintext highlighter-rouge">urn:decentraland:off-chain:base-avatars:BaseMale</code> for male.</p>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">skinColor</code>: <em>ColorString</em> A hex value for the player’s skin color.</li>
+  <li><code class="language-plaintext highlighter-rouge">hairColor</code>: <em>ColorString</em> A hex value for the player’s hair color.</li>
+  <li><code class="language-plaintext highlighter-rouge">eyeColor</code>: <em>ColorString</em> A hex value for the player’s eye color.</li>
+  <li><code class="language-plaintext highlighter-rouge">snapshots</code>: A nested object with base64 representations of .jpg images of the player in various resolutions.
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">face256</code>: <em>string</em> The player’s face as a 256x256 pixel image.</li>
+      <li><code class="language-plaintext highlighter-rouge">body</code>: <em>string</em> The full resolution image of the player standing straight, with 512x1024 pixels.</li>
+    </ul>
+  </li>
+</ul>
+
+<blockquote>
+  <p>WARNING: The snapshots of the avatar will be deprecated in the future and will no longer be returned as part of an avatar’s data. The recommended approach is to use <code class="language-plaintext highlighter-rouge">AvatarTexture</code> instead, see <a href="/development-guide/materials/#avatar-portraits">Avatar Portraits</a> ).</p>
+</blockquote>
+
+<h4 id="data-from-current-player">Data from current player</h4>
+
+<p>To obtain information from the current player that’s running the scene, use <code class="language-plaintext highlighter-rouge">getUserData()</code>.</p>
+
+<p>The example below imports the <code class="language-plaintext highlighter-rouge">Identity</code> library and runs <code class="language-plaintext highlighter-rouge">getUserData()</code>.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">getUserData</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@decentraland/Identity</span><span class="dl">"</span>
+
+<span class="nx">executeTask</span><span class="p">(</span><span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">data</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">getUserData</span><span class="p">()</span>
+  <span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>The function returns the entire set of data described above, including address, name, wearables, snapshots, etc.</p>
+
+<blockquote>
+  <p>Tip: The <code class="language-plaintext highlighter-rouge">getUserData()</code> function is asynchronous. See <a href="/development-guide/async-functions/">Asynchronous functions</a> if you’re not familiar with those.</p>
+</blockquote>
+
+<blockquote>
+  <p>Note: When running a local preview, use <code class="language-plaintext highlighter-rouge">dcl start --web3</code> to connect with your wallet and fetch your actual data. Otherwise, the preview uses random user data, just as when you enter as a guest.</p>
+</blockquote>
+
+<h4 id="data-from-nearby-players">Data from nearby players</h4>
+
+<p>You can obtain data from other players that are nearby, by calling <code class="language-plaintext highlighter-rouge">getPlayerData()</code>, passing the id of a Decentraland account.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">getPlayerData</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@decentraland/Players</span><span class="dl">"</span>
+
+<span class="nx">executeTask</span><span class="p">(</span><span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">data</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">getPlayerData</span><span class="p">({</span> <span class="na">userId</span><span class="p">:</span> <span class="dl">"</span><span class="s2">0x….</span><span class="dl">"</span> <span class="p">})</span>
+  <span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>The function returns the entire set of data described above, including address, name, wearables, snapshots, etc.</p>
+
+<blockquote>
+  <p>Tip: The <code class="language-plaintext highlighter-rouge">getPlayerData()</code> function is asynchronous. See <a href="/development-guide/async-functions/">Asynchronous functions</a> if you’re not familiar with those.</p>
+</blockquote>
+
+<p><code class="language-plaintext highlighter-rouge">getPlayerData()</code> can only fetch data from players who are currently nearby. They don’t have to be necessarily standing in the same scene, but in visual range, that’s because this information is being fetched from the local engine that’s rendering these avatars. To try this out in preview, open a second tab and log in with a different account.</p>
+
+<blockquote>
+  <p>Note: User IDs must always be lowercase. If copying a wallet address, make sure all the characters are set to lowercase.</p>
+</blockquote>
+
+<p>To know what players are being rendered in the surroundings, use <code class="language-plaintext highlighter-rouge">getConnectedPlayers()</code>. This function returns an array with the ids of all the players that are currently being rendered, which are all eligible to call with <code class="language-plaintext highlighter-rouge">getPlayerData()</code>. You can pair this with listening for new players connecting and disconnecting by using <code class="language-plaintext highlighter-rouge">onPlayerConnectedObservable</code> and <code class="language-plaintext highlighter-rouge">onPlayerDisconnectedObservable</code>.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">getConnectedPlayers</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@decentraland/Players</span><span class="dl">"</span>
+
+<span class="c1">// Get already connected players</span>
+<span class="nx">executeTask</span><span class="p">(</span><span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">players</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">getConnectedPlayers</span><span class="p">()</span>
+  <span class="nx">players</span><span class="p">.</span><span class="nx">forEach</span><span class="p">((</span><span class="nx">player</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">player is nearby: </span><span class="dl">"</span><span class="p">,</span> <span class="nx">player</span><span class="p">.</span><span class="nx">userId</span><span class="p">)</span>
+  <span class="p">})</span>
+<span class="p">})</span>
+
+<span class="c1">// Event when player connects</span>
+<span class="nx">onPlayerConnectedObservable</span><span class="p">.</span><span class="nx">add</span><span class="p">((</span><span class="nx">player</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">player entered: </span><span class="dl">"</span><span class="p">,</span> <span class="nx">player</span><span class="p">.</span><span class="nx">userId</span><span class="p">)</span>
+<span class="p">})</span>
+
+<span class="c1">// Event when player disconnects</span>
+<span class="nx">onPlayerDisconnectedObservable</span><span class="p">.</span><span class="nx">add</span><span class="p">((</span><span class="nx">player</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">player left: </span><span class="dl">"</span><span class="p">,</span> <span class="nx">player</span><span class="p">.</span><span class="nx">userId</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>As an alternative, you can use <code class="language-plaintext highlighter-rouge">getPlayersInScene()</code> to only fetch the players that are standing within the scene boundaries and also being rendered. You can pair this with listening to new players entering and leaving the scene by using <code class="language-plaintext highlighter-rouge">onEnterSceneObservable</code> and <code class="language-plaintext highlighter-rouge">onLeaveSceneObservable</code>.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">getPlayersInScene</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@decentraland/Players</span><span class="dl">"</span>
+
+<span class="c1">// Get all players already in scene</span>
+<span class="nx">executeTask</span><span class="p">(</span><span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">players</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">getPlayersInScene</span><span class="p">()</span>
+  <span class="nx">players</span><span class="p">.</span><span class="nx">forEach</span><span class="p">((</span><span class="nx">player</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">player is nearby: </span><span class="dl">"</span><span class="p">,</span> <span class="nx">player</span><span class="p">.</span><span class="nx">userId</span><span class="p">)</span>
+  <span class="p">})</span>
+<span class="p">})</span>
+
+<span class="c1">// Event when player enters scene</span>
+<span class="nx">onEnterSceneObservable</span><span class="p">.</span><span class="nx">add</span><span class="p">((</span><span class="nx">player</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">player entered scene: </span><span class="dl">"</span><span class="p">,</span> <span class="nx">player</span><span class="p">.</span><span class="nx">userId</span><span class="p">)</span>
+<span class="p">})</span>
+
+<span class="c1">// Event when player leaves scene</span>
+<span class="nx">onLeaveSceneObservable</span><span class="p">.</span><span class="nx">add</span><span class="p">((</span><span class="nx">player</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">player left scene: </span><span class="dl">"</span><span class="p">,</span> <span class="nx">player</span><span class="p">.</span><span class="nx">userId</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>TIP: Read more about <code class="language-plaintext highlighter-rouge">onPlayerConnectedObservable</code> and <code class="language-plaintext highlighter-rouge">onPlayerDisconnectedObservable</code> in <a href="/development-guide/event-listeners/#player-connects-or-disconnects">Player connects or disconnects</a> and about about <code class="language-plaintext highlighter-rouge">onEnterSceneObservable</code> and <code class="language-plaintext highlighter-rouge">onLeaveSceneObservable</code> in <a href="/development-guide/event-listeners/#player-enters-or-leaves-scene">Player enters or leaves scene</a>.</p>
+</blockquote>
+
+<p>Listen for events when players connect and disconnect
+As more players connect and disconnect, you can pic</p>
+
+<h4 id="data-from-any-player">Data from any player</h4>
+
+<p>To obtain information from any player, make a <a href="/development-guide/network-connections/#call-a-rest-api">REST API call</a> to the content servers. This returns the same information as the <code class="language-plaintext highlighter-rouge">getUserData()</code> and <code class="language-plaintext highlighter-rouge">getPlayerData()</code> functions, detailed at the start of the section.</p>
+
+<p>This information is exposed in the following URL, appending the player’s user id to the url parameter.</p>
+
+<p><code class="language-plaintext highlighter-rouge">https://peer.decentraland.org/lambdas/profile/&lt;player user id&gt;</code></p>
+
+<blockquote>
+  <p>Tip: Try the URL out in a browser to see how the response is structured.</p>
+</blockquote>
+
+<p>Unlike <code class="language-plaintext highlighter-rouge">getPlayerData()</code>, this option is not limited to just the players who are currently being rendered in the surroundings. With this approach you can fetch data from any player that has logged onto the servers in the past.</p>
+
+<p>If you know which server the player you want to query is connected to, you can get more up-to-date data by sending your requests to that specific server. For example, if the player changes clothes, this information will be available instantly in the player’s server, but will likely take a couple of minutes to propagate to the <code class="language-plaintext highlighter-rouge">peer.decentraland.org</code> server.</p>
+
+<p><code class="language-plaintext highlighter-rouge">https://&lt;player server&gt;/lambdas/profile/&lt;player user id&gt;</code></p>
+
+<blockquote>
+  <p>Tip: You can obtain the current player’s server by doing <code class="language-plaintext highlighter-rouge">getCurrentRealm().domain</code>.</p>
+</blockquote>
+
+<p>This example combines <code class="language-plaintext highlighter-rouge">getUserData()</code> and <code class="language-plaintext highlighter-rouge">getCurrentRealm()</code> to obtain the player’s data directly from the server that the player is on:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">getUserData</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@decentraland/Identity</span><span class="dl">"</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">getCurrentRealm</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@decentraland/EnvironmentAPI</span><span class="dl">"</span>
+
+<span class="k">async</span> <span class="kd">function</span> <span class="nx">fetchPlayerData</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">userData</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">getUserData</span><span class="p">()</span>
+  <span class="kd">const</span> <span class="nx">playerRealm</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">getCurrentRealm</span><span class="p">()</span>
+
+  <span class="kd">let</span> <span class="nx">url</span> <span class="o">=</span> <span class="s2">`{playerRealm.domain}/lambdas/profile/{userData.userId}`</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span>
+  <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">using URL: </span><span class="dl">"</span><span class="p">,</span> <span class="nx">url</span><span class="p">)</span>
+
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">fetch</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span>
+    <span class="kd">let</span> <span class="nx">json</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">()</span>
+
+    <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">full response: </span><span class="dl">"</span><span class="p">,</span> <span class="nx">json</span><span class="p">)</span>
+    <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">player is wearing :</span><span class="dl">"</span><span class="p">,</span> <span class="nx">json</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">metadata</span><span class="p">.</span><span class="nx">avatars</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">avatar</span><span class="p">.</span><span class="nx">wearables</span><span class="p">)</span>
+    <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">player owns :</span><span class="dl">"</span><span class="p">,</span> <span class="nx">json</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">metadata</span><span class="p">.</span><span class="nx">avatars</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">inventory</span><span class="p">)</span>
+  <span class="p">}</span> <span class="k">catch</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">an error occurred while reaching for player data</span><span class="dl">"</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">fetchPlayerData</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h2 id="get-players-public-ethereum-key">Get player’s public Ethereum key</h2>
+
+<p>As an alternative to <code class="language-plaintext highlighter-rouge">getUserData()</code>, you can obtain a player’s public Ethereum key by using <code class="language-plaintext highlighter-rouge">getUserPublicKey()</code>. You can then use this information to send payments to the player, or as a way to recognize players.</p>
+
+<p>The example below imports the <code class="language-plaintext highlighter-rouge">Identity</code> library and runs <code class="language-plaintext highlighter-rouge">getUserPublicKey()</code> to get the public key of the player’s Ethereum account and log it to console. The player must be logged into their Metamask account on their browser for this to work.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">getUserPublicKey</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@decentraland/Identity</span><span class="dl">"</span>
+
+<span class="kd">const</span> <span class="nx">publicKeyRequest</span> <span class="o">=</span> <span class="nx">executeTask</span><span class="p">(</span><span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">publicKey</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">getUserPublicKey</span><span class="p">()</span>
+  <span class="nx">log</span><span class="p">(</span><span class="nx">publicKey</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">publicKey</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>Tip: The <code class="language-plaintext highlighter-rouge">getUserPublicKey()</code> function is asynchronous. See <a href="/development-guide/async-functions/">Asynchronous functions</a> if you’re not familiar with those.</p>
+</blockquote>
+
+<h2 id="get-player-realm-data">Get player realm data</h2>
+
+<p>Players in decentraland exist in several separate <em>realms</em>. Players in different realms can’t see each other, interact or chat with each other, even if they’re standing on the same parcels. Dividing players like this allows Decentraland to handle an unlimited amount of players without running into any limitations. It also pairs players who are in close regions, to ensure that ping times between players that interact are acceptable.</p>
+
+<p>If your scene sends data to a <a href="/development-guide/remote-scene-considerations/">3rd party server</a> to sync changes between players in real time, then it’s often important that changes are only synced between players that are on the same realm. You should handle all changes that belong to one realm as separate from those on a different realm. Otherwise, players will see things change in a spooky way, without anyone making the change.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">getCurrentRealm</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@decentraland/EnvironmentAPI</span><span class="dl">"</span>
+
+<span class="nx">executeTask</span><span class="p">(</span><span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">realm</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">getCurrentRealm</span><span class="p">()</span>
+  <span class="nx">log</span><span class="p">(</span><span class="s2">`You are in the realm: `</span><span class="p">,</span> <span class="nx">realm</span><span class="p">.</span><span class="nx">displayName</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>Decentraland handles its communications between players (including player positions, chat, messageBus messages and smart item state changes) through a decentralized network of communication servers. Each one of these servers can support multiple separate <code class="language-plaintext highlighter-rouge">islands</code>, each grouping a different set of players that are near each other on the Decentraland map.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">getCurrentRealm()</code> function returns the following information:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">displayName</code>: <em>(string)</em> The full address of the realm, composed of the server + the layer</li>
+  <li><code class="language-plaintext highlighter-rouge">domain</code>: <em>(string)</em> The URL of the server</li>
+  <li><code class="language-plaintext highlighter-rouge">serverName</code>: <em>(string)</em> The name of the server</li>
+</ul>
+
+<blockquote>
+  <p>Tip: The <code class="language-plaintext highlighter-rouge">getCurrentRealm()</code> function is asynchronous. See <a href="/development-guide/async-functions/">Asynchronous functions</a> if you’re not familiar with those.</p>
+</blockquote>
+
+<p>As players move through the map, they may switch islands to be grouped with those players who are now closest to them. Islands also shift their borders dynamically to fit a manageable group of people, so even if a player stands still, as players enter and leave the world, the player could find themselves on another island.</p>
+
+<p>See <a href="/development-guide/event-listeners/#player-changes-realm-or-island">onRealmChangedObservable</a> for how to detect changes regarding the player’s realm or island.</p>
+
+<blockquote>
+  <p>Note: When the scene first loads, there might not yet be an island assigned for the player. The explorer will always eventually assign an island to the player, but this can sometimes occur a couple of seconds after the scene is loaded.</p>
+</blockquote>
+
+<h2 id="get-player-platform">Get player platform</h2>
+
+<p>Players can access Decentraland via various platforms, currently via the browser or via the native desktop app.</p>
+
+<p>Use <code class="language-plaintext highlighter-rouge">getPlatform()</code> to know what platform the current player is running Decentraland on.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">getPlatform</span><span class="p">,</span> <span class="nx">Platform</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@decentraland/EnvironmentAPI</span><span class="dl">"</span>
+
+<span class="nx">executeTask</span><span class="p">(</span><span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">data</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">getPlatform</span><span class="p">()</span>
+  <span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">data</span> <span class="o">===</span> <span class="nx">Platform</span><span class="p">.</span><span class="nx">BROWSER</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">In browser</span><span class="dl">"</span><span class="p">)</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">data</span> <span class="o">===</span> <span class="nx">Platform</span><span class="p">.</span><span class="nx">DESKTOP</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">In native desktop app</span><span class="dl">"</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>Players using the desktop app are likely to have a much smoother experience than those on the browser, since the browser imposes performance limitations on how much of the machine’s processing power the browser tab can use. You could use this information to render higher quality materials or other performance-heavy improvements only for players on desktop, as they are less likely to suffer bad frame rate from the extra content.</p>
+
+<h2 id="get-portable-experiences">Get Portable Experiences</h2>
+
+<p>Portable experiences are essentially scenes that are not constrained to parcels of land. Players can carry these with them anywhere they go in Decentraland, adding a new layer of content over the world. Smart Wearables are examples of portable experiences. You may want to know if a player is wearing one of these, since a smart wearable may enable players to have abilities that could be considered cheating in a competitive game. For example, in a platform game, a player that wears a jetpack has a very unfair advantage over others.</p>
+
+<p>As a scene creator, you may want to limit what players wearing portable experiences can do in your scene. Use <code class="language-plaintext highlighter-rouge">getPortableExperiencesLoaded()</code> to check if the player has any portable experiences currently activated.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">executeTask</span><span class="p">(</span><span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">portableExperiences</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">getPortableExperiencesLoaded</span><span class="p">()</span>
+  <span class="nx">log</span><span class="p">(</span><span class="nx">portableExperiences</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">getPortableExperiencesLoaded()</code> returns an array of objects, each of these objects includes an <code class="language-plaintext highlighter-rouge">id</code> attribute. In the case of wearables, the id is the wearable’s URN.</p>
+
+<h2 id="get-detailed-info-about-all-wearables">Get detailed info about all wearables</h2>
+
+<p>Make a <a href="/development-guide/network-connections/#call-a-rest-api">REST API call</a> to the following URL, to obtain a full updated list of all wearables that are currently usable, with details about each.</p>
+
+<p><code class="language-plaintext highlighter-rouge">https://dcl-wearables-dev.now.sh/expected.json</code></p>
+
+<p>This feature could be used together with fetching info about the player, to for example only allow players to enter a place if they are wearing any wearable from the halloween collection, or any wearable that is of <em>legendary</em> rarity.</p>
+
+<blockquote>
+  <p>Tip: Try the URL out in a browser to see how the response is structured.</p>
+</blockquote>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">async</span> <span class="kd">function</span> <span class="nx">fetchWearablesData</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">url</span> <span class="o">=</span> <span class="s2">`https://dcl-wearables-dev.now.sh/expected.json`</span>
+
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">fetch</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span>
+    <span class="kd">let</span> <span class="nx">json</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">()</span>
+    <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">full response: </span><span class="dl">"</span><span class="p">,</span> <span class="nx">json</span><span class="p">)</span>
+  <span class="p">}</span> <span class="k">catch</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">an error occurred while reaching for wearables data</span><span class="dl">"</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">executeTask</span><span class="p">(</span><span class="nx">fetchWearablesData</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="check-the-players-camera-mode">Check the player’s camera mode</h2>
+
+<blockquote>
+  <p>Note: <code class="language-plaintext highlighter-rouge">Camera.instance.cameraMode</code> is currently deprecated and is not always reliable. The recommended approach is to track camera change events with <code class="language-plaintext highlighter-rouge">onCameraModeChangedObservable</code>. This event is fired once when the scene first obtains information about the player’s current camera mode, and then any time the player changes camera mode while in or around your scene. See <a href="/development-guide/event-listeners/#player-changes-camera-mode">Event Listeners</a>.</p>
+</blockquote>
+
+<p>Players can either be using a 1st or 3rd person camera when exploring Decentraland. Check which of these the player is using by checking the value <code class="language-plaintext highlighter-rouge">Camera.instance.cameraMode</code>.</p>
+
+<p>The value of this property can either be <code class="language-plaintext highlighter-rouge">CameraMode.FirstPerson</code> or <code class="language-plaintext highlighter-rouge">CameraMode.ThirdPerson</code>.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="p">(</span><span class="nx">Camera</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">cameraMode</span> <span class="o">==</span> <span class="nx">CameraMode</span><span class="p">.</span><span class="nx">FirstPerson</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">The player is using the 1st person camera</span><span class="dl">"</span><span class="p">)</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+  <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">The player is using the 3rd person camera</span><span class="dl">"</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">Camera.instance.cameraMode</code> property is read-only, you can’t force the player to change camera mode.</p>
+
+<blockquote>
+  <p>Tip: To encourage players to use a particular camera mode in your scene, display a UI message advising them to switch modes whenever they use the wrong one.</p>
+</blockquote>
+
+<p>Knowing the camera mode can be very useful to fine-tune the mechanics of your scene to better adjust to what’s more comfortable using this mode. For example, small targets are harder to click when in 3rd person.</p>
+:ET

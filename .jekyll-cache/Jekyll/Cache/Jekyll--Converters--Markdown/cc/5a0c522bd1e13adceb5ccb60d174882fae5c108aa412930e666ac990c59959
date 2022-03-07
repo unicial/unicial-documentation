@@ -1,0 +1,13 @@
+I"<h2 id="50">5.0</h2>
+
+<p>This release introduces a new Entity Component System architecture. There are no new features, but the entire SDK has been rewritten based on the new paradigm.</p>
+
+<p>The following features aren’t currently supported in this implementation:</p>
+
+<ul>
+  <li>Video</li>
+  <li>Audio is only partially supported</li>
+</ul>
+
+<p>You can find a detailed announcement of this release and the reasons for it in <a href="https://decentraland.org/blog/announcements/announcing-decentralands-new-sdk/">this blogpost</a>.</p>
+:ET

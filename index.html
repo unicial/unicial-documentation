@@ -1,0 +1,21 @@
+---
+layout: default
+---
+{% include title.html %}
+<div class="wrapper home">
+  <img src="./images/texture.png"/>
+  {% include sidebar.html %}
+	<section>
+    <div class="home-content">
+      {% capture content %}{% include home.md %}{% endcapture %}
+      {{ content | markdownify }}
+    </div>
+    
+  </section>
+</div>
+{% include newsletter.html %}
+
+{%- comment -%} {% include override-color.html accent_color="#ff2d55" %} {%- endcomment -%}
+{% include override-color.html accent_color="#f05" %}
+
+{% include copy-code.html %}

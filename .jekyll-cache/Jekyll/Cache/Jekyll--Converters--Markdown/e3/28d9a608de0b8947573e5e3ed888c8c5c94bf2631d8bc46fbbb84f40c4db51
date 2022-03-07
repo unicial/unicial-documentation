@@ -1,0 +1,465 @@
+I"��<p>Through the Builder, you can drag and drop smart items into a scene. These are items that have configurable parameters and actions that can be triggered, like doors that can be opened or levers that can be activated. There is a default collection of smart items in the Builder, but you can also create your own and import them.</p>
+
+<p>Smart items are written using the same SDK code that you use for creating a scene, making use of <a href="/development-guide/entities-components/">entities, components</a> and <a href="/development-guide/systems/">systems</a>. This document assumes that you’re familiar with these concepts and will focus on how to encapsulate this code so that it interfaces with the scene and other smart items.</p>
+
+<h2 id="smart-item-references">Smart item references</h2>
+
+<p>We recommend that you start working from an existing smart item, and use it as a template.</p>
+
+<p>You can find the default collection of smart items that are in the builder in this repository:</p>
+
+<p>https://github.com/decentraland/smart-items</p>
+
+<p>You can also obtain the code of a smart item by using it in a scene in the Builder and then exporting that scene. The code for the smart item will be in a sub-folder of <code class="language-plaintext highlighter-rouge">src</code>.</p>
+
+<h2 id="the-asset-manifest">The asset manifest</h2>
+
+<p>Every smart item has an <code class="language-plaintext highlighter-rouge">asset.json</code> file. This is a manifest that exposes how the item can be configured via the Builder UI, and how other items can activate it.</p>
+
+<blockquote>
+  <p>TIP: We recommend starting the development of your smart item from the manifest. There you can first define the item’s interface and configurable parameters, and then develop the supporting backend for that.</p>
+</blockquote>
+
+<h4 id="general-item-data">General item data</h4>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">id</code>: A unique uuid for the smart item. The <code class="language-plaintext highlighter-rouge">dcl init</code> command generates a random value for this ID.</p>
+
+    <blockquote>
+      <p>Note: If you’re copying a project from an existing smart item, make sure you generate a new UUID for your item. Otherwise the Builder will not recognize this as a distinct item. Use <a href="https://www.uuidgenerator.net/">uuidgenerator.net</a> to generate a new random UUID.</p>
+    </blockquote>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">name</code>: Refers to the name that this model will have in the Builder UI.</p>
+
+    <blockquote>
+      <p>Note: Today, the item name that’s visible in the UI is taken directly from the name of the 3d model file. Don’t leave any spaces in the file name, use underscores to separate the words in it.</p>
+    </blockquote>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">model</code> refers to the 3D model that is used as a placeholder when dragging the item into the scene in edit mode. This can be especially useful when the item is made up of several 3D models, as you’ll want to display an alternative placeholder model that includes all the meshes together. Make sure this placeholder model has the same size and orientation as the item that will be seen in the scene. Also make sure that the item isn’t displaced via code from its default location, unless the placeholder matches this.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">tags</code> let you make the item easier to find when using the search.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">category</code> places the item into a subcategory inside the asset pack, for example “nature” or “decorations”.</p>
+  </li>
+</ul>
+
+<h4 id="parameters">Parameters</h4>
+
+<p>The <code class="language-plaintext highlighter-rouge">asset.json</code> file contains an array of parameters that can be configured via UI. The corresponding UI is generated in the Builder, automatically taking care of spacial arrangement and formatting of these menu items.</p>
+
+<p><img src="/images/media/smart-item-params.png" alt="" /></p>
+
+<p>Every parameter must have:</p>
+
+<ul>
+  <li>a <code class="language-plaintext highlighter-rouge">label</code> to display in the UI</li>
+  <li>an <code class="language-plaintext highlighter-rouge">id</code> by which its value can be used in your item’s code</li>
+  <li>a <code class="language-plaintext highlighter-rouge">type</code> that determines the accepted values. The UI will change accordingly to match the type.</li>
+</ul>
+
+<p>Parameters can also have a <code class="language-plaintext highlighter-rouge">default</code> value, to help make the item easier to use out of the box.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"distance"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Distance"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"default"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
+  </span><span class="p">}</span><span class="err">,</span><span class="w">
+</span></code></pre></div></div>
+
+<p>The basic supported types for parameters are :</p>
+
+<ul>
+  <li><em>text</em></li>
+  <li><em>integer</em></li>
+  <li><em>float</em></li>
+  <li><em>boolean</em></li>
+</ul>
+
+<h5 id="special-types">Special types</h5>
+
+<p>Type <em>actions</em> refers to an action in this or another smart item. When this type is used, the field will present two dropdown menus. One selects a smart item, the other an action from that item.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w">  </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"onUse"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"When used"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"actions"</span><span class="w">
+    </span><span class="p">}</span><span class="err">,</span><span class="w">
+</span></code></pre></div></div>
+
+<blockquote>
+  <p>Note: Decorators can use the plus sign to add as many actions as they want to one single <em>actions</em> field.</p>
+</blockquote>
+
+<p><img src="/images/media/smart-item-actions.png" alt="" /></p>
+
+<p>Type <code class="language-plaintext highlighter-rouge">entity</code> refers to another item. When this type is used, the field will present a single dropdown to select a smart item.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w">    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"target"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Used on"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"entity"</span><span class="w">
+    </span><span class="p">}</span><span class="err">,</span><span class="w">
+</span></code></pre></div></div>
+
+<blockquote>
+  <p>Note: Decorators can add a single entity in fields of type <em>entity</em>.</p>
+</blockquote>
+
+<p><img src="/images/media/smart-item-entity-field.png" alt="" /></p>
+
+<p>Type <code class="language-plaintext highlighter-rouge">textarea</code> refers to a multi-line string, that appears in the UI as a text box.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w">    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Text"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"textarea"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"default"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Some text"</span><span class="w">
+    </span><span class="p">}</span><span class="err">,</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Type <code class="language-plaintext highlighter-rouge">slider</code> exposes a draggable slider bar in the UI. This bar has a maximum and minimum value, and moves by fixed steps.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w">    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"speed"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Speed"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"slider"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"default"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"max"</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"min"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"step"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w">
+    </span><span class="p">}</span><span class="err">,</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Type <code class="language-plaintext highlighter-rouge">options</code> exposes a dropdown menu with a set of options you can list.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">"parameters"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sound"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Sound"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"options"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"options"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+		</span><span class="p">{</span><span class="w">
+          </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Birds"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Birds"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"City"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"City"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Factory"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Factory"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Field"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Field"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Swamp"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Swamp"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Town"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Town"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"default"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Birds"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div></div>
+
+<h4 id="actions">Actions</h4>
+
+<p>Actions can be called by this item or others to trigger a specific behavior. These don’t appear in the item’s own UI, but all fields of type <code class="language-plaintext highlighter-rouge">actions</code> list all of the actions available on all the items that are currently in the scene.</p>
+
+<p>Actions have a <code class="language-plaintext highlighter-rouge">label</code> that is shown in the dropdown menus, and an <code class="language-plaintext highlighter-rouge">id</code> that lets you refer to this value in the item’s code.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w"> </span><span class="nl">"actions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"open"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Open"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"parameters"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"close"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Close"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"parameters"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"toggle"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Open or Close"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"parameters"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="/images/media/smart-item-select-action.png" alt="" /></p>
+
+<p>Actions can also have <code class="language-plaintext highlighter-rouge">parameters</code> that you can use to pass information with the action event. These parameters follow the same syntax, types and conventions as explained for the item parameters.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w">  </span><span class="nl">"actions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"changeText"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Change Text"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"parameters"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"newText"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"New Text"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"textarea"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="/images/media/smart-item-action-params.png" alt="" /></p>
+
+<h2 id="item-code">Item code</h2>
+
+<p>The <code class="language-plaintext highlighter-rouge">item.ts</code> file is where you place the main logic for the item. This mainly includes creating an object that exposes at least an <code class="language-plaintext highlighter-rouge">init()</code> and a <code class="language-plaintext highlighter-rouge">spawn()</code> function.</p>
+
+<p>Below is an example of the <code class="language-plaintext highlighter-rouge">item.ts</code> of a door smart item:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="kd">type</span> <span class="nx">Props</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">onClick</span><span class="p">?:</span> <span class="nx">Actions</span>
+  <span class="nx">onOpen</span><span class="p">?:</span> <span class="nx">Actions</span>
+  <span class="nx">onClose</span><span class="p">?:</span> <span class="nx">Actions</span>
+<span class="p">}</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="kd">class</span> <span class="nx">Door</span> <span class="k">implements</span> <span class="nx">IScript</span><span class="o">&lt;</span><span class="nx">Props</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="nx">openClip</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AudioClip</span><span class="p">(</span><span class="dl">"</span><span class="s2">sounds/open.mp3</span><span class="dl">"</span><span class="p">)</span>
+  <span class="nx">closeClip</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AudioClip</span><span class="p">(</span><span class="dl">"</span><span class="s2">sounds/close.mp3</span><span class="dl">"</span><span class="p">)</span>
+
+  <span class="na">active</span><span class="p">:</span> <span class="nb">Record</span><span class="o">&lt;</span><span class="kr">string</span><span class="p">,</span> <span class="nx">boolean</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{}</span>
+
+  <span class="nx">init</span><span class="p">()</span> <span class="p">{}</span>
+
+  <span class="nx">toggle</span><span class="p">(</span><span class="na">entity</span><span class="p">:</span> <span class="nx">Entity</span><span class="p">,</span> <span class="na">value</span><span class="p">:</span> <span class="nx">boolean</span><span class="p">,</span> <span class="nx">playSound</span> <span class="o">=</span> <span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">active</span><span class="p">[</span><span class="nx">entity</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">===</span> <span class="nx">value</span><span class="p">)</span> <span class="k">return</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">playSound</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">const</span> <span class="nx">source</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AudioSource</span><span class="p">(</span><span class="nx">value</span> <span class="p">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">openClip</span> <span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">closeClip</span><span class="p">)</span>
+      <span class="nx">entity</span><span class="p">.</span><span class="nx">addComponentOrReplace</span><span class="p">(</span><span class="nx">source</span><span class="p">)</span>
+      <span class="nx">source</span><span class="p">.</span><span class="nx">playing</span> <span class="o">=</span> <span class="kc">true</span>
+    <span class="p">}</span>
+
+    <span class="kd">const</span> <span class="nx">animator</span> <span class="o">=</span> <span class="nx">entity</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">Animator</span><span class="p">)</span>
+    <span class="kd">const</span> <span class="nx">openClip</span> <span class="o">=</span> <span class="nx">animator</span><span class="p">.</span><span class="nx">getClip</span><span class="p">(</span><span class="dl">"</span><span class="s2">open</span><span class="dl">"</span><span class="p">)</span>
+    <span class="kd">const</span> <span class="nx">closeClip</span> <span class="o">=</span> <span class="nx">animator</span><span class="p">.</span><span class="nx">getClip</span><span class="p">(</span><span class="dl">"</span><span class="s2">close</span><span class="dl">"</span><span class="p">)</span>
+    <span class="nx">openClip</span><span class="p">.</span><span class="nx">stop</span><span class="p">()</span>
+    <span class="nx">closeClip</span><span class="p">.</span><span class="nx">stop</span><span class="p">()</span>
+    <span class="kd">const</span> <span class="nx">clip</span> <span class="o">=</span> <span class="nx">value</span> <span class="p">?</span> <span class="nx">openClip</span> <span class="p">:</span> <span class="nx">closeClip</span>
+    <span class="nx">clip</span><span class="p">.</span><span class="nx">play</span><span class="p">()</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">active</span><span class="p">[</span><span class="nx">entity</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span>
+  <span class="p">}</span>
+
+  <span class="nx">spawn</span><span class="p">(</span><span class="na">host</span><span class="p">:</span> <span class="nx">Entity</span><span class="p">,</span> <span class="na">props</span><span class="p">:</span> <span class="nx">Props</span><span class="p">,</span> <span class="na">channel</span><span class="p">:</span> <span class="nx">IChannel</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">door</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="dl">"</span><span class="s2">-button</span><span class="dl">"</span><span class="p">)</span>
+    <span class="nx">door</span><span class="p">.</span><span class="nx">setParent</span><span class="p">(</span><span class="nx">host</span><span class="p">)</span>
+
+    <span class="kd">const</span> <span class="nx">animator</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Animator</span><span class="p">()</span>
+    <span class="kd">const</span> <span class="nx">closeClip</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AnimationState</span><span class="p">(</span><span class="dl">"</span><span class="s2">close</span><span class="dl">"</span><span class="p">,</span> <span class="p">{</span> <span class="na">looping</span><span class="p">:</span> <span class="kc">false</span> <span class="p">})</span>
+    <span class="kd">const</span> <span class="nx">openClip</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AnimationState</span><span class="p">(</span><span class="dl">"</span><span class="s2">open</span><span class="dl">"</span><span class="p">,</span> <span class="p">{</span> <span class="na">looping</span><span class="p">:</span> <span class="kc">false</span> <span class="p">})</span>
+    <span class="nx">animator</span><span class="p">.</span><span class="nx">addClip</span><span class="p">(</span><span class="nx">closeClip</span><span class="p">)</span>
+    <span class="nx">animator</span><span class="p">.</span><span class="nx">addClip</span><span class="p">(</span><span class="nx">openClip</span><span class="p">)</span>
+    <span class="nx">door</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="nx">animator</span><span class="p">)</span>
+    <span class="nx">openClip</span><span class="p">.</span><span class="nx">stop</span><span class="p">()</span>
+
+    <span class="nx">door</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">GLTFShape</span><span class="p">(</span><span class="dl">"</span><span class="s2">models/Door_Genesis.glb</span><span class="dl">"</span><span class="p">))</span>
+
+    <span class="nx">door</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span>
+      <span class="k">new</span> <span class="nx">OnPointerDown</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">channel</span><span class="p">.</span><span class="nx">sendActions</span><span class="p">(</span><span class="nx">props</span><span class="p">.</span><span class="nx">onClick</span><span class="p">)</span>
+      <span class="p">})</span>
+    <span class="p">)</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">active</span><span class="p">[</span><span class="nx">door</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">false</span>
+
+    <span class="c1">// handle actions</span>
+    <span class="nx">channel</span><span class="p">.</span><span class="nx">handleAction</span><span class="p">(</span><span class="dl">"</span><span class="s2">open</span><span class="dl">"</span><span class="p">,</span> <span class="p">({</span> <span class="nx">sender</span> <span class="p">})</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">toggle</span><span class="p">(</span><span class="nx">door</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">sender</span> <span class="o">===</span> <span class="nx">channel</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">channel</span><span class="p">.</span><span class="nx">sendActions</span><span class="p">(</span><span class="nx">props</span><span class="p">.</span><span class="nx">onOpen</span><span class="p">)</span>
+      <span class="p">}</span>
+    <span class="p">})</span>
+    <span class="nx">channel</span><span class="p">.</span><span class="nx">handleAction</span><span class="p">(</span><span class="dl">"</span><span class="s2">close</span><span class="dl">"</span><span class="p">,</span> <span class="p">({</span> <span class="nx">sender</span> <span class="p">})</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">toggle</span><span class="p">(</span><span class="nx">door</span><span class="p">,</span> <span class="kc">false</span><span class="p">)</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">sender</span> <span class="o">===</span> <span class="nx">channel</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">channel</span><span class="p">.</span><span class="nx">sendActions</span><span class="p">(</span><span class="nx">props</span><span class="p">.</span><span class="nx">onClose</span><span class="p">)</span>
+      <span class="p">}</span>
+    <span class="p">})</span>
+    <span class="nx">channel</span><span class="p">.</span><span class="nx">handleAction</span><span class="p">(</span><span class="dl">"</span><span class="s2">toggle</span><span class="dl">"</span><span class="p">,</span> <span class="p">({</span> <span class="nx">sender</span> <span class="p">})</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="kd">const</span> <span class="nx">newValue</span> <span class="o">=</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">active</span><span class="p">[</span><span class="nx">door</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">toggle</span><span class="p">(</span><span class="nx">door</span><span class="p">,</span> <span class="nx">newValue</span><span class="p">)</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">sender</span> <span class="o">===</span> <span class="nx">channel</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">channel</span><span class="p">.</span><span class="nx">sendActions</span><span class="p">(</span><span class="nx">newValue</span> <span class="p">?</span> <span class="nx">props</span><span class="p">.</span><span class="nx">onOpen</span> <span class="p">:</span> <span class="nx">props</span><span class="p">.</span><span class="nx">onClose</span><span class="p">)</span>
+      <span class="p">}</span>
+    <span class="p">})</span>
+
+    <span class="c1">// sync initial values</span>
+    <span class="nx">channel</span><span class="p">.</span><span class="nx">request</span><span class="o">&lt;</span><span class="nx">boolean</span><span class="o">&gt;</span><span class="p">(</span><span class="dl">"</span><span class="s2">isOpen</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">isOpen</span><span class="p">)</span> <span class="o">=&gt;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">toggle</span><span class="p">(</span><span class="nx">door</span><span class="p">,</span> <span class="nx">isOpen</span><span class="p">,</span> <span class="kc">false</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="nx">channel</span><span class="p">.</span><span class="nx">reply</span><span class="o">&lt;</span><span class="nx">boolean</span><span class="o">&gt;</span><span class="p">(</span><span class="dl">"</span><span class="s2">isOpen</span><span class="dl">"</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">active</span><span class="p">[</span><span class="nx">door</span><span class="p">.</span><span class="nx">name</span><span class="p">])</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>Note: Keep in mind that external libraries aren’t supported in smart items, not even the <code class="language-plaintext highlighter-rouge">decentraland-esc-utils</code> library, so all of your item’s logic should be written using the SDK directly.</p>
+</blockquote>
+
+<h4 id="item-class-setup">Item class setup</h4>
+
+<p>The <code class="language-plaintext highlighter-rouge">init()</code> function is executed once the first time that a smart item of this kind is added to a scene.
+It’s a great place to define elements that will be shared amongst all instances of the item, like materials, a system, etc.</p>
+
+<h4 id="item-instancing">Item instancing</h4>
+
+<p>The <code class="language-plaintext highlighter-rouge">spawn()</code> function is executed every time a new instance of the smart item is added to the scene. This is where you should instance the entity and components of the item, as well as initiate all the action handlers.</p>
+
+<p><code class="language-plaintext highlighter-rouge">spawn(host: Entity, props: Props, channel: IChannel)</code></p>
+
+<p>The <code class="language-plaintext highlighter-rouge">spawn()</code> function takes a <em>host</em> entity as a parameter. This host’s positioning will be applied to the positioning of the item in the scene. Instead of adding components like a shape, audiosource, etc directly to the host entity, create a new entity and set it as a child of the host.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">props</code> parameter will expose all the properties that are defined in the <code class="language-plaintext highlighter-rouge">asset.josn</code> file, calling them by the <code class="language-plaintext highlighter-rouge">id</code> specified for each in that file.</p>
+
+<p>You should define a custom type for props, that includes the specific set of properties used by the item. You can then refer to these properties in the <code class="language-plaintext highlighter-rouge">spawn()</code> function via the parameter’s id: <code class="language-plaintext highlighter-rouge">props.onClick</code>.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">channel</code> parameter refers to the name of the channel of communication that will be used by this smart item. Smart items use the <a href="/development-guide/remote-scene-considerations/#p2p-messaging">message bus</a> to communicate between items and to sync state changes with other players. Having separate channels for each item avoids unwanted crosstalk between unrelated items.</p>
+
+<h4 id="handling-actions">Handling actions</h4>
+
+<p>In the spawn function you should also set up handlers to respond when another item calls this item to trigger an action.</p>
+
+<p>For example, a door can have an ‘open’ action, that could be called by a button, a key, or even another door.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">channel</span><span class="p">.</span><span class="nx">handleAction</span><span class="p">(</span><span class="dl">"</span><span class="s2">open</span><span class="dl">"</span><span class="p">,</span> <span class="p">({</span> <span class="nx">sender</span> <span class="p">})</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">toggle</span><span class="p">(</span><span class="nx">door</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">sender</span> <span class="o">===</span> <span class="nx">channel</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">channel</span><span class="p">.</span><span class="nx">sendActions</span><span class="p">(</span><span class="nx">props</span><span class="p">.</span><span class="nx">onOpen</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>In the example above, each time an <code class="language-plaintext highlighter-rouge">open</code> action arrives, the door runs the <code class="language-plaintext highlighter-rouge">toggle</code> function to play its corresponding animation and sound and to change its state. Then it verifies that the <code class="language-plaintext highlighter-rouge">open</code> action effectively came from this player instance and not from another player; if so, it will call any actions that were configured to be called on the item’s <code class="language-plaintext highlighter-rouge">OnOpen</code>. If this check isn’t done, then the actions would be sent out multiple times, once for every player in the scene. This, besides being inefficient, can be quite disruptive when dealing with toggle-type actions.</p>
+
+<blockquote>
+  <p>TIP: As your item gets more complex, we recommend keeping the action handlers light, and keep most of the logic in external functions that can be called from these.</p>
+</blockquote>
+
+<h2 id="testing-your-item">Testing your item</h2>
+
+<p>Use the <code class="language-plaintext highlighter-rouge">game.ts</code> file to test out your item just as you would test a scene. Add an instance of your item to the <code class="language-plaintext highlighter-rouge">game.ts</code> item, giving it a transform to position it and including all the required parameters inside an object.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">Spawner</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">../node_modules/decentraland-builder-scripts/spawner</span><span class="dl">"</span>
+<span class="k">import</span> <span class="nx">Door</span><span class="p">,</span> <span class="p">{</span> <span class="nx">Props</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">./item</span><span class="dl">"</span>
+
+<span class="kd">const</span> <span class="nx">door</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Door</span><span class="p">()</span>
+<span class="kd">const</span> <span class="nx">spawner</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Spawner</span><span class="o">&lt;</span><span class="nx">Props</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">door</span><span class="p">)</span>
+
+<span class="nx">spawner</span><span class="p">.</span><span class="nx">spawn</span><span class="p">(</span>
+  <span class="dl">"</span><span class="s2">door</span><span class="dl">"</span><span class="p">,</span>
+  <span class="k">new</span> <span class="nx">Transform</span><span class="p">({</span>
+    <span class="na">position</span><span class="p">:</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+  <span class="p">}),</span>
+  <span class="p">{</span>
+    <span class="na">onClick</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="na">actionId</span><span class="p">:</span> <span class="dl">"</span><span class="s2">toggle</span><span class="dl">"</span><span class="p">,</span>
+        <span class="na">entityName</span><span class="p">:</span> <span class="dl">"</span><span class="s2">door</span><span class="dl">"</span><span class="p">,</span>
+        <span class="na">values</span><span class="p">:</span> <span class="p">{},</span>
+      <span class="p">},</span>
+    <span class="p">],</span>
+  <span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Then simply run <code class="language-plaintext highlighter-rouge">dcl start</code> on the item’s folder, as you would for a normal scene. You’ll be able to interact with the item. The preview will hot-reload as you change your item’s code.</p>
+
+<p>Try providing different values to the item’s properties, to make sure it functions as expected.</p>
+
+<h2 id="importing-into-the-builder">Importing into the Builder</h2>
+
+<p>When you’re ready to export the item, run <code class="language-plaintext highlighter-rouge">dcl pack</code> on the item’s folder. This will generate an <code class="language-plaintext highlighter-rouge">item.zip</code> file. Then import this file into a custom asset pack in the Builder.</p>
+
+<p>You can then test it in a Builder scene. We recommend you do the following tests:</p>
+
+<ul>
+  <li>Set different values in the item’s parameters</li>
+  <li>Have its actions called by other items</li>
+  <li>Call other items from it</li>
+  <li>Add multiple instances of the item to make sure they don’t interfere with each other</li>
+</ul>
+
+<p>If this all works then congratulations, you have a fully stable smart item!</p>
+
+<h2 id="storing-state-data">Storing state data</h2>
+
+<p>Your item might need to store information at an instance level. For example, each door needs to keep track of if its open or closed, but other more complex items might keep track of more information about themselves.</p>
+
+<p>The example above uses a list of booleans to represent the open/closed state of each door, where the entity name of each door is used as a key. For items with more information, it’s advisable to instead define a <a href="/development-guide/entities-components/#custom-components">custom component</a> that holds all of the data of the item.</p>
+
+<p>When instancing an item in the <code class="language-plaintext highlighter-rouge">spawn()</code> function, you should then add this component to new items.</p>
+
+<blockquote>
+  <p>TIP: We recommend defining the custom component in a separate file from <code class="language-plaintext highlighter-rouge">item.ts</code>, to keep your code cleaner.</p>
+</blockquote>
+
+<p>It’s important that you name your custom components with unique names that shouldn’t overlap with names used by other smart items. We recommend including the item name as part of the component name to avoid this. Otherwise, conflicting smart items in a same scene could interfere with each other in unexpected ways.</p>
+
+<h2 id="custom-systems">Custom systems</h2>
+
+<p>If you need your item to perform a gradual action that is executed frame by frame, like moving or rotating (not by animation), then you need to define <a href="/development-guide/systems/">systems</a> to carry this out. Delaying an action also requires creating a system that waits x milliseconds.</p>
+
+<blockquote>
+  <p>NOTE: The <code class="language-plaintext highlighter-rouge">decentraland-ecs-utils</code> library can perform many of these actions in a scene’s code, but this library is not supported in smart items. Any transition needs to be explicitly written as a system.</p>
+</blockquote>
+
+<p>As with custom components, systems need to have unique names that don’t overlap with those of other smart items used in the same scene. Again, we recommend using the item name as part of the system name to avoid this.</p>
+
+<p>Note that besides defining the system, you also need to add an instance of it to the engine. The ideal place for that is in the <code class="language-plaintext highlighter-rouge">init()</code> function of the smart item, which is executed once when the first item of this type is added.</p>
+
+<blockquote>
+  <p>TIP: We recommend defining systems in a separate file from <code class="language-plaintext highlighter-rouge">item.ts</code>, to keep your code cleaner.</p>
+</blockquote>
+
+<h2 id="multiplayer-behavior">Multiplayer behavior</h2>
+
+<p>All the smart items that are available by default in the Builder have multiplayer capabilities. They achieve this by using the <a href="/development-guide/remote-scene-considerations/#p2p-messaging">message bus</a> to send peer to peer messages between players every time that something changes.</p>
+
+<p>Since the state of the item is shared amongst peers, if all players leave the area of the scene, the state of the item is no longer stored anywhere, and it reverts to its initial state.</p>
+
+<p>To keep the state of your smart item in sync between players, make sure that any relevant changes send out messages via the item’s channel for other instances to follow it.</p>
+
+<p>When new players join the scene, make sure that they obtain any relevant information from other players about the current state of the item. For example, to do this, the door item sends out a <code class="language-plaintext highlighter-rouge">channel.request</code> when spawning, and if there are any other players with instances of that door there should be code that will reply with a boolean indicating if the door is currently open.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// we send a request to all other players</span>
+<span class="nx">channel</span><span class="p">.</span><span class="nx">request</span><span class="o">&lt;</span><span class="nx">boolean</span><span class="o">&gt;</span><span class="p">(</span><span class="dl">"</span><span class="s2">isOpen</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">isOpen</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">toggle</span><span class="p">(</span><span class="nx">door</span><span class="p">,</span> <span class="nx">isOpen</span><span class="p">,</span> <span class="kc">false</span><span class="p">))</span>
+
+<span class="c1">// we respond to this incoming request from other players</span>
+<span class="nx">channel</span><span class="p">.</span><span class="nx">reply</span><span class="o">&lt;</span><span class="nx">boolean</span><span class="o">&gt;</span><span class="p">(</span><span class="dl">"</span><span class="s2">isOpen</span><span class="dl">"</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">active</span><span class="p">[</span><span class="nx">door</span><span class="p">.</span><span class="nx">name</span><span class="p">])</span>
+</code></pre></div></div>
+
+<p>In some cases, you might not want the actions of a player affecting others. For example, when one player picks up a key, you don’t want all players to have that key equipped. To avoid this, you can filter the sender of a message and only react when it matches the channel id.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">channel</span><span class="p">.</span><span class="nx">handleAction</span><span class="p">(</span><span class="dl">"</span><span class="s2">equip</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">action</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">isEquipped</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
+    <span class="c1">// we only equip the key for the player who triggered the action</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">sender</span> <span class="o">===</span> <span class="nx">channel</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">equip</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
+      <span class="nx">channel</span><span class="p">.</span><span class="nx">sendActions</span><span class="p">(</span><span class="nx">props</span><span class="p">.</span><span class="nx">onEquip</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="c1">// we remove the key from the scene for everybody</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">hide</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+</code></pre></div></div>
+:ET

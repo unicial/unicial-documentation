@@ -1,0 +1,225 @@
+I"8<p>Materials are embedded into a <em>.gltf</em> or <em>.glb</em> file.</p>
+
+<p>This document refers to materials that are imported in a 3D model. For materials defined via code to apply onto primitive shapes, see <a href="/development-guide/materials/">materials</a>.</p>
+
+<blockquote>
+  <p>Note: You can’t currently dynamically change the materials of a 3D model from your scene’s code, unless this is a primitive shape.</p>
+</blockquote>
+
+<h2 id="shader-support">Shader support</h2>
+
+<p>Not all shaders can be used in models that are imported into Decentraland. Make sure you use one of the following:</p>
+
+<ul>
+  <li>
+    <p>Standard materials: any shaders are supported, for example diffuse, specular, transparency, etc.</p>
+
+    <blockquote>
+      <p>Tip: When using Blender, these are the materials supported by <em>Blender Render</em> rendering.</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>PBR (Physically Based Rendering) materials: This shader is extremely flexible, as it includes properties like diffuse, roughness, metalness and emission that allow you to configure how a material interacts with light.</p>
+
+    <blockquote>
+      <p>Tip: When using Blender, you can use PBR materials by setting <em>Cycles</em> rendering and adding the <em>Principled BSDF</em> shader. Note that none of the other shaders of the <em>Cycles</em> renderer are supported.</p>
+    </blockquote>
+  </li>
+</ul>
+
+<p>The image below shows two identical models, created with the same colors and textures. The model on the left uses all <em>PBR</em> materials, some of them include <em>metalness</em>, <em>transparency</em>, and <em>emissiveness</em>. The model on the right uses all <em>standard</em> materials, some including <em>transparency</em> and <em>emissiveness</em>.</p>
+
+<p><img src="/images/media/materials_pbr_basic.png" alt="" /></p>
+
+<h2 id="transparent-materials">Transparent materials</h2>
+
+<p>You can set a material to be <em>transparent</em>. Transparent materials can be seen through to varying degrees, depending on their <em>alpha</em>. To do this, activate the transparency property of the material and then set its <em>alpha</em> to the desired amount. An alpha of 1 will make the material completely opaque, an alpha of 0 will make it invisible.</p>
+
+<p>The image below shows two identical models created with standard materials. The one on the left uses only opaque materials, the one on the right uses both transparent and opaque materials in some of its parts.</p>
+
+<p><img src="/images/media/materials_transparent_emissive.png" alt="" /></p>
+
+<p>There are two main different transparency modes: <em>Aplha Clip</em> and <em>Aplha Blend</em>.</p>
+
+<p><em>Alpha Clip</em> sets that each part of a model is either 100% opaque or 100% transparent. <em>Alpha Blend</em> allows you to pick intermediate values per region.</p>
+
+<p><img src="/images/media/transparency-modes.png" alt="" /></p>
+
+<p>Unless you specifically want to be able to have an intermediate level of transparency, it’s always better to use <em>Alpha Clip</em>.</p>
+
+<h2 id="emissive-materials">Emissive materials</h2>
+
+<p>You can also make a material <em>emissive</em>. Emissive materials cast their own light. Note that when rendered, they don’t actually illuminate nearby objects in the scene, they just seem to have a blurred glow around them.</p>
+
+<p>The image below shows two identical models created with standard materials. The one on the right has glowing emissive materials on some of its surfaces.</p>
+
+<p><img src="/images/media/materials_transparent_emissive.png" alt="" /></p>
+
+<p>To make a material emissive in Blender, simply add an <code class="language-plaintext highlighter-rouge">emission</code> shader to the material.</p>
+
+<p><img src="/images/media/simple-emissive.png" alt="" /></p>
+
+<p>To make a material both emissive and have a texture, you can use two shaders in parallel, one of the <code class="language-plaintext highlighter-rouge">emission</code> and another <code class="language-plaintext highlighter-rouge">principled BDSF</code> for the texture. You can then use a <code class="language-plaintext highlighter-rouge">mix shader</code> node to join them.</p>
+
+<p><img src="/images/media/apply-emissive.png" alt="" /></p>
+
+<blockquote>
+  <p>Tip: By using a color atlas as a texture, you can get away with having various possible colors counted as a single texture. This is useful for making sure you don’t exceed the <a href="/development-guide/scene-limitations/">scene limitations</a>.</p>
+</blockquote>
+
+<p><img src="/images/media/neon-texture.png" alt="" /></p>
+
+<h4 id="soften-an-emissive">Soften an emissive</h4>
+
+<p>The <code class="language-plaintext highlighter-rouge">emission</code> shader has a <code class="language-plaintext highlighter-rouge">strength</code> property that can lower the glow of an emissive material. However, due to a known issue with the <em>.glTF</em> specification, an exported <em>.glTF</em> or <em>.glb</em> file doesn’t retain this property. When importing the model into a Decentraland scene it will always have the emissive strength at 100%.</p>
+
+<p>To make a material glow less, the best workaround is to set the <code class="language-plaintext highlighter-rouge">color</code> property on the <code class="language-plaintext highlighter-rouge">emission</code> shader to something less bright, or to reference a color from a texture that is less bright.</p>
+
+<p>For example, if using the below color map, you can achieve a less bright emissive material by picking a color from the bottom half of the image. Anything on the top half will be fully emissive, but as you go lower the material will have less glow.</p>
+
+<p><img src="/images/media/neon-texture.png" alt="" /></p>
+
+<h2 id="vertex-painting">Vertex painting</h2>
+
+<p>Vertex painting of 3D models isn’t currently supported by Decentraland’s engine. We recommend using texture mapping with a pallette of plain colors for a similar effect.</p>
+
+<h2 id="textures">Textures</h2>
+
+<p>Textures can be embedded into the exported glTF file or referenced from an external file. Both ways are supported.</p>
+
+<!--
+
+There are different kinds of textures you can use in a 3D model:
+
+- albedo textures: don't use light
+- alpha textures: determine only the transparency regions and its degree
+- bump texture: Stores surface normal data used to displace a mesh in a texture. Used with BPR.
+- emissiveTexture
+- refractionTexture
+
+
+
+link to content guide to show how you set materials for primitives
+
+what extensions are supported for image files?
+anything special to use alpha
+
+what special layers PBR uses?
+
+
+-->
+
+<h4 id="default-textures">Default textures</h4>
+
+<p>All of the assets from the default Decentraland asset libraries (available in the Builder or as wearables) share a set of optimized plane textures. These textures are pre-loaded by players when they open the explorer, which makes these assets a lot faster to load.</p>
+
+<p>If you build your own custom 3D models and use these same Decentraland default textures, your assets will also load faster when players walk to your parcels.</p>
+
+<p>These textures are composed of a palette of plain colors, that you can map to different parts of a 3D model.</p>
+
+<p><img src="/images/media/MiniTown_TX.png" alt="Minitown texture" width="250" /></p>
+
+<p>You can find the full collection of Decentrlanad default textures in <a href="https://github.com/decentraland/builder-assets/tree/master/textures">this repo</a></p>
+
+<h4 id="lighting-conditions">Lighting conditions</h4>
+
+<p>It’s currently not possible to have custom light sources in a Decentraland scene. You may want to consider baking lighting into a texture, for example to simulate a lighting focal point on a wall.</p>
+
+<p>Note that objects cast shadows over others. The default lighting conditions have a light source that is positioned at 45 degrees on all three axis.</p>
+
+<p>Emissive materials aren’t affected by shadows from other objects, but they do cast their own shadow.</p>
+
+<h4 id="texture-size-constraints">Texture size constraints</h4>
+
+<p>Texture sizes must use width and height numbers (in pixels) that match the following numbers:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1, 2, 4, 8, 16, 32, 64, 128, 256, 512
+</code></pre></div></div>
+
+<blockquote>
+  <p>This sequence is made up of powers of two: <code class="language-plaintext highlighter-rouge">f(x) = 2 ^ x</code> . 512 is the maximum number we allow for a texture size. This is a fairly common requirement among other rendering engines, it’s there due internal optimizations of the graphics processors.</p>
+</blockquote>
+
+<p>The width and height don’t need to have the same number, but they both need to belong to this sequence.</p>
+
+<p><strong>The recommended size for textures is 512x512</strong>, we have found this to be the optimal size to be transported through domestic networks and to provide reasonable loading/quality experiences.</p>
+
+<p>Examples of other valid sizes:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>32x32
+64x32
+512x256
+512x512
+</code></pre></div></div>
+
+<blockquote>
+  <p>Although textures of arbitrary sizes work in the alpha release, the engine displays an alert in the console. We will enforce this restriction in coming releases and invalid texture sizes will cease to work.</p>
+</blockquote>
+
+<h2 id="normal-maps">Normal maps</h2>
+
+<p>You can add an additional normal map to a texture to control how reflections bounce off different regions of a same model. This can be used to achieve very interesting and realistic effects. It also allows you to keep the textures themselves lighter, as some detail can be provided on the normal map layer instead.</p>
+
+<p>The colors on the normal map are not to be taken literally, but instead map to what direction light bounces off to. Darker parts of the texture will reflect less light.</p>
+
+<p><img src="/images/media/normal-map.png" alt="Model without valid material" width="250" /></p>
+
+<p>For example in this brick wall can be overlayed on a texture that matches the same brick positions. The different color mapping implies that the blue bricks will bounce light forward. The green margins on the top bounce light upwards. The cracks between the bricks reflect a lot less light. This is a great way to get the lighting on the wall behave more realistically, without having to spend geometry on each individual brick.</p>
+
+<blockquote>
+  <p>NOTE: Never use the same texture file for both the texture of an object and its normal map. Create a separate file and name it differently. Models in deployed scenes are compressed by the content servers, and normal maps are compressed differently to other textures. The compressed model might end up looking very different if the server compresses a texture as a normal map or viceversa.</p>
+</blockquote>
+
+<h2 id="how-to-swap-a-material">How to swap a material</h2>
+
+<p>Suppose you’ve imported a 3D model that uses a material that’s not supported by Decentraland. You can easily change this material while still keeping the same texture and its mapping.</p>
+
+<p><img src="/images/media/materials-not-supported.png" alt="Model without valid material" width="250" /></p>
+
+<p>To swap the material:</p>
+
+<ol>
+  <li>Check the current material’s settings to see what texture files are being used and how they are configured.</li>
+  <li>
+    <p>Delete the current material from the mesh.</p>
+
+    <p><img src="/images/media/materials_delete_material.png" alt="" /></p>
+  </li>
+  <li>
+    <p>Create a new material.</p>
+
+    <p><img src="/images/media/materials_new_material.png" alt="New default basic material" width="400" /></p>
+
+    <blockquote>
+      <p>Tip: If you’re using Blender and are on the <em>Blender Render</em> tab, it creates a basic material by default, which is supported by Decentraland.</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>Open the <em>Textures</em> settings and create a new texture, importing the same image file that the original material used.</p>
+
+    <p><img src="/images/media/materials_new_texture.png" alt="New default basic texture" width="300" /></p>
+  </li>
+  <li>
+    <p>The texture should be mapped to the new material just as it was mapped to the old material.</p>
+
+    <p><img src="/images/media/materials_final.png" alt="Model with valid material" width="300" /></p>
+  </li>
+</ol>
+
+<h2 id="best-practices-for-materials">Best practices for materials</h2>
+
+<ul>
+  <li>
+    <p>If your scene includes multiple models that use the same texture, reference the texture as an external file instead of having it embedded in the 3D model. Embedded textures get duplicated for each model and add to the scene’s size. <em>.glb</em> files have their textures embedded by default, but you can use <a href="https://github.com/AnalyticalGraphicsInc/gltf-pipeline">glTF pipeline</a> to extract it outside.</p>
+
+    <blockquote>
+      <p>Note: After referencing a file for a texture that won’t be embedded, make sure that file won’t be moved or renamed, as otherwise the reference to the file will be lost. The file must also be inside the scene folder so that it’s uploaded together with the scene.</p>
+    </blockquote>
+  </li>
+  <li>Use the Decentraland <a href="https://github.com/decentraland/builder-assets/tree/master/textures">default textures</a>, which are pre-loaded by players, making your assets render a lot faster.</li>
+  <li>Read <a href="https://www.khronos.org/blog/art-pipeline-for-gltf">this article</a> for a detailed overview of a full art pipeline that uses PBR textures in glTF models.</li>
+  <li>You can find a detailed reference about how to create glTF compatible materials with Blender in <a href="https://docs.blender.org/manual/en/latest/addons/import_export/scene_gltf2.html">Blender’s documentation</a>.</li>
+  <li>Find free, high quality PBR textures in <a href="https://cgbookcase.com/">cgbookcase</a>.</li>
+  <li>When setting transparency of a material, try to always use <em>Alpha clip</em> rather than <em>Alpha blend</em>, unless you specifically need to have a material that’s partially transparent (like glass). This will avoid problems where the engine renders the wrong model in front of the other.</li>
+</ul>
+:ET

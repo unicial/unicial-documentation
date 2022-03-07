@@ -1,0 +1,200 @@
+I"�L<p>Decentraland runs scenes locally in a player’s browser. By default, players are able to see each other and interact directly, but each one interacts with the environment independently. Changes in the environment aren’t shared between players by default. You need to implement this manually.</p>
+
+<p>Allowing all players to see a scene as having the same content in the same state is extremely important to for players to interact in more meaningful ways. Without this, if a player opens a door and walks into a house, other players will see that door as still closed, and the first player will appear to walk directly through the closed door to other players.</p>
+
+<p>There are two ways to keep the scene state that all players see in sync:</p>
+
+<ul>
+  <li>Send P2P messages between players to update changes</li>
+  <li>Use an authoritative server to keep track of the scene’s state</li>
+</ul>
+
+<p>The first of these options is the easiest to implement. The downside is that you rely more on player’s connection speeds. Also, if there are incentives to exploit (eg: there are prizes for players with highest scores in a game, or there are in-game transactions) it’s always recommendable to use an authoritative server, as this allows you to have more control and exposes less vulnerabilities.</p>
+
+<h2 id="p2p-messaging">P2P messaging</h2>
+
+<h4 id="initiate-a-message-bus">Initiate a message bus</h4>
+
+<p>Create a message bus object to handle the methods that are needed to send and receive messages between players.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">sceneMessageBus</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MessageBus</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h4 id="send-messages">Send messages</h4>
+
+<p>Use the <code class="language-plaintext highlighter-rouge">.emit</code> command of the message bus to send a message to all other players in the scene.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">sceneMessageBus</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MessageBus</span><span class="p">()</span>
+
+<span class="nx">box1</span><span class="p">.</span><span class="nx">AddComponent</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">OnClick</span><span class="p">((</span><span class="nx">e</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">sceneMessageBus</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="dl">"</span><span class="s2">box1Clicked</span><span class="dl">"</span><span class="p">,</span> <span class="p">{})</span>
+  <span class="p">})</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Each message can contain a payload as a second argument. The payload is of type <code class="language-plaintext highlighter-rouge">Object</code>, and can contain any relevant data you wish to send.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">sceneMessageBus</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MessageBus</span><span class="p">()</span>
+
+<span class="kd">let</span> <span class="nx">spawnPos</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+
+<span class="nx">sceneMessageBus</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="dl">"</span><span class="s2">spawn</span><span class="dl">"</span><span class="p">,</span> <span class="p">{</span> <span class="na">position</span><span class="p">:</span> <span class="nx">spawnPos</span> <span class="p">})</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>Tip: If you need a single message to include data from more than one variable, create a custom type to hold all this data in a single object.</p>
+</blockquote>
+
+<h4 id="receive-messages">Receive messages</h4>
+
+<p>To handle messages from all other players in that scene, use <code class="language-plaintext highlighter-rouge">.on</code>. When using this function, you provide a message string and define a function to execute. For each time that a message with a matching string arrives, the given function is executed once.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">sceneMessageBus</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MessageBus</span><span class="p">()</span>
+
+<span class="nx">sceneMessageBus</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">spawn</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">info</span><span class="p">:</span> <span class="nx">NewBoxPosition</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">newCube</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+  <span class="kd">let</span> <span class="nx">transform</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Transform</span><span class="p">()</span>
+  <span class="nx">transform</span><span class="p">.</span><span class="nx">position</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="nx">info</span><span class="p">.</span><span class="nx">position</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="nx">info</span><span class="p">.</span><span class="nx">position</span><span class="p">.</span><span class="nx">y</span><span class="p">,</span> <span class="nx">info</span><span class="p">.</span><span class="nx">position</span><span class="p">.</span><span class="nx">z</span><span class="p">)</span>
+  <span class="nx">newCube</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="nx">transform</span><span class="p">)</span>
+  <span class="nx">engine</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="nx">newCube</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>Note: Messages that are sent by a player are also picked up by that same player. The <code class="language-plaintext highlighter-rouge">.on</code> method can’t distinguish between a message that was emitted by that same player from a message emitted from other players.</p>
+</blockquote>
+
+<h4 id="full-example">Full example</h4>
+
+<p>This example uses a message bus to send a new message every time the main cube is clicked, generating a new cube in a random position. The message includes the position of the new cube, so that all players see these new cubes in the same positions.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">/// --- Spawner function ---</span>
+
+<span class="kd">function</span> <span class="nx">spawnCube</span><span class="p">(</span><span class="nx">x</span><span class="p">:</span> <span class="kr">number</span><span class="p">,</span> <span class="nx">y</span><span class="p">:</span> <span class="kr">number</span><span class="p">,</span> <span class="nx">z</span><span class="p">:</span> <span class="kr">number</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// create the entity</span>
+  <span class="kd">const</span> <span class="nx">cube</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+
+  <span class="c1">// add a transform to the entity</span>
+  <span class="nx">cube</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">Transform</span><span class="p">({</span> <span class="na">position</span><span class="p">:</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">z</span><span class="p">)</span> <span class="p">}))</span>
+
+  <span class="c1">// add a shape to the entity</span>
+  <span class="nx">cube</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">BoxShape</span><span class="p">())</span>
+
+  <span class="c1">// add the entity to the engine</span>
+  <span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">cube</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="nx">cube</span>
+<span class="p">}</span>
+
+<span class="c1">/// --- Create message bus ---</span>
+<span class="kd">const</span> <span class="nx">sceneMessageBus</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MessageBus</span><span class="p">()</span>
+
+<span class="c1">/// --- Define a custom type to pass in messages ---</span>
+<span class="kd">type</span> <span class="nx">NewBoxPosition</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">position</span><span class="p">:</span> <span class="nx">ReadOnlyVector3</span>
+<span class="p">}</span>
+
+<span class="c1">/// --- Call spawner function ---</span>
+<span class="kd">const</span> <span class="nx">cube</span> <span class="o">=</span> <span class="nx">spawnCube</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+
+<span class="c1">/// --- Emit messages ---</span>
+<span class="nx">cube</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">OnClick</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="na">action</span><span class="p">:</span> <span class="nx">NewBoxPosition</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="na">position</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">x</span><span class="p">:</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">8</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="na">y</span><span class="p">:</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">8</span><span class="p">,</span>
+        <span class="na">z</span><span class="p">:</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">8</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+      <span class="p">},</span>
+    <span class="p">}</span>
+
+    <span class="nx">sceneMessageBus</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="dl">"</span><span class="s2">spawn</span><span class="dl">"</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span>
+  <span class="p">})</span>
+<span class="p">)</span>
+
+<span class="c1">/// --- Receive messages ---</span>
+<span class="nx">sceneMessageBus</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">spawn</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">info</span><span class="p">:</span> <span class="nx">NewBoxPosition</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">cube</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">Transform</span><span class="p">).</span><span class="nx">scale</span><span class="p">.</span><span class="nx">z</span> <span class="o">*=</span> <span class="mf">1.1</span>
+  <span class="nx">cube</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">Transform</span><span class="p">).</span><span class="nx">scale</span><span class="p">.</span><span class="nx">x</span> <span class="o">*=</span> <span class="mf">0.9</span>
+
+  <span class="nx">spawnCube</span><span class="p">(</span><span class="nx">info</span><span class="p">.</span><span class="nx">position</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="nx">info</span><span class="p">.</span><span class="nx">position</span><span class="p">.</span><span class="nx">y</span><span class="p">,</span> <span class="nx">info</span><span class="p">.</span><span class="nx">position</span><span class="p">.</span><span class="nx">z</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<h4 id="more-examples">More examples</h4>
+
+<p>Find some more examples in the <a href="https://github.com/decentraland-scenes/Awesome-Repository#use-message-bus">Awesome Repository</a></p>
+
+<h4 id="test-a-p2p-scene-locally">Test a P2P scene locally</h4>
+
+<p>If you launch a scene preview and open it in two (or more) different browser windows, each open window will be interpreted as a separate player, and a mock communications server will keep these players in sync.</p>
+
+<p>Interact with the scene on one window, then switch to the other to see that the effects of that interaction are also visible there.</p>
+
+<blockquote>
+  <p>Note: Open separate browser <em>windows</em>. If you open separate <em>tabs</em> in the same window, the interaction won’t work properly, as only one tab will be treated as active by the browser at a time.</p>
+</blockquote>
+
+<h2 id="use-an-authoritative-server">Use an authoritative server</h2>
+
+<p>An authoritative server may have different levels of involvement with the scene:</p>
+
+<ul>
+  <li>API + DB: This is useful for scenes where changes don’t happen constantly and where it’s acceptable to have minor delays in syncing. When a player changes something, it sends an HTTP request to a REST API that stores the new scene state in a data base. Changes remained stored for any new player that visits the scene at a later date. The main limitation is that new changes from other players aren’t notified to players who are already there, messages can’t be pushed from the server to players. Players must regularly send requests the server to get the latest state.</li>
+</ul>
+
+<blockquote>
+  <p>TIP: It’s also possible to opt for a hybrid approach where changes are notified between players via P2P Messagebus messages, but the final state is also stored via an API for future visitors.</p>
+</blockquote>
+
+<ul>
+  <li>Websockets: This alternative is more robust, as it establishes a two-way communications channel between player and server. Updates can be sent from the server, you could even have game logic run on or validated on the server. This enables real time interaction and makes more fast paced games possible. It’s also more secure, as each message between player and server is part of a session that is opened, no need to validate each message.</li>
+</ul>
+
+<h4 id="example-scenes-with-authoritative-server">Example scenes with authoritative server</h4>
+
+<ul>
+  <li>
+    <p><a href="https://github.com/decentraland-scenes/Awesome-Repository#use-an-api-as-db">API + DB</a></p>
+  </li>
+  <li>
+    <p><a href="https://github.com/decentraland-scenes/Awesome-Repository#websockets">Websockets</a></p>
+  </li>
+</ul>
+
+<h4 id="preview-scenes-with-authoritative-servers">Preview scenes with authoritative servers</h4>
+
+<p>To preview a scene that uses an authoritative server, you must run both the scene and the server it relies on. The server can be run locally in the same machine as the preview, as an easier way to test it.</p>
+
+<p>To start the server, go to the <code class="language-plaintext highlighter-rouge">/server</code> folder and run <code class="language-plaintext highlighter-rouge">npm start</code>.</p>
+
+<p>Once the server is running, either remotely or locally, you can run <code class="language-plaintext highlighter-rouge">dcl start</code> on the scene as you normally do for local scenes.</p>
+
+<p>Once the scene preview is running, you can open multiple browser tabs pointing at the same local address. Each tab will instantiate a separate player in the same scene, these players will share the same scene state as the scene changes.</p>
+
+<p>See <a href="/development-guide/preview-scene/">preview a scene</a> for more details.</p>
+
+<h4 id="separate-realms">Separate realms</h4>
+
+<p>Players in decentraland exist in many separate <em>realms</em>. Players in different realms cant see each other, interact or chat with each other, even if they’re standing on the same parcels. Dividing players like this allows Decentraland to handle an unlimited amount of players without running into any limitations. It also pairs players that are in close regions, to ensure that ping times between players that interact are acceptable.</p>
+
+<p>If your scene sends data to a 3rd party server to sync changes between players in real time, then it’s important that changes are only synced between players that are on the same realm. You should handle all changes that belong to one realm as separate from those on a different realm. Otherwise, players will see things change in a spooky way, without anyone making the change.</p>
+
+<p>See how to obtain the realm for each player in <a href="/development-guide/user-data/">get player data</a></p>
+
+<h4 id="multiplayer-persistance">Multiplayer persistance</h4>
+
+<p>Unlike local scenes that are newly mounted each time a player walks into them, scenes that use authoritative servers have a life span that extends well beyond when the player enters and leaves the scene.</p>
+
+<p>You must therefore design the experience taking into account that player won’t always find the scene in the same initial state.
+Any changes made to the scene will linger on for other players to find, you must make sure that these don’t interfere with future player’s experiences in an undesired way.</p>
+
+<h5 id="reset-the-state">Reset the state</h5>
+
+<p>When loading the scene, make sure its built based on the shared information stored in the server, and not in a default state.</p>
+
+<p>In some cases, it makes sense to include some kind of reset button in the scene. Pressing the reset button would reset the scene gracefully.</p>
+
+<p>Sometimes, this just implies setting the variables in the scene state back to default values. But resetting the scene might also involve unsubscribing listeners and stopping loops in the server side. If empty loops remain each time the scene is reset, these would keep piling up and will have an ill effect on the scene’s performance.</p>
+:ET

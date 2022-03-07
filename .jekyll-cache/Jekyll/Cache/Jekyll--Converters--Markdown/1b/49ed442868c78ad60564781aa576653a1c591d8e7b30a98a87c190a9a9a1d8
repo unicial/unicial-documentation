@@ -1,0 +1,42 @@
+I"q<p>To change the player’s position in the scene, use the <code class="language-plaintext highlighter-rouge">movePlayerTo()</code> function. This function takes two arguments:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">position</code>: Where to move the player, expressed as an object with <em>x</em>, <em>y</em>, and <em>z</em> properties.</li>
+  <li><code class="language-plaintext highlighter-rouge">cameraTarget</code>: (optional) What direction to make the player face, expressed as an object with <em>x</em>, <em>y</em>, and <em>z</em> properties that represent the coordinates of a point in space to stare at. If no value is provided, the player will maintain the same rotation as before moving.</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">movePlayerTo</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@decentraland/RestrictedActions</span><span class="dl">'</span>
+<span class="kd">const</span> <span class="nx">respawner</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+<span class="nx">respawner</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">BoxShape</span><span class="p">())</span>
+<span class="nx">respawner</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">Transform</span><span class="p">({</span> <span class="na">position</span><span class="p">:</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span> <span class="p">}))</span>
+<span class="nx">respawner</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">OnPointerDown</span><span class="p">(</span>
+    <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="nx">movePlayerTo</span><span class="p">({</span> <span class="na">x</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="na">y</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="na">z</span><span class="p">:</span> <span class="mi">1</span> <span class="p">},</span> <span class="p">{</span> <span class="na">x</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="na">y</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="na">z</span><span class="p">:</span> <span class="mi">8</span> <span class="p">})</span>
+    <span class="p">},</span>
+    <span class="p">{</span> <span class="na">hoverText</span><span class="p">:</span> <span class="dl">"</span><span class="s2">Move player</span><span class="dl">"</span> <span class="p">}</span>
+  <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">respawner</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>The player’s movement occurs instantly, without any confirmation screens or camera transitions.</p>
+
+<blockquote>
+  <p>Note: Players can only be moved if they already are standing inside the scene’s bounds, and can only be moved to locations that are inside the limits of the scene’s bounds. You can’t use <code class="language-plaintext highlighter-rouge">movePlayerTo()</code> to transport a player to another scene. To move a player to another scene, see <a href="/development-guide/external-links/#teleports">Teleports</a>.</p>
+</blockquote>
+
+<p>You must first add the <code class="language-plaintext highlighter-rouge">ALLOW_TO_MOVE_PLAYER_INSIDE_SCENE</code> permission to the <code class="language-plaintext highlighter-rouge">scene.json</code> file before you can use this feature. If not yet present, create a <code class="language-plaintext highlighter-rouge">requiredPermissions</code> property at root level in the JSON file to assign it this permission.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">"requiredPermissions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="s2">"ALLOW_TO_MOVE_PLAYER_INSIDE_SCENE"</span><span class="w">
+  </span><span class="p">]</span><span class="err">,</span><span class="w">
+</span></code></pre></div></div>
+
+<p>See <a href="/development-guide/scene-metadata/#required-permissions">Required permissions</a> for more details.</p>
+
+<blockquote>
+  <p>Note: To prevent abusive behavior that might damage a player’s experience, the ability to move a player is handled as a permission. Currently, this permission has no effect in how the player experiences the scene. In the future, players who walk into a scene with this permission in the <code class="language-plaintext highlighter-rouge">scene.json</code> file will be requested to grant the scene the ability to move them.</p>
+</blockquote>
+:ET

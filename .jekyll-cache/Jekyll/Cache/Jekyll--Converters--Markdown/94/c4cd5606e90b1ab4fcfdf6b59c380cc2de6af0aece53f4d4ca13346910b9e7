@@ -1,0 +1,67 @@
+I"�<p>If you don’t own parcels in Decentraland or are not ready to <a href="/development-guide/publishing/">deploy</a> your scene to Decentraland, you can upload your scene preview to run as an app in a free server.</p>
+
+<p>Once uploaded, the only thing that others have to do to explore your scene is follow a link. They don’t need to install the CLI, Node, NPM, or any of the other tools that would be required to run the preview on their local machine.</p>
+
+<p>Note that it’s not necessary to own LAND to upload a scene preview to a Heroku server. The uploaded content isn’t linked to the blockchain in any way. When running the preview, other adjacent parcels appear as empty.</p>
+
+<p>Follow the steps below to upload your scenes to a free Heroku server:</p>
+
+<ol>
+  <li>
+    <p>Create a free <a href="https://dashboard.heroku.com/">Heroku</a> account, if you don’t already have one.</p>
+  </li>
+  <li>
+    <p>Install the Heroku CLI. Do this via <code class="language-plaintext highlighter-rouge">npm i -g heroku</code>, or see <a href="https://devcenter.heroku.com/articles/heroku-cli#install-the-heroku-cli">their documentation</a> for alternatives.</p>
+  </li>
+  <li>
+    <p>Create a git repository for your project.</p>
+
+    <p>a) Create with <code class="language-plaintext highlighter-rouge">git init</code></p>
+
+    <p>b) Do <code class="language-plaintext highlighter-rouge">git add</code> and `git commit -m ‘initial commit’</p>
+
+    <p>c) Set the current branch to <em>main</em> via <code class="language-plaintext highlighter-rouge">git branch -m master main</code></p>
+
+    <p>d) Make sure the <code class="language-plaintext highlighter-rouge">.gitignore</code> file contains the following:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/node_modules
+npm-debug.log
+.DS_Store
+/*.env
+bin
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Use the Heroku CLI to log into your Heroku account with <code class="language-plaintext highlighter-rouge">heroku login</code>. This opens a browser window to provide your user and password.</p>
+  </li>
+  <li>
+    <p>Create a new Heroku application and give it a unique name. In the Heroku site do that via <strong>New</strong> &gt; <strong>Create new App</strong>. Otherwise, in the Heroku CLI do it via <code class="language-plaintext highlighter-rouge">heroku create -a example-dcl-scene</code></p>
+  </li>
+  <li>
+    <p>Link your Decentraland project to your Heroku application. On the project folder run <code class="language-plaintext highlighter-rouge">heroku git:remote -a example-dcl-scene</code> (using the name you created you heroku application with)</p>
+  </li>
+  <li>
+    <p>Edit <code class="language-plaintext highlighter-rouge">package.json</code> in your scene to change the <code class="language-plaintext highlighter-rouge">start</code> script to <code class="language-plaintext highlighter-rouge">CI=true dcl start -p ${PORT:=8000}</code></p>
+  </li>
+  <li>
+    <p>Explicitly install the Decentraland CLI as a dependency of your project, running <code class="language-plaintext highlighter-rouge">npm i --save decentraland</code></p>
+  </li>
+  <li>
+    <p>Deploy your scene preview with <code class="language-plaintext highlighter-rouge">git push heroku main</code></p>
+  </li>
+  <li>
+    <p>To access the scene, copy the link shared by the Heroku deploy command. Then manually add the following parameters to the URL <code class="language-plaintext highlighter-rouge">?realm=localhost-stub&amp;renderer-branch=master</code>.</p>
+
+    <p>For example if the link shared by Heroku is <code class="language-plaintext highlighter-rouge">https://example-dcl-scene.herokuapp.com</code>, the link you should enter is <code class="language-plaintext highlighter-rouge">https://example-dcl-scene.herokuapp.com/?realm=localhost-stub&amp;renderer-branch=master</code>.</p>
+  </li>
+</ol>
+
+<p>Every time you make changes to your scene, make sure you:</p>
+
+<ul>
+  <li>Commit and push your changes to the git repo</li>
+  <li>Push the new version to the Heroku app <code class="language-plaintext highlighter-rouge">git push heroku main</code></li>
+</ul>
+
+<p>You can read the console logs of the scene preview by running <code class="language-plaintext highlighter-rouge">heroku logs --tail</code></p>
+:ET

@@ -1,0 +1,156 @@
+I"�3<p>There are two different ways you can show a video in a scene. One is to stream the video from an external source, the other is to pack the video file with the scene and play it from there.</p>
+
+<p>In both cases, you assign the video to a <code class="language-plaintext highlighter-rouge">VideoTexture</code>, which can be used on a <a href="/development-guide/materials/">material</a> and then applied to any <a href="/development-guide/shape-components/">primitive shape</a> like a plane, cube, or even a cone.</p>
+
+<blockquote>
+  <p>TIP: Since the video is a texture that’s added to a material, you can also experiment with other properties of materials, like tinting it with a color, of adding other texture layers. for example to produce a dirty screen effect.</p>
+</blockquote>
+
+<h2 id="show-a-video">Show a video</h2>
+
+<p>The following instructions apply both to streaming and to showing a video from a file:</p>
+
+<ol>
+  <li>
+    <p>Create a <code class="language-plaintext highlighter-rouge">VideoClip</code> object, either referencing a streaming URL or a path to a video file.</p>
+  </li>
+  <li>
+    <p>Create a <code class="language-plaintext highlighter-rouge">VideoTexture</code> object, and assign the <code class="language-plaintext highlighter-rouge">VideoClip</code> to it.</p>
+  </li>
+  <li>
+    <p>Create a <code class="language-plaintext highlighter-rouge">Material</code> or <code class="language-plaintext highlighter-rouge">BasicMaterial</code>, and set its <code class="language-plaintext highlighter-rouge">albedoTexture</code> or <code class="language-plaintext highlighter-rouge">texture</code> to the <code class="language-plaintext highlighter-rouge">VideoTexture</code> you created.</p>
+  </li>
+  <li>
+    <p>Then add that <code class="language-plaintext highlighter-rouge">Material</code> to an entity that has a primitive shape, like a <code class="language-plaintext highlighter-rouge">PlaneShape</code> or a <code class="language-plaintext highlighter-rouge">BoxShape</code>.</p>
+  </li>
+  <li>
+    <p>Play the video texture</p>
+  </li>
+</ol>
+
+<p>This example uses a video stream:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// #1</span>
+<span class="kd">const</span> <span class="nx">myVideoClip</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">VideoClip</span><span class="p">(</span>
+  <span class="dl">"</span><span class="s2">https://theuniverse.club/live/consensys/index.m3u8</span><span class="dl">"</span>
+<span class="p">)</span>
+
+<span class="c1">// #2</span>
+<span class="kd">const</span> <span class="nx">myVideoTexture</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">VideoTexture</span><span class="p">(</span><span class="nx">myVideoClip</span><span class="p">)</span>
+
+<span class="c1">// #3</span>
+<span class="kd">const</span> <span class="nx">myMaterial</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Material</span><span class="p">()</span>
+<span class="nx">myMaterial</span><span class="p">.</span><span class="nx">albedoTexture</span> <span class="o">=</span> <span class="nx">myVideoTexture</span>
+<span class="nx">myMaterial</span><span class="p">.</span><span class="nx">roughness</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="nx">myMaterial</span><span class="p">.</span><span class="nx">specularIntensity</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="nx">myMaterial</span><span class="p">.</span><span class="nx">metallic</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+<span class="c1">// #4</span>
+<span class="kd">const</span> <span class="nx">screen</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+<span class="nx">screen</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">PlaneShape</span><span class="p">())</span>
+<span class="nx">screen</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">Transform</span><span class="p">({</span>
+    <span class="na">position</span><span class="p">:</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+  <span class="p">})</span>
+<span class="p">)</span>
+<span class="nx">screen</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="nx">myMaterial</span><span class="p">)</span>
+<span class="nx">screen</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">OnPointerDown</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">myVideoTexture</span><span class="p">.</span><span class="nx">playing</span> <span class="o">=</span> <span class="o">!</span><span class="nx">myVideoTexture</span><span class="p">.</span><span class="nx">playing</span>
+  <span class="p">})</span>
+<span class="p">)</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">screen</span><span class="p">)</span>
+
+<span class="c1">// #5</span>
+<span class="nx">myVideoTexture</span><span class="p">.</span><span class="nx">play</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>To use a video file, just change the first step to reference the path to the file:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">myVideoClip</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">VideoClip</span><span class="p">(</span><span class="dl">"</span><span class="s2">videos/myVideo.mp3</span><span class="dl">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="video-materials">Video Materials</h2>
+
+<p>To many, the default properties of a material make the video look quite opaque for a screen, but you can enhance that by altering other properties of the material.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">myMaterial</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Material</span><span class="p">()</span>
+<span class="nx">myMaterial</span><span class="p">.</span><span class="nx">albedoTexture</span> <span class="o">=</span> <span class="nx">videoTexture</span>
+<span class="nx">myMaterial</span><span class="p">.</span><span class="nx">roughness</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="nx">myMaterial</span><span class="p">.</span><span class="nx">specularIntensity</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="nx">myMaterial</span><span class="p">.</span><span class="nx">metallic</span> <span class="o">=</span> <span class="mi">0</span>
+</code></pre></div></div>
+
+<p>If you want the screen to glow a little, you can even set the <code class="language-plaintext highlighter-rouge">emissiveTexture</code> of the material to the same <code class="language-plaintext highlighter-rouge">VideoTexture</code> as the <code class="language-plaintext highlighter-rouge">albedoTexture</code>.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">myMaterial</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Material</span><span class="p">()</span>
+<span class="nx">myMaterial</span><span class="p">.</span><span class="nx">albedoTexture</span> <span class="o">=</span> <span class="nx">videoTexture</span>
+<span class="nx">myMaterial</span><span class="p">.</span><span class="nx">roughness</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="nx">myMaterial</span><span class="p">.</span><span class="nx">specularIntensity</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="nx">myMaterial</span><span class="p">.</span><span class="nx">metallic</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="nx">myMaterial</span><span class="p">.</span><span class="nx">emissiveTexture</span> <span class="o">=</span> <span class="nx">videoTexture</span>
+<span class="nx">myMaterial</span><span class="p">.</span><span class="nx">emissiveColor</span> <span class="o">=</span> <span class="nx">Color3</span><span class="p">.</span><span class="nx">White</span><span class="p">()</span>
+<span class="nx">myMaterial</span><span class="p">.</span><span class="nx">emissiveIntensity</span> <span class="o">=</span> <span class="mf">0.6</span>
+</code></pre></div></div>
+
+<p>See <a href="/development-guide/materials/">materials</a> for more details.</p>
+
+<h2 id="about-streaming">About Streaming</h2>
+
+<p>The source of the streaming must be an <em>https</em> URL (<em>http</em> URLs aren’t supported), and the source should have <a href="https://en.wikipedia.org/wiki/Cross-origin_resource_sharing">CORS policies (Cross Origin Resource Sharing)</a> that permit externally accessing it. If this is not the case, you might need to set up a server to act as a proxy and expose the stream in a valid way.</p>
+
+<p>To launch your own video streaming server, we recommend using a <a href="https://github.com/illuspas/Node-Media-Server">Node Media Server</a>, which provides most of what you need out of the box.</p>
+
+<p>Keep in mind that streaming video demands a significant effort from the player’s machine. We recommend not having more than one video stream displayed at a time per scene. Also avoid streaming videos that are in very high resolution, don’t use anything above <em>HD</em>. We also recommend activating the stream only once the player performs an action or approaches the screen, to avoid affecting neighbouring scenes.</p>
+
+<h2 id="about-video-files">About Video Files</h2>
+
+<p>The following file formats are supported:</p>
+
+<ul>
+  <li><em>.mp4</em></li>
+  <li><em>.ogg</em></li>
+  <li><em>.webm</em></li>
+</ul>
+
+<p>Keep in mind that a video file adds to the total size of the scene, which makes the scene take longer to download for players walking into your scene. The video size might also make you go over the <a href="/development-guide/scene-limitations/">scene limitations</a>, as you have a maximum of 15 MB per parcel to use. We recommend compressing the video as much as possible, so that it’s less of a problem.</p>
+
+<p>We also recommend starting to play the video when the player is near or performs an action to do that. Starting to play a video when your scene is loaded far in the horizon will unnecessarily affect performance while players visit neighboring scenes.</p>
+
+<h2 id="handle-a-video-file">Handle a video file</h2>
+
+<p>When playing a video from a file, you can perform the following actions:</p>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">play()</code>: Plays the video. It will start from where the <code class="language-plaintext highlighter-rouge">seek</code> property indicates.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">pause()</code>: Stops the video playing, but leaves its <code class="language-plaintext highlighter-rouge">seek</code> property where the video last was. The last played frame remains visible.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">reset()</code>: Stops the video playing and sends its <code class="language-plaintext highlighter-rouge">seek</code> property back to the begining of the video. The first frame of the video is displayed.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">seekTime()</code>: Sets the <code class="language-plaintext highlighter-rouge">seek</code> property to a specific value, so that the video plays from that point on. It’s expressed in seconds after the video’s original beginning.</p>
+  </li>
+</ul>
+
+<p>You can also change the following properties:</p>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">loop</code>: Boolean that determines if the video is played continuously in a loop, or if it stops after playing once. <em>false</em> by default.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">playbackRate</code>: Changes the speed at which the video is played. <em>1</em> by default.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">volume</code>: Lets you change the volume of the audio. <em>1</em> by default.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">seek</code>: Allows you to set a different starting position on the video. It’s expressed in seconds after the video’s original beginning. <em>-1</em> by default, which makes it start at the actual start of the video.</p>
+  </li>
+</ul>
+:ET

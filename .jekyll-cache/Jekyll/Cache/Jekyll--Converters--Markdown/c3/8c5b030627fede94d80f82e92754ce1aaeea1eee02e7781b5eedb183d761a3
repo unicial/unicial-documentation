@@ -1,0 +1,98 @@
+I"<p>3D models can be animated in a Decentraland scene using animations. All animations of a 3D model must be embedded inside its <em>glTF</em> file, you can’t reference animations in separate files.</p>
+
+<p>Most 3D model animations are <a href="https://en.wikipedia.org/wiki/Skeletal_animation"><em>skeletal animations</em></a>. These animations simplify the complex geometry of the model into a “stick figure”, linking every vertex in the mesh to the closest <em>bone</em> in the <em>skeleton</em>. Modelers adjust the skeleton into different poses, and the mesh stretches and bends to follow these movements.</p>
+
+<p>As an alternative, <em>vertex animations</em> animate a model without the need of a skeleton. These animations specify the position of each vertex in the model directly. These animations aren’t currently supported by Decentraland’s engine.</p>
+
+<p>There’s no specific rule about the names animations must have. You can verify the names of the animations in an exported model by opening the contents of a <em>.gltf</em> file with a text editor. You can also inspect the model in <a href="https://sandbox.babylonjs.com/">Babylon sandbox</a> to see the available animations.</p>
+
+<p>You can include any number of animations in a <em>glTF model</em>. All animations in a <em>glTF</em> model are disabled by default when loading the model into a Decentraland scene.</p>
+
+<p>In a Decentraland scene, you can use <code class="language-plaintext highlighter-rouge">weight</code> to blend several animations or to make an animation more subtle.</p>
+
+<blockquote>
+  <p>Tip: Instead of creating your own animations, you can also download generic animations and apply them to your model. For example, for 3D characters with human-like characteristics, you can download free or paid animations from <a href="https://www.mixamo.com/#/">Mixamo</a>.</p>
+</blockquote>
+
+<p>This document covers how to add animations into a 3D model. See <a href="/development-guide/3d-model-animations/">handle animations</a> for instructions on how to activate and handle animations in a scene.</p>
+
+<h2 id="how-to-create-an-animation">How to create an animation</h2>
+
+<p>You can use a tool like Blender to create animations for a 3D model.</p>
+
+<ol>
+  <li>
+    <p>Create an armature, following the shape of your model and the parts you wish to move. You do this by adding an initial bone and then extruding all other bones from the vertices of that one. Bones in the armature define the points that can be articulated. The armature must be positioned overlapping the mesh.</p>
+
+    <p><img src="/images/media/armature_hummingbird1.png" alt="Armature" width="300" /></p>
+  </li>
+  <li>
+    <p>Make both the armature and the mesh child assets of the same object.</p>
+  </li>
+  <li>
+    <p>Check that the mesh moves naturally when rotating its bones in the ways you plan to move it. If parts of the mesh get stretched in undesired ways, use weight paint to change what parts of the model are affected by each bone in the armature.</p>
+
+    <p><img src="/images/media/animations_hummingbird_wp1.png" alt="Weight paint view for one bone" width="300" /></p>
+
+    <p><img src="/images/media/animations_hummingbird_wp2.png" alt="Weight paint view for another bone" width="300" /></p>
+  </li>
+</ol>
+
+<blockquote>
+  <p>Note: There’s a reported bug with Babylon.js that prevents some faces of a mesh from being rendered when they’re not related to any bone in the armature. So if you paint some faces with weight 0 and then animate the model, you might see these faces dissappear. To solve this, we recommend making sure that each face is related to at least one bone of the armature and painted with a weight of at least 0.01.</p>
+</blockquote>
+
+<ol>
+  <li>
+    <p>Move the armature to a desired pose, all bones can be rotated or scaled. Then lock the rotation and scale of the bones you wish to control with this animation.</p>
+
+    <p><img src="/images/media/armature_hummingbird2.png" alt="Shifted armature" width="300" /></p>
+  </li>
+  <li>
+    <p>Switch to a different frame in the animation, position the armature into a new pose and lock it again. Repeat this process for all the key frames you want to set to describe the animation.</p>
+
+    <p><img src="/images/media/armature_hummingbird_animation.png" alt="Frames in animation" width="450" /></p>
+  </li>
+  <li>
+    <p>By default all frames in between the ones you defined will transition linearly from one pose to the next. You can also configure these transitions to behave exponentially, ease-in, bounce, etc.</p>
+  </li>
+</ol>
+
+<h2 id="vertex-animations">Vertex animations</h2>
+
+<p>Vertex animations, also known as morph-targets, aren’t currently supported by Decentraland’s engine.</p>
+
+<h2 id="how-to-handle-multiple-animations-with-blender">How to handle multiple animations with Blender</h2>
+
+<p>To export a model with several embedded animations in Blender, you must create multiple <em>actions</em> from the <em>Dope-Sheet</em>.</p>
+
+<p><img src="/images/media/blender-dope-sheet.png" alt="Open dope sheet" width="250" /></p>
+
+<p>You can also edit the animation from the Dope-Sheet view, for example you can adjust the distance between two key frames.</p>
+
+<p>To preview the different actions, open the <em>Action Editor</em> (only accessible once you’re in the Dope Sheet).</p>
+
+<p><img src="/images/media/blender-action-editor.png" alt="Open action editor" width="250" /></p>
+
+<p>In order to export multiple animations, you need to stash all the actions using the <em>NLA Editor</em>. We recommend opening the NLA editor on a separate editor tab while keeping the Dope sheet also open.</p>
+
+<p><img src="/images/media/blender-nla-editor.png" alt="Open NLA editor" width="250" /></p>
+
+<p>In the NLA Editor, select each action that you want to embed in the glTF model and click <em>Stash</em>.</p>
+
+<p><img src="/images/media/blender-nla-editor2.png" alt="Stash actions into glTF model" width="600" /></p>
+
+<p>When adding the model to your Decentraland scene, you must activate animations by configuring the <em>gltf-model</em> entity. See <a href="/development-guide/3d-model-animations/">3D model animations</a> for instructions.</p>
+
+<h2 id="best-practices-for-animations">Best practices for animations</h2>
+
+<ul>
+  <li>Keep the armature simple, only create bones for the parts of the model that you intend to animate.</li>
+  <li>If the animation will be looped in your scene, make sure the final pose is identical to the starting pose to avoid jumps.</li>
+  <li>Sometimes in an animation you might want to only control the movements of parts of the armature, and leave other bones undefined. This can make it easier to combine animations together.</li>
+  <li>Animated characters in your scene shouldn’t ever stay completely still, even when they aren’t doing anything. It’s best to create an “idle” animation to use for when the character is still. The idle animation can include subtle movements like breathing and perhaps occasional glances.</li>
+  <li>Make sure your model only has one armature when you export it. Sometimes, when importing another animation to the program where you’re editing your model, it will bring in a copy of the armature. You want all animations of the model to be performed by the same base armature.</li>
+  <li>When exporting the <em>glTF</em> model, make sure you’re exporting all the objects and animations. Some exporters will only export the <em>currently selected</em> by default.</li>
+  <li>After exporting the model, inspect it in <a href="https://sandbox.babylonjs.com/">Babylon sandbox</a> to make sure all animations work and are named as expected.</li>
+</ul>
+:ET

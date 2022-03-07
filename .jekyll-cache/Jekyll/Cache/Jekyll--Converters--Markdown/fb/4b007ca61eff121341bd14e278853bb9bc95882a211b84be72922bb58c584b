@@ -1,0 +1,313 @@
+I"�h<h1 id="404">4.0.4</h1>
+
+<ul>
+  <li>
+    <p>Adds Ethereum provider support. It uses the same provider as your browser. This is an experimental API, the behavior may change in the future.</p>
+
+    <p>For the moment, we are only allowing a whitelisted set of RPC calls:</p>
+
+    <ul>
+      <li>eth_sendTransaction</li>
+      <li>eth_getTransactionReceipt</li>
+      <li>eth_estimateGas</li>
+      <li>eth_call</li>
+      <li>eth_getBalance</li>
+      <li>eth_getStorageAt</li>
+      <li>eth_blockNumber</li>
+      <li>eth_gasPrice</li>
+      <li>eth_protocolVersion</li>
+      <li>net_version</li>
+      <li>eth_getTransactionCount</li>
+      <li>eth_getBlockByNumber</li>
+    </ul>
+
+    <p><strong>In Future releases, we’ll be adding more limitations and verifications on top of this API</strong></p>
+
+    <div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">createElement</span><span class="p">,</span> <span class="nx">ScriptableScene</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">decentraland-api-api</span><span class="dl">"</span>
+<span class="k">import</span> <span class="nx">Web3</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">"</span><span class="s2">web3</span><span class="dl">"</span><span class="p">)</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="kd">class</span> <span class="nx">EthereumProvider</span> <span class="kd">extends</span> <span class="nx">ScriptableScene</span> <span class="p">{</span>
+  <span class="k">async</span> <span class="nx">sceneDidMount</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">provider</span> <span class="o">=</span> <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">getEthereumProvider</span><span class="p">()</span>
+    <span class="kd">const</span> <span class="nx">web3</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Web3</span><span class="p">(</span><span class="nx">provider</span><span class="p">)</span>
+
+    <span class="nx">web3</span><span class="p">.</span><span class="nx">eth</span><span class="p">.</span><span class="nx">getBlock</span><span class="p">(</span><span class="mi">48</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">error</span><span class="p">:</span> <span class="nb">Error</span><span class="p">,</span> <span class="nx">result</span><span class="p">:</span> <span class="kr">any</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">Eth block 48 (from scene)</span><span class="dl">"</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span>
+    <span class="p">})</span>
+  <span class="p">}</span>
+
+  <span class="k">async</span> <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="o">&lt;</span><span class="nx">scene</span> <span class="o">/&gt;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+
+    <blockquote>
+      <p>IMPORTANT: The SDK works with version <em>0.20.6</em> of the Web3 library. It doesn’t currently support newer versions.</p>
+    </blockquote>
+  </li>
+</ul>
+
+<h1 id="403">4.0.3</h1>
+
+<ul>
+  <li>Fixes <code class="language-plaintext highlighter-rouge">pointerEvents</code> in preview scenes</li>
+  <li>Fixes <code class="language-plaintext highlighter-rouge">transitions</code> in scale component</li>
+  <li>Fixes the camera inertia, it was causing problems with Firefox</li>
+  <li>Adds it is now possible to toggle the colliders and bounding boxes in the preview using the key C and B</li>
+  <li>
+    <p>Adds a MessageBus between parcels, you can now send messages between users in the same scene</p>
+
+    <div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span>
+  <span class="nx">createElement</span><span class="p">,</span>
+  <span class="nx">ScriptableScene</span><span class="p">,</span>
+  <span class="nx">MessageBusClient</span><span class="p">,</span>
+<span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">decentraland-api</span><span class="dl">"</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="kd">class</span> <span class="nx">BoxFollower</span> <span class="kd">extends</span> <span class="nx">ScriptableScene</span> <span class="p">{</span>
+  <span class="nx">state</span> <span class="o">=</span> <span class="p">{</span> <span class="na">elements</span><span class="p">:</span> <span class="p">[]</span> <span class="p">}</span>
+
+  <span class="k">async</span> <span class="nx">sceneDidMount</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// get an instance of a MessageBus for this scene</span>
+    <span class="kd">const</span> <span class="nx">messageBus</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">MessageBusClient</span><span class="p">.</span><span class="nx">acquireEstateChannel</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">subscribeTo</span><span class="p">(</span><span class="dl">"</span><span class="s2">pointerDown</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="c1">// every time we receive a pointerDown, we send that message thru the MessageBus,</span>
+      <span class="c1">// in this case we are senging an event named `customPointerDown`</span>
+      <span class="nx">messageBus</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="dl">"</span><span class="s2">customPointerDown</span><span class="dl">"</span><span class="p">,</span> <span class="nx">e</span><span class="p">)</span>
+    <span class="p">})</span>
+
+    <span class="nx">messageBus</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">customPointerDown</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="c1">// everybody in the same parcel, even this MessageBus instance, receives the event</span>
+      <span class="kd">const</span> <span class="nx">position</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="na">x</span><span class="p">:</span> <span class="nx">e</span><span class="p">.</span><span class="k">from</span><span class="p">.</span><span class="nx">x</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">direction</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span>
+        <span class="na">y</span><span class="p">:</span> <span class="nx">e</span><span class="p">.</span><span class="k">from</span><span class="p">.</span><span class="nx">y</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">direction</span><span class="p">.</span><span class="nx">y</span><span class="p">,</span>
+        <span class="na">z</span><span class="p">:</span> <span class="nx">e</span><span class="p">.</span><span class="k">from</span><span class="p">.</span><span class="nx">z</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">direction</span><span class="p">.</span><span class="nx">z</span><span class="p">,</span>
+      <span class="p">}</span>
+
+      <span class="kd">const</span> <span class="nx">newBox</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="o">&lt;</span><span class="nx">box</span>
+          <span class="nx">position</span><span class="o">=</span><span class="p">{</span><span class="nx">position</span><span class="p">}</span>
+          <span class="nx">scale</span><span class="o">=</span><span class="p">{</span><span class="mf">0.1</span><span class="p">}</span>
+          <span class="nx">id</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">elements</span><span class="p">.</span><span class="nx">length</span><span class="p">}</span>
+        <span class="sr">/</span><span class="err">&gt;
+</span>      <span class="p">)</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span>
+        <span class="na">elements</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">elements</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">newBox</span><span class="p">),</span>
+      <span class="p">})</span>
+    <span class="p">})</span>
+  <span class="p">}</span>
+
+  <span class="k">async</span> <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="o">&lt;</span><span class="nx">scene</span><span class="o">&gt;</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">elements</span><span class="p">}</span><span class="o">&lt;</span><span class="sr">/scene</span><span class="err">&gt;
+</span>  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Adds a shadeless material, it is not affected by the light. It is useful to create pixel art scenes or user interfaces.</p>
+
+    <div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;</span><span class="nx">base</span><span class="o">-</span><span class="nx">material</span>
+  <span class="nx">id</span><span class="o">=</span><span class="dl">"</span><span class="s2">test</span><span class="dl">"</span>
+  <span class="nx">texture</span><span class="o">=</span><span class="dl">"</span><span class="s2">something.png</span><span class="dl">"</span>
+  <span class="nx">samplingMode</span><span class="o">=</span><span class="p">{</span><span class="nx">TextureSamplingMode</span><span class="p">.</span><span class="nx">NEAREST</span><span class="p">}</span>
+  <span class="nx">alphaTest</span><span class="o">=</span><span class="p">{</span><span class="mf">0.5</span><span class="p">}</span>
+<span class="sr">/</span><span class="err">&gt;
+</span></code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Adds <code class="language-plaintext highlighter-rouge">lookAt</code> component, allows you to handle the rotation of the entities without angles, instead, it is possible to specify a point in the space and the entity will be rotated to point in that direction.</p>
+
+    <div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;</span><span class="nx">box</span> <span class="nx">lookAt</span><span class="o">=</span><span class="p">{{</span> <span class="na">x</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="na">y</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="na">z</span><span class="p">:</span> <span class="mi">10</span> <span class="p">}}</span> <span class="sr">/</span><span class="err">&gt;
+</span></code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="breaking-changes">Breaking changes</h4>
+
+<ul>
+  <li>Removed <code class="language-plaintext highlighter-rouge">ignoreCollisions</code> component. It is now required to manually specify the entities that will have collisions with the new component <code class="language-plaintext highlighter-rouge">withCollisions</code></li>
+  <li>Material entity no longer sets up alpha automatically. If you want to create a transparent material you need to add the <code class="language-plaintext highlighter-rouge">hasAlpha</code> component.
+    <div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;</span><span class="nx">material</span> <span class="nx">albedoTexture</span><span class="o">=</span><span class="dl">"</span><span class="s2">semiTransparentTexture.png</span><span class="dl">"</span> <span class="nx">hasAlpha</span> <span class="o">/&gt;</span>
+<span class="c1">// or</span>
+<span class="o">&lt;</span><span class="nx">material</span> <span class="nx">albedoTexture</span><span class="o">=</span><span class="dl">"</span><span class="s2">semiTransparentTexture.png</span><span class="dl">"</span> <span class="nx">alphaTexture</span><span class="o">=</span><span class="dl">"</span><span class="s2">semiTransparentTexture.png</span><span class="dl">"</span> <span class="o">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h1 id="402">4.0.2</h1>
+
+<p>This release improves internals of the P2P communications and fix a critical rotation bug.</p>
+
+<ul>
+  <li>Fixes an important bug in rotations, now rotations behave exactly as they should, they mimic the behavior of Unity</li>
+  <li>Fixes transparency in albedo PNGs</li>
+  <li>Adds the axis in every <code class="language-plaintext highlighter-rouge">&lt;scene&gt;</code> in debug mode</li>
+  <li>Adds several properties to the <code class="language-plaintext highlighter-rouge">&lt;material&gt;</code> entity</li>
+</ul>
+
+<h1 id="401">4.0.1</h1>
+
+<p>This release contains several bugfixes and removes the spherical gaze from the center of the screen, instead, it introduces a clean white circle.</p>
+
+<h1 id="400">4.0.0</h1>
+
+<p>The version 4.0.0 introduces several major changes, those are breaking changes:</p>
+
+<h2 id="migrated-from-threejs-to-babylonjs">Migrated from Three.js to Babylon.js</h2>
+
+<p>Three.js was no powerful nor optimized enough to support the amount of elements and materials we wanted to handle. This
+migration also proves the idea behind the decoupling of the SDK, we managed to change the entire rendering engine without
+affecting the user scenes.</p>
+
+<h2 id="new-material-entity">New material entity</h2>
+
+<p>Previously when you wanted to create and modify a material, you needed to specify it as a component of a entity like this:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">createElement</span><span class="p">,</span> <span class="nx">ScriptableScene</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">decentraland-api</span><span class="dl">"</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="kd">class</span> <span class="nx">BoxFollower</span> <span class="kd">extends</span> <span class="nx">ScriptableScene</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="o">&lt;</span><span class="nx">scene</span> <span class="nx">id</span><span class="o">=</span><span class="dl">"</span><span class="s2">old_scene</span><span class="dl">"</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nx">sphere</span> <span class="nx">material</span><span class="o">=</span><span class="dl">"</span><span class="s2">map: some/url.png; alphaTest: 0.5</span><span class="dl">"</span> <span class="o">/&gt;</span>
+      <span class="o">&lt;</span><span class="sr">/scene</span><span class="err">&gt;
+</span>    <span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>That leads to material duplications and special care with garbage collection in the engine; and to a super verbosic and
+not well decoupled code in the scene’s code.</p>
+
+<p>We converted the material into an entity itself, now, the materials are using a PBR pipeline by default.</p>
+
+<p>Here is how it looks now:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">createElement</span><span class="p">,</span> <span class="nx">ScriptableScene</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">decentraland-api</span><span class="dl">"</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="kd">class</span> <span class="nx">BoxFollower</span> <span class="kd">extends</span> <span class="nx">ScriptableScene</span> <span class="p">{</span>
+  <span class="k">async</span> <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="o">&lt;</span><span class="nx">scene</span> <span class="nx">id</span><span class="o">=</span><span class="dl">"</span><span class="s2">new_scene</span><span class="dl">"</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nx">material</span>
+          <span class="nx">id</span><span class="o">=</span><span class="dl">"</span><span class="s2">reusable_material</span><span class="dl">"</span>
+          <span class="nx">albedoColor</span><span class="o">=</span><span class="dl">"</span><span class="s2">some/url.png</span><span class="dl">"</span>
+          <span class="nx">roughness</span><span class="o">=</span><span class="dl">"</span><span class="s2">0.5</span><span class="dl">"</span>
+        <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">sphere</span> <span class="nx">material</span><span class="o">=</span><span class="dl">"</span><span class="s2">#reusable_material</span><span class="dl">"</span> <span class="o">/&gt;</span>
+      <span class="o">&lt;</span><span class="sr">/scene</span><span class="err">&gt;
+</span>    <span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="fixed-the-coordinate-system">Fixed the coordinate system</h2>
+
+<p>Previous to this release, we had a patch for the reference system. The Z axis was inverted inside the parcel in relation
+to the world-grid.</p>
+
+<p>It means if an object was standing in the world position <code class="language-plaintext highlighter-rouge">55,55</code>, it was in the parcel <code class="language-plaintext highlighter-rouge">5,-4</code>. It is now in the parcel <code class="language-plaintext highlighter-rouge">5,5</code>.</p>
+
+<p>You need to be careful with this change since it inverts an entire axis, you might have to change the position of your entities.</p>
+
+<h2 id="changes-in-the-way-to-receive-the-users-position">Changes in the way to receive the users position</h2>
+
+<p>Previous to this version, you needed to execute <code class="language-plaintext highlighter-rouge">await getMyPositionInEstate()</code> to obtain the position of the user in the
+screen. Now you can subscribe to the <code class="language-plaintext highlighter-rouge">positionChanged</code> event.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">createElement</span><span class="p">,</span> <span class="nx">ScriptableScene</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">decentraland-api</span><span class="dl">"</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="kd">class</span> <span class="nx">BoxFollower</span> <span class="kd">extends</span> <span class="nx">ScriptableScene</span> <span class="p">{</span>
+  <span class="nx">state</span> <span class="o">=</span> <span class="p">{</span> <span class="na">position</span><span class="p">:</span> <span class="p">{</span> <span class="na">x</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="na">y</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="na">z</span><span class="p">:</span> <span class="mi">0</span> <span class="p">}</span> <span class="p">}</span>
+
+  <span class="k">async</span> <span class="nx">sceneDidMount</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">subscribeTo</span><span class="p">(</span><span class="dl">"</span><span class="s2">positionChanged</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span> <span class="na">position</span><span class="p">:</span> <span class="nx">e</span><span class="p">.</span><span class="nx">position</span> <span class="p">})</span>
+    <span class="p">})</span>
+  <span class="p">}</span>
+
+  <span class="k">async</span> <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="o">&lt;</span><span class="nx">scene</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nx">box</span> <span class="nx">position</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">position</span><span class="p">}</span> <span class="nx">ignoreCollisions</span> <span class="o">/&gt;</span>
+      <span class="o">&lt;</span><span class="sr">/scene</span><span class="err">&gt;
+</span>    <span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>In addition, we added the following events to the SDK</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="kd">type</span> <span class="nx">PointerEvent</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="cm">/** Origin of the ray */</span>
+  <span class="na">from</span><span class="p">:</span> <span class="nx">Vector3Component</span>
+  <span class="cm">/** Direction vector of the ray (normalized) */</span>
+  <span class="na">direction</span><span class="p">:</span> <span class="nx">Vector3Component</span>
+  <span class="cm">/** Length of the ray */</span>
+  <span class="na">length</span><span class="p">:</span> <span class="kr">number</span>
+  <span class="cm">/** ID of the pointer that triggered the event */</span>
+  <span class="na">pointerId</span><span class="p">:</span> <span class="kr">number</span>
+<span class="p">}</span>
+
+<span class="k">export</span> <span class="kr">interface</span> <span class="nx">IEvents</span> <span class="p">{</span>
+  <span class="cm">/**
+   * `positionChanged` is triggered when the position of the camera changes
+   * This event is throttled to 10 times per second.
+   */</span>
+  <span class="nl">positionChanged</span><span class="p">:</span> <span class="p">{</span>
+    <span class="cm">/** Position relative to the base parcel of the scene */</span>
+    <span class="na">position</span><span class="p">:</span> <span class="nx">Vector3Component</span>
+
+    <span class="cm">/** Camera position, this is a absolute world position */</span>
+    <span class="na">cameraPosition</span><span class="p">:</span> <span class="nx">Vector3Component</span>
+
+    <span class="cm">/** Eye height, in meters. */</span>
+    <span class="na">playerHeight</span><span class="p">:</span> <span class="kr">number</span>
+  <span class="p">}</span>
+
+  <span class="cm">/**
+   * `rotationChanged` is triggered when the rotation of the camera changes.
+   * This event is throttled to 10 times per second.
+   */</span>
+  <span class="nl">rotationChanged</span><span class="p">:</span> <span class="p">{</span>
+    <span class="cm">/** {X,Y,Z} Degree vector. Same as entities */</span>
+    <span class="na">rotation</span><span class="p">:</span> <span class="nx">Vector3Component</span>
+    <span class="cm">/** Rotation quaternion, useful in some scenarios. */</span>
+    <span class="na">quaternion</span><span class="p">:</span> <span class="nx">Quaternion</span>
+  <span class="p">}</span>
+
+  <span class="cm">/**
+   * `setAttributes` is triggered after the system receives new properties.
+   */</span>
+  <span class="nl">setAttributes</span><span class="p">:</span> <span class="p">{</span>
+    <span class="p">[</span><span class="na">key</span><span class="p">:</span> <span class="kr">string</span><span class="p">]:</span> <span class="kr">any</span>
+  <span class="p">}</span>
+
+  <span class="cm">/**
+   * `click` is triggered when a user points and the ray (from mouse or controller) hits the entity.
+   * Notice: Only entities with ID will be listening for click events.
+   */</span>
+  <span class="nl">click</span><span class="p">:</span> <span class="p">{</span>
+    <span class="cm">/** ID of the entity of the event */</span>
+    <span class="na">elementId</span><span class="p">:</span> <span class="kr">string</span>
+
+    <span class="cm">/** ID of the pointer that triggered the event */</span>
+    <span class="na">pointerId</span><span class="p">:</span> <span class="kr">number</span>
+  <span class="p">}</span>
+
+  <span class="cm">/**
+   * `pointerUp` is triggered when the user releases an input pointer.
+   * It could be a VR controller, a touch screen or the mouse.
+   */</span>
+  <span class="nl">pointerUp</span><span class="p">:</span> <span class="err">P</span><span class="nx">ointerEvent</span>
+
+  <span class="cm">/**
+   * `pointerDown` is triggered when the user press an input pointer.
+   * It could be a VR controller, a touch screen or the mouse.
+   */</span>
+  <span class="nx">pointerDown</span><span class="p">:</span> <span class="nx">PointerEvent</span>
+<span class="p">}</span>
+</code></pre></div></div>
+:ET

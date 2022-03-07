@@ -1,0 +1,140 @@
+I"t#<h2 id="before-you-begin">Before you begin</h2>
+
+<p>Make sure of the following:</p>
+
+<ul>
+  <li>
+    <p>Your scene complies with all of the <a href="/development-guide/scene-limitations/">scene limitations</a>. Most of these are validated each time you run a preview of your scene.</p>
+  </li>
+  <li>
+    <p>You have a <a href="https://metamask.io/">Metamask</a> account, with your LAND parcels assigned to it.</p>
+  </li>
+  <li>
+    <p>You own the necessary amount of adjacent LAND parcels. Otherwise you can purchase LAND in the <a href="/market/marketplace/">Market</a>.</p>
+  </li>
+</ul>
+
+<blockquote>
+  <p>Note: Multi-parcel scenes can only be deployed to adjacent parcels.</p>
+</blockquote>
+
+<h2 id="check-scene-data">Check scene data</h2>
+
+<p>When deploying, the CLI reads information from the <em>scene.json</em> to know where to deploy your scene to.</p>
+
+<p>Open your scene’s <em>scene.json</em> file and complete the following data:</p>
+
+<ul>
+  <li>
+    <p><strong>title</strong>: The title is displayed on the UI under the mini-map, whenever players enter your scene. It also shows on the teleport popup.</p>
+  </li>
+  <li>
+    <p><strong>description</strong>: A description of what players will find in your scene. This is displayed on the teleport popup.</p>
+  </li>
+  <li>
+    <p><strong>navmapThumbnail</strong>: An image that represents your scene. This is displayed on the teleport popup. The image should be a <em>.png</em> or <em>.jpg</em> image of a recommended size of <em>228x160</em> pixels.</p>
+  </li>
+  <li>
+    <p><strong>Parcels</strong>: The coordinates of the parcels that will be occupied by your scene</p>
+  </li>
+  <li>
+    <p><strong>Base</strong>: The coordinates of the parcel that will be considered the [0,0] coordinate of the scene. If your scene has multiple parcels, it should be the bottom-left (South-West) parcel.</p>
+  </li>
+  <li>
+    <p><strong>spawnPoints</strong>: A set of coordinates inside the scene (relative to the scene’s base parcel) where players spawn into. By default players spawn onto the <em>0,0,0</em> location of the scene (bottom-left corner). Use this to start out in a specific location, set a region to prevent players from overlapping with each other when they first appear.</p>
+  </li>
+</ul>
+
+<blockquote>
+  <p>Note: See <a href="/development-guide/scene-metadata/">scene metadata</a> for more details on how to set these parameters.</p>
+</blockquote>
+
+<h2 id="to-publish-the-scene">To publish the scene</h2>
+
+<ol>
+  <li>Log into your Metamask account with the same public address associated with your parcels in Decentraland.</li>
+  <li>Run <code class="language-plaintext highlighter-rouge">dcl deploy</code> from the scene’s folder.
+    <blockquote>
+      <p>Tip: If there are files in your project folder that you don’t want to deploy, list them in the <em>.dclignore</em> file before deploying.</p>
+    </blockquote>
+  </li>
+  <li>A browser tab will open, showing what parcels you’re deploying to. Click <strong>Sign and Deploy</strong>.</li>
+  <li>Metamask opens, notifying you that your signature is requested. Click <strong>Sign</strong> to confirm this action.</li>
+</ol>
+
+<blockquote>
+  <p>Tip: If you’re implementing a continuous integration flow, where changes to your scene are deployed automatically, then you can set the <code class="language-plaintext highlighter-rouge">export DCL_PRIVATE_KEY</code> environment variable to the private key of an account that has deploy permissions.</p>
+</blockquote>
+
+<blockquote>
+  <p>Tip: <code class="language-plaintext highlighter-rouge">dcl deploy</code> runs a <code class="language-plaintext highlighter-rouge">dcl build</code>, which checks the scene for type errors more strictly than running <code class="language-plaintext highlighter-rouge">dcl start</code>. If these errors can’t be avoided (eg: they happen in an external library) and they don’t impact the scene, you can use <code class="language-plaintext highlighter-rouge">dcl deploy  --skip-build</code>  to skip the <code class="language-plaintext highlighter-rouge">dcl build</code> step and deploy the scene as it is.</p>
+</blockquote>
+
+<h2 id="publish-from-a-physical-ledger-device">Publish from a physical Ledger device</h2>
+
+<p>Instead of storing your LAND tokens in a Metamask account, you may find it more secure to store them in a <a href="https://www.ledger.com/">Ledger</a> device that’s physically plugged in to your computer.</p>
+
+<p>If you’re using one of these, the process of uploading content to your LAND is slightly different.</p>
+
+<ol>
+  <li>Plug your Ledger device in. Your parcels in Decentraland should be associated with that same wallet.</li>
+  <li>
+    <p>Run <code class="language-plaintext highlighter-rouge">dcl deploy --https</code> from the scene’s folder.</p>
+
+    <blockquote>
+      <p>Tip: If there are files in your project folder that you don’t want to deploy, list them in the <em>.dclignore</em> file.</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>A browser tab will open, showing what parcels you’re deploying to. Click <strong>Sign and Deploy</strong>.</p>
+
+    <blockquote>
+      <p>Note: Currently, the certificate is self-signed, so your browser might give you a warning before launching the page. The warning is displayed only because the certificate is self-signed by your machine, please ignore it and carry on.</p>
+    </blockquote>
+  </li>
+  <li>The Ledger device will then ask you for a confirmation, which you must give by pushing the device’s buttons.</li>
+</ol>
+
+<h2 id="scene-overwriting">Scene overwriting</h2>
+
+<p>When a new scene is deployed, it overwrites older content that existed on the parcels it occupies.</p>
+
+<p>If a scene that takes up multiple parcels is only partially overwritten by another, all of its parcels are either overwritten or erased.</p>
+
+<p>Suppose you deployed your scene <em>A</em> over two parcels <em>[100, 100]</em> and <em>[100, 101]</em>. Then you sell parcel <em>[100, 101]</em> to a user who owns adjacent land and that deploys a large scene (<em>B</em>) to several parcels, including <em>[100, 101]</em>.</p>
+
+<p>Your scene <em>A</em> can’t be partially rendered in just one parcel, so <em>[100, 100]</em> won’t display any content. You must build a new version of scene <em>A</em> that only takes up one parcel and deploy it to only parcel <em>[100, 100]</em>.</p>
+
+<h2 id="what-are-the-content-servers">What are the content servers</h2>
+
+<p>The content servers are a network of community-owned servers with a filesystem that’s content-addressed, meaning that each file is identified by its contents, not by an arbitrary file name.</p>
+
+<p>We use the content servers to host and distribute all scene content in a similar way to BitTorrent, keeping the Decentraland network distributed.</p>
+
+<ol>
+  <li>The content servers store and distribute all of the assets required to render your scenes.</li>
+  <li>The <code class="language-plaintext highlighter-rouge">dcl deploy</code> command links these assets to the LAND parcel specified in your <strong>scene.json</strong> file. Whenever you redeploy your scene, the CLI will update your LAND smart contract, if needed, to point to the most recent content available on the content servers.</li>
+</ol>
+
+<p>The information on each copy of the server is verifiable, as each scene is signed by the LAND owner’s hash. This means that someone hosting a copy of the server won’t be able to tamper with the content to display something illegitimate. The community can also vote to approve or remove any of these servers using the DAO.</p>
+
+<h2 id="the-test-server">The test server</h2>
+
+<p>You can deploy content to the test catalyst server to run full tests with multiple users, the sourrounding scenes, and an environment that is identical to production. The test server is identical to all other catalyst servers, the difference is that the content that is deployed to this server isn’t propagated to the others. Content deployed to other servers on the other hand does get propagated to this server, so surrounding scenes should look as they will in production.</p>
+
+<p>To deploy to the test server, run:</p>
+
+<p><code class="language-plaintext highlighter-rouge">dcl deploy --target peer-testing.decentraland.org</code></p>
+
+<blockquote>
+  <p>Note: The same permissions apply as in production. You must be owner or have permissions on the parcels that you’re deployng to.</p>
+</blockquote>
+
+<p>Players are never directed to this server, the only way to access it is to explicitly provide a URL parameter to connect to it.</p>
+
+<p>To enter the content server, add <code class="language-plaintext highlighter-rouge">&amp;CATALYST=peer-testing.decentraland.org</code> to the Decentraland URL</p>
+
+<p>play.decentraland.org/&amp;CATALYST=peer-testing.decentraland.org</p>
+
+<p>If you’re working in a confidential project that you don’t want to unveil until launch, note that the test server is relatively hidden from players, but anyone explicitly using the test server’s URL could potentially run into it.</p>
+:ET

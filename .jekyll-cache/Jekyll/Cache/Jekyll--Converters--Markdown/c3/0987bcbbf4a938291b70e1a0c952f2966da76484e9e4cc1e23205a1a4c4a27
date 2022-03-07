@@ -1,0 +1,352 @@
+I"<p>There are several events that the scene can subscribe to, to know the actions of the player while in or near the scene.</p>
+
+<p>For button and click events performed by the player, see <a href="/development-guide/click-events/">Button events</a>.</p>
+
+<h2 id="player-connects-or-disconnects">Player connects or disconnects</h2>
+
+<p>Whenever another player starts or stops being rendered by the local engine, this creates an event you can listen to. Players may or may not be standing on the same scene as you, but must be within visual range (not necessarily in sight). The <code class="language-plaintext highlighter-rouge">onPlayerConnectedObservable</code> detects both when a player newly connects nearby or comes close enough to be in visual range, likewise the <code class="language-plaintext highlighter-rouge">onPlayerDisconnectedObservable</code> detects when a player ends their session or or walks far away.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">onPlayerConnectedObservable</span><span class="p">.</span><span class="nx">add</span><span class="p">((</span><span class="nx">player</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">player entered: </span><span class="dl">"</span><span class="p">,</span> <span class="nx">player</span><span class="p">.</span><span class="nx">userId</span><span class="p">)</span>
+<span class="p">})</span>
+
+<span class="nx">onPlayerDisconnectedObservable</span><span class="p">.</span><span class="nx">add</span><span class="p">((</span><span class="nx">player</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">player left: </span><span class="dl">"</span><span class="p">,</span> <span class="nx">player</span><span class="p">.</span><span class="nx">userId</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>Keep in mind that if other players are already being rendered in the surroundings before the player has loaded your scene, this event won’t notify the newly loaded scene of the already existing players. If you need to keep track of all current players, you can query for existing players upon scene loading, and then listen to this event for updates.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">getConnectedPlayers</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@decentraland/Players</span><span class="dl">"</span>
+
+<span class="nx">executeTask</span><span class="p">(</span><span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">players</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">getConnectedPlayers</span><span class="p">()</span>
+  <span class="nx">players</span><span class="p">.</span><span class="nx">forEach</span><span class="p">((</span><span class="nx">player</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">player was already here: </span><span class="dl">"</span><span class="p">,</span> <span class="nx">player</span><span class="p">.</span><span class="nx">userId</span><span class="p">)</span>
+  <span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<h2 id="player-enters-or-leaves-scene">Player enters or leaves scene</h2>
+
+<p>Whenever an avatar steps inside or out of the parcels of land that make up your scene, or teleports in or out, this creates an event you can listen to. This event is triggered by all avatars, including the player’s.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">onEnterSceneObservable</span><span class="p">.</span><span class="nx">add</span><span class="p">((</span><span class="nx">player</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">player entered scene: </span><span class="dl">"</span><span class="p">,</span> <span class="nx">player</span><span class="p">.</span><span class="nx">userId</span><span class="p">)</span>
+<span class="p">})</span>
+
+<span class="nx">onLeaveSceneObservable</span><span class="p">.</span><span class="nx">add</span><span class="p">((</span><span class="nx">player</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">player left scene: </span><span class="dl">"</span><span class="p">,</span> <span class="nx">player</span><span class="p">.</span><span class="nx">userId</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>Note: This event only responds to players that are currently being rendered locally. In large scenes where the scene size exceeds the visual range, players entering in the opposite corner may not be registered. If the number of players in the region exceeds the capabilities of an island on Decentraland servers, players that are not sharing a same island aren’t visible and are not tracked by these events either.</p>
+</blockquote>
+
+<h4 id="only-current-player">Only current player</h4>
+
+<p>You can filter out the triggered events to only react to the player’s avatar, rather than other avatars that may be around.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">getUserData</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@decentraland/Identity</span><span class="dl">"</span>
+
+<span class="nx">executeTask</span><span class="p">(</span><span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">myPlayer</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">getUserData</span><span class="p">()</span>
+
+  <span class="nx">onEnterSceneObservable</span><span class="p">.</span><span class="nx">add</span><span class="p">((</span><span class="nx">player</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">player entered scene: </span><span class="dl">"</span><span class="p">,</span> <span class="nx">player</span><span class="p">.</span><span class="nx">userId</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">player</span><span class="p">.</span><span class="nx">userId</span> <span class="o">===</span> <span class="nx">myPlayer</span><span class="p">?.</span><span class="nx">userId</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">I entered the scene!</span><span class="dl">"</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">})</span>
+
+  <span class="nx">onLeaveSceneObservable</span><span class="p">.</span><span class="nx">add</span><span class="p">((</span><span class="nx">player</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">player left scene: </span><span class="dl">"</span><span class="p">,</span> <span class="nx">player</span><span class="p">.</span><span class="nx">userId</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">player</span><span class="p">.</span><span class="nx">userId</span> <span class="o">===</span> <span class="nx">myPlayer</span><span class="p">?.</span><span class="nx">userId</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">I left the scene!</span><span class="dl">"</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>This example first obtains the player’s id, then subscribes to the events and compares the <code class="language-plaintext highlighter-rouge">userId</code> returned by the event to that of the player.</p>
+
+<h4 id="query-all-players-in-scene">Query all players in scene</h4>
+
+<p>You can also get the full list of players who are currently on your scene and being rendered by calling <code class="language-plaintext highlighter-rouge">getPlayersInScene()</code>.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">getPlayersInScene</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@decentraland/Players</span><span class="dl">"</span>
+
+<span class="nx">executeTask</span><span class="p">(</span><span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">players</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">getPlayersInScene</span><span class="p">()</span>
+  <span class="nx">players</span><span class="p">.</span><span class="nx">forEach</span><span class="p">((</span><span class="nx">player</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">player was already here: </span><span class="dl">"</span><span class="p">,</span> <span class="nx">player</span><span class="p">.</span><span class="nx">userId</span><span class="p">)</span>
+  <span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<!--
+## Player moves
+
+Whenever a player moves, this also generates events that can be listened to.
+
+```ts
+onPositionChangedObservable.add((eventData) => {
+  log("position:", eventData.position)
+  log("world position:", eventData.cameraPosition)
+})
+onRotationChangedObservable.add((eventData) => {
+  log("rotation: ", eventData.rotation)
+  log("quaternion: ", eventData.quaternion)
+})
+```
+
+The event detected by `onPositionChangedObservable` includes the following data:
+
+- position
+- cameraPosition
+- playerHeight
+
+The event detected by `onRotationChangedObservable` includes the following data:
+
+- rotation: The camera's rotation in Euler angles
+- quaternion: The camera's rotation in Quaternion angles
+
+> Note: The rotation refers to that of the camera, not to that of the avatar. So if the player is in 3rd person, the avatar may be facing a different direction than the camera.
+
+Using these events is a lot more efficient than fetching the `Camera.instance.position` and `Camera.instance.rotation` on every frame, as there are no updates when the player stays still. Since this position & rotation data updates 10 times a second, it also means that checking these values on every frame (30 times a second) will result in many repeat readings. This gain in efficiency is especially noticeable when communicating position data to a multiplayer server.
+
+```ts
+const cube = new Entity()
+cube.addComponent(new BoxShape())
+let cubeTransform = new Transform({ position: new Vector3(5, 1, 5) })
+cube.addComponent(cubeTransform)
+engine.addEntity(cube)
+
+onRotationChangedObservable.add((eventData) => {
+  cubeTransform.rotation = eventData.rotation
+})
+```
+
+The example above uses the player's rotation to set that of a cube in the scene.
+
+> Note: The `onRotationChangedObservable`, `onPositionChangedObservable` data is updated at a throttled rate of 10 times per second. Due to this, positions may lag slightly in relation to the scene that runs at 30 FPS under ideal conditions.
+-->
+
+<h2 id="player-changes-camera-mode">Player changes camera mode</h2>
+
+<p>When the player changes the camera mode between 1st and 3rd person in or near your scene, this creates an event you can listen to.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">onCameraModeChangedObservable</span><span class="p">.</span><span class="nx">add</span><span class="p">(({</span> <span class="nx">cameraMode</span> <span class="p">})</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">Camera mode changed:</span><span class="dl">"</span><span class="p">,</span> <span class="nx">cameraMode</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>The values of the returned property can be:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">CameraMode.FirstPerson</code></li>
+  <li><code class="language-plaintext highlighter-rouge">CameraMode.ThirdPerson</code></li>
+</ul>
+
+<p>This event is fired once when the scene first obtains information about the player’s current camera mode, and then any time the player changes camera mode while in or around your scene.</p>
+
+<blockquote>
+  <p>Tip: To encourage players to use a particular camera mode in your scene, display a UI message advising them to switch modes whenever they use the wrong one.</p>
+</blockquote>
+
+<p>Knowing the camera mode can be very useful to fine-tune the mechanics of your scene to better adjust to what’s more comfortable using this mode. For example, small targets are harder to click when on 3rd person.</p>
+
+<h2 id="player-plays-animation">Player plays animation</h2>
+
+<p>Whenever the player plays an emote (dance, clap, wave, etc), you can detect this event.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">onPlayerExpressionObservable</span><span class="p">.</span><span class="nx">add</span><span class="p">(({</span> <span class="nx">expressionId</span> <span class="p">})</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">Expression: </span><span class="dl">"</span><span class="p">,</span> <span class="nx">expressionId</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>The event includes the following information:</p>
+
+<ul>
+  <li>expressionId: Name of the emote performed (ie: <em>wave</em>, <em>clap</em>, <em>kiss</em>)</li>
+</ul>
+
+<p>Note: This event is triggered any time the player makes an emote and the scene is loaded. The player could be standing in a nearby scene when this happens.</p>
+
+<h2 id="player-clicks-on-another-player">Player clicks on another player</h2>
+
+<p>Whenever the player clicks on another player, you can detect an event.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">onPlayerClickedObservable</span><span class="p">.</span><span class="nx">add</span><span class="p">((</span><span class="nx">clickEvent</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">Clicked </span><span class="dl">"</span><span class="p">,</span> <span class="nx">clickEvent</span><span class="p">.</span><span class="nx">userId</span><span class="p">,</span> <span class="dl">"</span><span class="s2"> details: </span><span class="dl">"</span><span class="p">,</span> <span class="nx">clickEvent</span><span class="p">.</span><span class="nx">ray</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>Note: Both the player performing the click and the player being clicked must be standing within the parcels of the scene. This listener only detects events of the current player clicking on other players, not those of clicks performed by other players.</p>
+
+<p>The event includes the following data:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">userId</code>: The id of the clicked player</li>
+  <li><code class="language-plaintext highlighter-rouge">ray</code>: Data about the ray traced by the click
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">direction</code>: <em>Vector3</em> A normalized Vector3 that represents the direction from the point of origin of the click to the hit point of the click.</li>
+      <li><code class="language-plaintext highlighter-rouge">distance</code>: <em>number</em> The distance in meters from the point of origin to the hit point.</li>
+      <li><code class="language-plaintext highlighter-rouge">origin</code>: <em>Vector3</em> The point of origin of the click, the position of the player who did the click, relative to the scene.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Tip: The default behavior of clicking on another player is opening the player passport, where you can see additional information about that player, add them as a friend, etc. You can disable the opening of this UI so that it doesn’t get in the way of the experience you want to build by adding an <a href="/development-guide/avatar-modifiers/">Avatar Modifier Area</a>.</p>
+
+<h2 id="player-locksunlocks-cursor">Player locks/unlocks cursor</h2>
+
+<p>Players can switch between two cursor modes: <em>locked cursor</em> mode to control the camera or <em>unlocked cursor</em> mode for moving the cursor freely over the UI.</p>
+
+<p>Players unlock the cursor by clicking the <em>Right mouse button</em> or pressing the <em>Esc</em> key, and lock the cursor back by clicking anywhere in the screen.</p>
+
+<p>This <code class="language-plaintext highlighter-rouge">onPointerLockedStateChange</code> event is activated each time a player switches between these two modes, while near the scene.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">onPointerLockedStateChange</span><span class="p">.</span><span class="nx">add</span><span class="p">(({</span> <span class="nx">locked</span> <span class="p">})</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">locked</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">Pointer has been locked</span><span class="dl">"</span><span class="p">)</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">Pointer has been unlocked</span><span class="dl">"</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>Note: This event is triggered even if the player is not standing directly inside the scene.</p>
+</blockquote>
+
+<p>The <code class="language-plaintext highlighter-rouge">locked</code> property from this event is a boolean value that is <em>true</em> when the player locks the cursor and <em>false</em> when the player unlocks the cursor.</p>
+
+<p>This event is useful if the player needs to change cursor modes and may need a hint for how to lock/unlock the cursor.</p>
+
+<p>This can also be used in scenes where the player is expected to react fast, but the action can take a break while the player has the cursor unlocked.</p>
+
+<h2 id="player-goes-idle">Player goes idle</h2>
+
+<p>Whenever the player is inactive for a full minute, without interacting with any input being picked up by the Decentraland explorer, we can consider the player to be idle. Whenever this happens, it creates an event that you can listen to.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">onIdleStateChangedObservable</span><span class="p">.</span><span class="nx">add</span><span class="p">(({</span> <span class="nx">isIdle</span> <span class="p">})</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">Idle State change: </span><span class="dl">"</span><span class="p">,</span> <span class="nx">isIdle</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">isIdle</code> property is a boolean value that is <em>true</em> when the player enters the idle mode and <em>false</em> when the player leaves the idle mode.</p>
+
+<p>This event is especially useful for multiplayer scenes, when you might want to disconnect from the server players who are likely away from the machine or left Decentraland in a tab in the background.</p>
+
+<blockquote>
+  <p>Note: The idle state is inferred based on the player not using the keyboard or mouse for a full minute. This can of course produce false positives, for example a player might be watching other players interact or watching a video stream, standing still but fully engaged. Be mindful of these corner cases and what the experience is like for a player who stands still for a while.</p>
+</blockquote>
+
+<h2 id="player-changes-profile">Player changes profile</h2>
+
+<p>Whenever the player makes a change to their profile, the <code class="language-plaintext highlighter-rouge">onProfileChanged</code> event is called. These changes may include putting on different wearables, changing name, description, activating portable experiences, etc.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">onProfileChanged</span><span class="p">.</span><span class="nx">add</span><span class="p">((</span><span class="nx">profileData</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">Own profile data is </span><span class="dl">"</span><span class="p">,</span> <span class="nx">profileData</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>Event data includes only the ID of the player and a version number for that avatar’s profile, according to the catalyst server. Every time a change is propagated, the version number increases by 1.</p>
+
+<blockquote>
+  <p>Tip: When this event is triggered, you can then use the <a href="/development-guide/user-data/#get-player-data">getUserData()</a> function to fetch the latest version of this information, including the list of wearables that the player has on. You may need to add a slight delay before you call <code class="language-plaintext highlighter-rouge">getUserData()</code> to ensure that the version this function returns is up to date.</p>
+</blockquote>
+
+<p>When testing in preview, run the scene with <code class="language-plaintext highlighter-rouge">dcl start --web3</code> so that you connect with your wallet. Otherwise, you will be using a random avatar.</p>
+
+<blockquote>
+  <p>Note: This event is only triggered by changes to the current player, not by changes on the profiles of other nearby players.</p>
+</blockquote>
+
+<h2 id="scene-finished-loading">Scene finished loading</h2>
+
+<p>When the scene finishes loading, the <code class="language-plaintext highlighter-rouge">onSceneReadyObservable</code> gets called. This works both if the player loads straight into the scene, or if the player walks up to the scene from somewhere else. When all of the content in the scene has finished its initial load, including heavy models, etc, this event is called.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">onSceneReadyObservable</span><span class="p">.</span><span class="nx">add</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">SCENE LOADED</span><span class="dl">"</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<h2 id="video-playing">Video playing</h2>
+
+<p>When a <code class="language-plaintext highlighter-rouge">VideoTexture</code> changes its playing status, the <code class="language-plaintext highlighter-rouge">onVideoEvent</code> observable receives an event.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">onVideoEvent</span><span class="p">.</span><span class="nx">add</span><span class="p">((</span><span class="nx">data</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">New Video Event </span><span class="dl">"</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>The input of a video event contains the following properties:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">videoClipId</code> ( <em>string</em>): The ID for the <code class="language-plaintext highlighter-rouge">VideoTexture</code> component that changed status.</li>
+  <li><code class="language-plaintext highlighter-rouge">componentId</code> (<em>string</em>): The ID of the <code class="language-plaintext highlighter-rouge">VideoTexture</code> component that changed status.</li>
+  <li><code class="language-plaintext highlighter-rouge">currentOffset</code> (<em>number</em>): The current value of the <code class="language-plaintext highlighter-rouge">seek</code> property on the video. This value shows seconds after the video’s original beginning. <em>-1</em> by default.</li>
+  <li><code class="language-plaintext highlighter-rouge">totalVideoLength</code> (<em>number</em> ): The length in seconds of the entire video. <em>-1</em> if length is unknown.</li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">videoStatus</code>: The value for the new video status of the <code class="language-plaintext highlighter-rouge">VideoTexture</code>, expressed as a value from the <code class="language-plaintext highlighter-rouge">VideoStatus</code> enum. This enum can hold the following possible values:</p>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">VideoStatus.NONE</code> = 0,</li>
+  <li><code class="language-plaintext highlighter-rouge">VideoStatus.ERROR</code> = 1,</li>
+  <li><code class="language-plaintext highlighter-rouge">VideoStatus.LOADING</code> = 2,</li>
+  <li><code class="language-plaintext highlighter-rouge">VideoStatus.READY</code> = 3,</li>
+  <li><code class="language-plaintext highlighter-rouge">VideoStatus.PLAYING</code> = 4,</li>
+  <li><code class="language-plaintext highlighter-rouge">VideoStatus.BUFFERING</code> = 5</li>
+</ul>
+
+<p>Learn more about playing videos in Decentraland in <a href="/development-guide/video-playing/">Video Playing</a>.</p>
+
+<h2 id="player-changes-realm-or-island">Player changes realm or island</h2>
+
+<p>Players in decentraland exist in separate <em>realms</em>, and in separate <em>islands</em> within each realm. Players in different realms or islands cant see each other, interact or chat with each other, even if they’re standing on the same parcels.</p>
+
+<p>Each time the player changes realms or island, the <code class="language-plaintext highlighter-rouge">onRealmChangedObservable</code> event gets called.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">onRealmChangedObservable</span><span class="p">.</span><span class="nx">add</span><span class="p">((</span><span class="nx">realmChange</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">PLAYER CHANGED ISLAND TO </span><span class="dl">"</span><span class="p">,</span> <span class="nx">realmChange</span><span class="p">.</span><span class="nx">room</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>This event includes the following fields:</p>
+
+<ul>
+  <li><strong>serverName</strong>: <em>string</em>; The catalyst server name.</li>
+  <li><strong>room</strong>: <em>string</em>; The island name.</li>
+  <li><strong>displayName</strong>: <em>string</em>; The catalyst server name followed by a <em>-</em> and the island name. For example <code class="language-plaintext highlighter-rouge">unicorn-x011</code>.</li>
+  <li><strong>domain</strong>: <em>string</em>; The url to the catalyst server being used.</li>
+</ul>
+
+<p>As players move through the map, they may switch islands to be grouped with those players who are now closest to them. Islands also shift their borders dynamically to fit a manageable group of people in each. So even if a player stands still they could be changed island as others enter and leave surrounding scenes.</p>
+
+<p>If your scene relies on a <a href="/development-guide/remote-scene-considerations/">3rd party server</a> to sync changes between players in real time, then you may want to only share data between players that are grouped in a same realm+island, so it’s a good practice to change rooms in the 3rd party server whenever players change island.</p>
+
+<h2 id="player-startsends-the-tutorial">Player starts/ends the tutorial</h2>
+
+<p>When a new player first enters Decentraland for the fist time, they go through a brief tutorial that shows the basic movements and UI elements. Typically players will experience this on Genesis Plaza, but a new player that enters a specific scene from an event as their first time in Decentraland will experience a shortened version of that tutorial wherever they are.</p>
+
+<p>This tutorial includes some music, that could clash with the music of the scene that the player is currently on, so it’s recommended to stop any background music in case the player is going through the tutorial.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">tutorialEnableObservable</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">src/modules/tutorialHandler</span><span class="dl">"</span>
+
+<span class="nx">tutorialEnableObservable</span><span class="p">.</span><span class="nx">add</span><span class="p">((</span><span class="nx">tutorialEnabled</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">tutorialEnabled</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">Player started tutorial</span><span class="dl">"</span><span class="p">)</span>
+    <span class="nx">backgroundMusicSource</span><span class="p">.</span><span class="nx">playing</span> <span class="o">=</span> <span class="kc">false</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">Player finished tutorial</span><span class="dl">"</span><span class="p">)</span>
+    <span class="nx">backgroundMusicSource</span><span class="p">.</span><span class="nx">playing</span> <span class="o">=</span> <span class="kc">true</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>Note: This event only occurs when the player starts or ends the tutorial. It doesn’t get called at all in case the player has already experienced the tutorial in a prior session or scene.</p>
+</blockquote>
+:ET

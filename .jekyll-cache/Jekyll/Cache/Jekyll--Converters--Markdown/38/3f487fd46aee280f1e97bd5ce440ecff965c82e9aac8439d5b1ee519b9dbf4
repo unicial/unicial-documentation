@@ -1,0 +1,129 @@
+I"�$<p>Sound is a great way to provide feedback to player actions and events, background sounds can also give your scene more context and improve the player’s immersion into it.</p>
+
+<blockquote>
+  <p>Note: Keep in mind that sounds are only heard by players who are standing within the parcels that make up the scene where the sound was generated, even if they would otherwise be in hearing range. Players can also turn off sounds on their settings.</p>
+</blockquote>
+
+<p>Supported sound formats vary depending on the browser, but it’s recommended to use <em>.mp3</em>.</p>
+
+<p><em>.wav</em> files are also supported but not generally recommended as they are significantly larger.</p>
+
+<h2 id="play-sounds">Play sounds</h2>
+
+<p>To play a sound, you need the following:</p>
+
+<ul>
+  <li>An <code class="language-plaintext highlighter-rouge">Entity</code> to use for the sound location.</li>
+  <li>An <code class="language-plaintext highlighter-rouge">AudioSource</code> component, added to that entity.</li>
+  <li>An <code class="language-plaintext highlighter-rouge">AudioClip</code> object, referenced by that component.</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Create entity</span>
+<span class="kd">const</span> <span class="nx">cube</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+
+<span class="c1">// Create AudioClip object, holding audio file</span>
+<span class="kd">const</span> <span class="nx">clip</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AudioClip</span><span class="p">(</span><span class="dl">"</span><span class="s2">sounds/carnivalrides.mp3</span><span class="dl">"</span><span class="p">)</span>
+
+<span class="c1">// Create AudioSource component, referencing `clip`</span>
+<span class="kd">const</span> <span class="nx">source</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AudioSource</span><span class="p">(</span><span class="nx">clip</span><span class="p">)</span>
+
+<span class="c1">// Add AudioSource component to entity</span>
+<span class="nx">cube</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="nx">source</span><span class="p">)</span>
+
+<span class="c1">// Play sound</span>
+<span class="nx">source</span><span class="p">.</span><span class="nx">playing</span> <span class="o">=</span> <span class="kc">true</span>
+</code></pre></div></div>
+
+<p>When creating an <code class="language-plaintext highlighter-rouge">AudioClip</code> object, you need to provide the path to the location of the sound file.</p>
+
+<p>The sound file must be inside the project folder. In the example above, the audio file is located in a <code class="language-plaintext highlighter-rouge">sounds</code> folder, which is located at root level of the scene project folder.</p>
+
+<blockquote>
+  <p>Tip: We recommend keeping your sound files separate in a <code class="language-plaintext highlighter-rouge">/sounds</code> folder inside your scene.</p>
+</blockquote>
+
+<p>Each entity can only have a single <code class="language-plaintext highlighter-rouge">AudioSource</code> component, that can only have a single <code class="language-plaintext highlighter-rouge">AudioClip</code>. This limitation can be easily overcome by including multiple invisible entities, each with their own sound.</p>
+
+<p>If you set the <code class="language-plaintext highlighter-rouge">playing</code> property of an <code class="language-plaintext highlighter-rouge">AudioSource</code> component to <em>false</em>, the file is stopped. This means that if you later set <code class="language-plaintext highlighter-rouge">playing</code> to <em>true</em> again, the sound file will begin from the start again.</p>
+
+<h2 id="looping">Looping</h2>
+
+<p>To keep a sound playing in a continuous loop, set the <code class="language-plaintext highlighter-rouge">loop</code> field of the <code class="language-plaintext highlighter-rouge">AudioSource</code> component to <em>true</em> before you start playing it.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">source</span><span class="p">.</span><span class="nx">loop</span> <span class="o">=</span> <span class="kc">true</span>
+<span class="nx">source</span><span class="p">.</span><span class="nx">playing</span> <span class="o">=</span> <span class="kc">true</span>
+</code></pre></div></div>
+
+<p>Looping sounds is especially useful for adding background music or other background sounds.</p>
+
+<p>You can use the <code class="language-plaintext highlighter-rouge">playOnce()</code> function to play a sound once from start to finish.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">source</span><span class="p">.</span><span class="nx">playOnce</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h2 id="set-volume">Set volume</h2>
+
+<p>You can set the <code class="language-plaintext highlighter-rouge">volume</code> property of the <code class="language-plaintext highlighter-rouge">AudioSource</code> component to change the volume of a sound.</p>
+
+<p>The volume can be a number from <em>0</em> to <em>1</em>.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">source</span><span class="p">.</span><span class="nx">volume</span> <span class="o">=</span> <span class="mf">0.5</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>Note: Of course, the volume of a sound is also affected by the distance from the audio source.</p>
+</blockquote>
+
+<h2 id="reuse-sound-objects">Reuse sound objects</h2>
+
+<p>A great way to save processing power is to use a same <code class="language-plaintext highlighter-rouge">AudioClip</code> object on many <code class="language-plaintext highlighter-rouge">AudioSource</code> components.</p>
+
+<p>Suppose you have a large amount of balls bouncing around in your scene, and you want to hear a <em>thump</em> sound every time two of them collide. You can add an <code class="language-plaintext highlighter-rouge">AudioSource</code> component to each ball, and use a single <code class="language-plaintext highlighter-rouge">AudioClip</code> object on all of these.</p>
+
+<!--
+```ts
+```
+-->
+
+<h2 id="streaming-sound">Streaming sound</h2>
+
+<p>You can stream audio from a URL. This is useful to play music directly from an internet radio, or stream a conference into your scene.</p>
+
+<p>The audio in the source must be in one of the following formats: <code class="language-plaintext highlighter-rouge">.mp3</code>, <code class="language-plaintext highlighter-rouge">ogg</code>, or <code class="language-plaintext highlighter-rouge">aac</code>. The source must also be an <em>https</em> URL (<em>http</em> URLs aren’t supported), and the source should have <a href="https://en.wikipedia.org/wiki/Cross-origin_resource_sharing">CORS policies (Cross Origin Resource Sharing)</a> that permit externally accessing it. If this is not the case, you might need to set up a server to act as a proxy and expose the stream in a valid way.</p>
+
+<p>To add sound into your scene, simply add an entity with an <code class="language-plaintext highlighter-rouge">AudioStream</code> component:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">streamSource</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+<span class="nx">streamSource</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">AudioStream</span><span class="p">(</span>
+    <span class="dl">"</span><span class="s2">https://icecast.ravepartyradio.org/ravepartyradio-192.mp3</span><span class="dl">"</span>
+  <span class="p">)</span>
+<span class="p">)</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">streamSource</span><span class="p">)</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>Note: The streamed sound isn’t positional, it will be heard at a consistent volume throughout your entire scene. If a player steps out of the scene, they will not hear the streaming at all.</p>
+</blockquote>
+
+<p>Set the volume of the <code class="language-plaintext highlighter-rouge">AudioStream</code> component by changing its <code class="language-plaintext highlighter-rouge">volume</code> property.</p>
+
+<p>Switch the <code class="language-plaintext highlighter-rouge">AudioStream</code> component on or off by setting its <code class="language-plaintext highlighter-rouge">playing</code> property to <em>true</em> or <em>false</em>.</p>
+
+<!--
+## Make an entity play a sound
+
+
+The `distanceModel` property of the sound component conditions how the player's distance to the sound's source affects its volume. The model can be _linear_, _exponential_ or _inverse_. When using the linear or exponential model, you can also set the `rolloffFactor` property to set the steepness of the curve.
+
+```ts
+```
+
+## Volume curves
+
+You can also change how volume levels relate to distance from the sound source to put more or less emphasis on a sound's location.
+
+```ts
+```
+-->
+:ET

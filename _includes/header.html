@@ -1,0 +1,41 @@
+<header>
+  <div class="dropdown-overlay"></div>
+  <div class="search-overlay mobile"></div>
+  <div class="wrapper">
+    <nav>
+      <div class="topbar">
+        <div class="logo">
+          <a href="https://decentraland.org/"><img src="{{ site.baseurl }}/images/logo.png" /></a>
+        </div>
+        <div class="dropdown-trigger">Docs</div>
+      </div>
+      <div class="dropdown-content">
+        <ul class="menu">
+          <li><a href="/" class="active">Documents</a></li>
+          <li><a href="#">Marketplace</a></li>
+          <li><a href="#">About Us</a></li>
+        </ul>
+      </div>
+    </nav>
+    <div class="header_search">
+      <div class="search-overlay desktop"></div>
+      <form action="{{ site.baseurl }}/search/" method="get">
+        <input type="text" name="q" {% if include.add_id %}id="search-input"{% endif %} placeholder="Search" autofocus autocomplete="off">
+        {% include search.svg %}
+        <div class="loader"></div>
+        <div class="close">
+          {% include close.svg %}
+        </div>
+        <input type="submit" value="Search" style="display: none;">
+      </form>
+      <ul class="search-results"></ul>
+    </div>
+    
+    <div class="header-lang-selector">
+      <select name="lang-selector" id="lang">
+        <option value="english">En</option>
+        <option value="chinese">中文</option>
+      </select>
+    </div>
+  </div>
+</header>

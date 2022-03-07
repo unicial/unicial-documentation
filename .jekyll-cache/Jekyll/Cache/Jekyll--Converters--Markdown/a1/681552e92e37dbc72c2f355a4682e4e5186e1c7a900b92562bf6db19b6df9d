@@ -1,0 +1,70 @@
+I"Ï<h2 id="vectors">Vectors</h2>
+
+<p>Decentraland uses vectors to represent paths, points in space, and directions. Vectors can also be used to define rotation orientations, as a friendlier alternative to <em>quaternions</em>. <code class="language-plaintext highlighter-rouge">Vector2</code>, <code class="language-plaintext highlighter-rouge">Vector3</code> and <code class="language-plaintext highlighter-rouge">Vector4</code> are each defined as different classes, containing a different number of dimensions.</p>
+
+<p>Vector objects contain a series of handy methods that you can call to avoid having to deal with most vector math operations.</p>
+
+<p>Below are a few lines showing the syntax for some basic operations with vectors.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Instance a vector object</span>
+<span class="kd">let</span> <span class="nx">myVector</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+
+<span class="c1">// Edit one of its values</span>
+<span class="nx">myVector</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="mi">5</span>
+
+<span class="c1">// Call functions from the vector instance</span>
+<span class="kd">let</span> <span class="nx">normalizedVector</span> <span class="o">=</span> <span class="nx">myVector</span><span class="p">.</span><span class="nx">normalize</span><span class="p">()</span>
+
+<span class="c1">// Call functions from the vector class</span>
+<span class="kd">let</span> <span class="nx">distance</span> <span class="o">=</span> <span class="nx">Vector3</span><span class="p">.</span><span class="nx">Distance</span><span class="p">(</span><span class="nx">myVector1</span><span class="p">,</span> <span class="nx">myVector2</span><span class="p">)</span>
+
+<span class="kd">let</span> <span class="nx">midPoint</span> <span class="o">=</span> <span class="nx">Vector3</span><span class="p">.</span><span class="nx">lerp</span><span class="p">(</span><span class="nx">myVector1</span><span class="p">,</span> <span class="nx">myVector2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>3D vectors are also included in the fields of several components. For example, the <code class="language-plaintext highlighter-rouge">Transform</code> component contains <code class="language-plaintext highlighter-rouge">Vector3</code> values for the <em>position</em> and <em>scale</em> of the entity.</p>
+
+<h4 id="shortcuts-for-writing-direction-vectors">Shortcuts for writing direction vectors</h4>
+
+<p>The following shortcuts exist for defining generic vectors:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">Vector3.Zero()</code> returns <em>(0, 0, 0)</em></li>
+  <li><code class="language-plaintext highlighter-rouge">Vector3.Up()</code> returns <em>(0, 1, 0)</em></li>
+  <li><code class="language-plaintext highlighter-rouge">Vector3.Down()</code> returns <em>(0, -1, 0)</em></li>
+  <li><code class="language-plaintext highlighter-rouge">Vector3.Left()</code> returns <em>(-1, 0, 0)</em></li>
+  <li><code class="language-plaintext highlighter-rouge">Vector3.Right()</code> returns <em>(1, 0, 0)</em></li>
+  <li><code class="language-plaintext highlighter-rouge">Vector3.Forward()</code> returns <em>(0, 0, 1)</em></li>
+  <li><code class="language-plaintext highlighter-rouge">Vector3.Backward()</code> returns <em>(0, 0, -1)</em></li>
+</ul>
+
+<h2 id="scalars">Scalars</h2>
+
+<p>A scalar is nothing more than a number. For that reason, it doesnâ€™t make much sense to instantiate a <code class="language-plaintext highlighter-rouge">Scalar</code> object to store data. The functions in the <code class="language-plaintext highlighter-rouge">Scalar</code> class however exposes several handy functions (similar to those in <em>Vector</em> classes), that can be used on numbers.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Call functions from the Scalar class</span>
+<span class="kd">let</span> <span class="nx">random</span> <span class="o">=</span> <span class="nx">Scalar</span><span class="p">.</span><span class="nx">RandomRange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+
+<span class="kd">let</span> <span class="nx">midPoint</span> <span class="o">=</span> <span class="nx">Scalar</span><span class="p">.</span><span class="nx">lerp</span><span class="p">(</span><span class="nx">number1</span><span class="p">,</span> <span class="nx">number2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+
+<span class="kd">let</span> <span class="nx">clampedValue</span> <span class="o">=</span> <span class="nx">Scalar</span><span class="p">.</span><span class="nx">Clamp</span><span class="p">(</span><span class="nx">myInput</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="quaternions">Quaternions</h2>
+
+<p>Quaternions are used to store rotation information for the Transform component. A Quaternion is composed of four numbers between -1 and 1: x, y, z, w.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Instance a quaternion object</span>
+<span class="kd">let</span> <span class="nx">myQuaternion</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Quaternion</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c1">// Edit one of its values</span>
+<span class="nx">myQuaternion</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">// Call functions from the quaternion instance</span>
+<span class="kd">let</span> <span class="nx">quaternionAsArray</span> <span class="o">=</span> <span class="nx">myQuaternion</span><span class="p">.</span><span class="nx">asArray</span><span class="p">()</span>
+
+<span class="c1">// Call functions from the quaternion class</span>
+<span class="kd">let</span> <span class="nx">quaternionFromEuler</span> <span class="o">=</span> <span class="nx">Quaternion</span><span class="p">.</span><span class="nx">FromEulerAnglesRef</span><span class="p">(</span><span class="mi">90</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="kd">let</span> <span class="nx">midPoint</span> <span class="o">=</span> <span class="nx">Quaternion</span><span class="p">.</span><span class="nx">Slerp</span><span class="p">(</span><span class="nx">myQuaternion1</span><span class="p">,</span> <span class="nx">myQuaternion2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+</code></pre></div></div>
+:ET

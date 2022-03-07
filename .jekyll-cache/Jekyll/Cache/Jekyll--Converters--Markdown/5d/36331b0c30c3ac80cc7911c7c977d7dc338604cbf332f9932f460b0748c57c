@@ -1,0 +1,257 @@
+I"�=<p>Smart wearables are a type of portable experience. Portable experiences are parts of the gameplay that players take with them as they move through the metaverse. For example, a player could take a snowball from your scene, walk away to another scene, and throw the snowball to another player who’s also playing the same game.</p>
+
+<p>Smart wearables are portable experiences that are turned on when the player puts on a certain item of clothing. Smart wearables can grant players new abilities, like a jetpack that lets them fly, or add a new layer of content on top of the rest of the world, like randomly placing coins to be collected throughout the whole of genesis city.</p>
+
+<h2 id="getting-started">Getting started</h2>
+
+<p>To create a new smart wearable</p>
+
+<ol>
+  <li>Make sure you have the latest version of the CLI installed</li>
+</ol>
+
+<p><code class="language-plaintext highlighter-rouge">npm i -g decentraland@latest</code></p>
+
+<ol>
+  <li>Open a command line in a new folder and run</li>
+</ol>
+
+<p><code class="language-plaintext highlighter-rouge">dcl init</code></p>
+
+<p>When prompted by the command, select <code class="language-plaintext highlighter-rouge">smart wearable (beta)</code></p>
+
+<p>This command creates the basic files and structure for a new smart wearable. This folder is very similar to that of a Decentraland scene, but you will notice the following differences:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">asset.json</code> includes all of the metadata for the portable experience</li>
+  <li>There’s a placeholder 3d model (glasses.glb) and thumbnail (glasses.png) for a pair of dark glasses. You should replace these with the actual wearable you want to use</li>
+  <li><code class="language-plaintext highlighter-rouge">scene.json</code> is a lot shorter, it doesn’t include properties that are irrelevant to a wearable, like parcels or spawn points</li>
+</ul>
+
+<h2 id="about-assetjson">About Asset.json</h2>
+
+<p>The default <code class="language-plaintext highlighter-rouge">asset.json</code> file looks like this:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="err">&lt;random-id&gt;</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"assetType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"portable-experience"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Portable Experience Example"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"My new Portable Experience"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"category"</span><span class="p">:</span><span class="w"> </span><span class="s2">"eyewear"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"rarity"</span><span class="p">:</span><span class="w"> </span><span class="s2">"mythic"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"thumbnail"</span><span class="p">:</span><span class="w"> </span><span class="s2">"glasses.png"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"menuBarIcon"</span><span class="p">:</span><span class="w"> </span><span class="s2">"glasses.png"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"model"</span><span class="p">:</span><span class="w"> </span><span class="s2">"glasses.glb"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"bodyShape"</span><span class="p">:</span><span class="w"> </span><span class="s2">"both"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>The following fields are present in <code class="language-plaintext highlighter-rouge">asset.json</code>:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">id</code>: The <code class="language-plaintext highlighter-rouge">dcl init</code> command generates a random value for this ID.</li>
+</ul>
+
+<blockquote>
+  <p>NOTE: If you forked your project from an existing one, make sure the ID value is unique before publishing your wearable. Use <a href="https://www.uuidgenerator.net/">uuidgenerator.net</a> to generate a new random UUID</p>
+</blockquote>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">assetType</code>: This field is required for the preview to identify this project as a portable experience.</li>
+  <li><code class="language-plaintext highlighter-rouge">name</code>: The name for the wearable that users will see in the marketplace</li>
+  <li><code class="language-plaintext highlighter-rouge">description</code>: The description of the wearable that users will see in the marketplace. Make sure you indicate what the smart wearable can do, as users of the marketplace will have no way to preview its functinality before buying it.</li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">category</code>: What wearable category to use. Possible values are:</p>
+
+    <ul>
+      <li>
+        <p>‘eyebrows’</p>
+      </li>
+      <li>
+        <p>‘eyes’</p>
+      </li>
+      <li>
+        <p>‘facial_hair’</p>
+      </li>
+      <li>
+        <p>‘hair’</p>
+      </li>
+      <li>
+        <p>‘mouth’</p>
+      </li>
+      <li>
+        <p>‘upper_body’</p>
+      </li>
+      <li>
+        <p>‘lower_body’</p>
+      </li>
+      <li>
+        <p>‘feet’</p>
+      </li>
+      <li>
+        <p>‘earring’</p>
+      </li>
+      <li>
+        <p>‘eyewear’</p>
+      </li>
+      <li>
+        <p>‘hat’</p>
+      </li>
+      <li>
+        <p>‘helmet’</p>
+      </li>
+      <li>
+        <p>‘mask’</p>
+      </li>
+      <li>
+        <p>‘tiara’</p>
+      </li>
+      <li>
+        <p>‘top_head’</p>
+      </li>
+      <li>
+        <p>‘skin’</p>
+      </li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">rarity</code>: The rarity supply of the token. Possible values are:
+    <ul>
+      <li>unique (1 copy)</li>
+      <li>mythic (10 copies)</li>
+      <li>legendary (100 copies)</li>
+      <li>epic (1000 copies)</li>
+      <li>uncommon (10.000 copies)</li>
+      <li>common (100.000 copies)</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">thumbnail</code>: Image to use as thumbnail for the wearable, both in the backpack and the marketplace. This image should be at root level in your folder. The recommended image size is 256x256.</li>
+  <li><code class="language-plaintext highlighter-rouge">menuBarIcon</code>: Image to use on the “experiences” menu, to represent this portable experience, to represent the portable experience. This image should be at root level in your folder. The recommended image size is 256x256.</li>
+  <li><code class="language-plaintext highlighter-rouge">model</code>: The 3d model to use for the wearable. This file should be at root level in your folder.</li>
+  <li><code class="language-plaintext highlighter-rouge">bodyShape</code>: The avatar body type that this wearable is compatible with. Possible values:
+    <ul>
+      <li>male</li>
+      <li>female</li>
+      <li>both</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="the-preview">The Preview</h2>
+
+<p>Running a preview of a portable experience is just like running that of a scene, simply run <code class="language-plaintext highlighter-rouge">dcl start</code>. If the <code class="language-plaintext highlighter-rouge">asset.json</code> file is properly configured and the project is recognized as a portable experience, you’ll notice that all the visible around you are the default empty parcels. In this preview mode, you are not restricted to any set of parcels, you can add 3d models or sounds anywhere in the world.</p>
+
+<h2 id="tips">Tips</h2>
+
+<ul>
+  <li>When positioning an entity, note that positions are global, relative to the 0,0 coordinates of Genesis Plaza.</li>
+  <li>To react to nearby players:
+    <ul>
+      <li>use <code class="language-plaintext highlighter-rouge">getConnectedPlayers()</code> to know what players are already there, and <code class="language-plaintext highlighter-rouge">onPlayerConnectedObservable</code> / `onPlayerDisconnectedObservable to track other players coming and going.</li>
+      <li>Be mindful that the loading of the smart wearable, surrounding scenes and other players may occur in different orders depending on the situation. If the player enters Decentraland with the smart wearable already on, it’s likely that your portable experience will load before other players do. On the other hand, tf the player first loads into a scene and then puts on the wearable, it’s likely that other players will already be loaded by the time the portable experience starts running.</li>
+      <li>Wait till the player is connected to an island inside their realm. Fetch the realm data and check for the ‘room’ field. If the ‘room’ field is null, the player is not yet connected to an island and other players won’t be loaded yet. You can periodically check this every 1 second till the ‘room’ field is present, and only initialize your logic then.</li>
+    </ul>
+  </li>
+  <li>To interact with surrounding scenes:
+    <ul>
+      <li>You can’t directly send any instructions to nearby scenes or other portable experiences, the <code class="language-plaintext highlighter-rouge">messageBus</code> is currently sandboxed for each portable experience/scene.</li>
+      <li>You can use an intermediate server to send information between the portable experience and a scene.</li>
+      <li>If you do a raycast, you can detect hits against the colliders of entities from the surrounding scenes. This can tell you the exact hit location, normal direction, and even the entity name and mesh name of the 3d model.</li>
+    </ul>
+  </li>
+  <li>Kill a portable experience: Run the <code class="language-plaintext highlighter-rouge">kill()</code> method to self-terminate a portable experience.</li>
+</ul>
+
+<h2 id="publish">Publish</h2>
+
+<p>To publish your smart wearable:</p>
+
+<ol>
+  <li>
+    <p>Make sure the information in <code class="language-plaintext highlighter-rouge">asset.json</code> is accurate. If you used another project as a starting point, make sure the <code class="language-plaintext highlighter-rouge">id</code> is a unique identifier, not used by other wearables.</p>
+  </li>
+  <li>
+    <p>Run <code class="language-plaintext highlighter-rouge">dcl pack</code> on your project folder. This generates a <code class="language-plaintext highlighter-rouge">portable-experience.zip</code> file in your project folder.</p>
+  </li>
+</ol>
+
+<blockquote>
+  <p>NOTE: The output of <code class="language-plaintext highlighter-rouge">dcl pack</code> will indicate the size of the uncompressed exported project, it must be under 2MB. If larger than that, it won’t be accepted by the builder.</p>
+</blockquote>
+
+<ol>
+  <li>
+    <p>Open the Builder, open the Collections tab, click + to upload a new wearable.</p>
+  </li>
+  <li>
+    <p>Drag your compressed <code class="language-plaintext highlighter-rouge">portable-expereince.zip</code> file into the Builder, verify that all the information is accurate.</p>
+  </li>
+</ol>
+
+<blockquote>
+  <p>Note: If your wearable is an upper_body or a lower_body and meant to be unisex, you need to do a workaround (even if both body shapes use the same model):</p>
+</blockquote>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- Select only Male and complete the process
+- Open the wearables in the editor, click the three dot options button, select “upload female representation”, and upload the 3d model for the female shape.
+</code></pre></div></div>
+
+<ol>
+  <li>Open the editor and make sure the “hide” and “remove” categories are correctly set to disable other wearable categories when this wearable is on.</li>
+  <li>Create a new collection with this and perhaps other wearables.</li>
+  <li>Hit the 3 dots icon next to “Mint Items” and select “See in world”. This will open a tab with the explorer on ropsten, where you can try out all the wearables of your collection in Decentraland, and see how they behave in a more real scenario, for example running around Genesis Plaza.</li>
+  <li>At this point, your wearable is ready to be published. We still don’t encourage creators to publish any smart wearables, as we’re still in experimental stages, reviewers from the committee have been instructed to not approve any smart wearables that don’t come from the foundation.</li>
+</ol>
+
+<blockquote>
+  <p>Note: There will be a <code class="language-plaintext highlighter-rouge">dcl deploy</code> command in the future, to enable you to do this process without navigating the Builder UI.</p>
+</blockquote>
+
+<!--
+## Restricted actions
+
+To prevent abuse, certain features aren't permitted on portable experiences, or require adding a permission flag.
+
+The following actions require special permissions
+
+- Send HTTP requests
+- Connect to a WebSockets server
+... etc
+-->
+
+<h2 id="limitations">Limitations</h2>
+
+<blockquote>
+  <p>IMPORTANT: The entire smart wearable needs to fit within 2 MB. This includes the 3d model, thumbnail, code, libraries, sound files, additional 3d models, UI images, etc. This limit is for the uncompressed folder. The builder will not let you upload larger wearables than this.
+To check the size of your portable experience, run <code class="language-plaintext highlighter-rouge">dcl pack</code>, the project size is specified in the output text of the command. You can also verify this by uncompressing the generated <code class="language-plaintext highlighter-rouge">portable-expereince.zip</code> file.</p>
+</blockquote>
+
+<p>Smart wearables only run the portable experience for the player wearing the wearable. Other players don’t see the effects. For example, if the portable experience renders a pet that follows the player, other players around won’t see this pet.</p>
+
+<p>Smart wearables only work when players have them on. For this reason, players can only have a limited number of activated smart wearables, and depending on what part of the body they take up, some will be incompatible with others. For example, you can’t have two hats at the same time, or a helmet and hair at the same time.</p>
+
+<p>If a wearable is “hidden” but not “removed” by other wearables being worn, then the portable experience can still be on, even if the corresponding wearable is not visible.</p>
+
+<h2 id="examples">Examples</h2>
+
+<p><a href="https://github.com/decentraland-scenes/Portal-ble_experience">Portal-ble expoerence</a></p>
+
+<p><a href="https://github.com/decentraland-scenes/Smart-wearable-graffitti">Graffiti</a></p>
+
+<p><a href="https://github.com/decentraland-scenes/Smart-wearable-radio">Radio</a></p>
+
+<p><a href="https://github.com/decentraland-scenes/Smart-wearable-raycast-test">Raycast test</a></p>
+
+<p><a href="https://github.com/decentraland-scenes/Smart-wearable-realms-test">Realms test</a></p>
+
+<p><a href="https://github.com/decentraland-scenes/Smart-wearable-rocket-board">Rocket board</a></p>
+
+<p><a href="https://github.com/decentraland-scenes/Smart-wearable-Scarvenger-hunt">Scarvenger hunt</a></p>
+
+<p>Xmas 2021:</p>
+
+<p><a href="https://github.com/nearnshaw/xmas-airdrops">Xmas airdrops</a></p>
+
+<p><a href="https://github.com/decentraland-scenes/snowball-fight">Snowball fight</a></p>
+
+<p><a href="https://github.com/decentraland-scenes/xmas-secret-santa">Secret Santa</a></p>
+:ET

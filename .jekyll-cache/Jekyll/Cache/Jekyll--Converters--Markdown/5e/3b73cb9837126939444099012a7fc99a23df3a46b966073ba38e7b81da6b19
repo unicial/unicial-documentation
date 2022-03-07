@@ -1,0 +1,614 @@
+I"��<p>A Decentraland scene can interface with the Ethereum blockchain. This can serve to obtain data about the user’s wallet and the tokens in it, or to trigger transactions that could involve any Ethereum token, fungible or non-fungible. This can be used in many ways, for example to sell tokens, to reward tokens as part of a game-mechanic, to change how a player interacts with a scene if they own certain tokens, etc.</p>
+
+<p>The following tools currently exist, all of them provided by Decentraland:</p>
+
+<!--
+- The `Identity` library: used to obtain general player data.
+-->
+
+<ul>
+  <li>The <code class="language-plaintext highlighter-rouge">Ethereum controller</code>: A basic library that offers some limited but simple functionality.</li>
+  <li>The <code class="language-plaintext highlighter-rouge">eth-connect</code> library: A lower level library to interface with Ethereum contracts and call their functions, for example to trigger transactions or check balances.</li>
+</ul>
+
+<p>Note that all transactions triggered by a scene will require a player to approve and pay a gas fee.</p>
+
+<p>All blockchain operations also need to be carried out as <a href="/development-guide/async-functions/">asynchronous functions</a>, since the timing depends on external events.</p>
+
+<p>When running a preview of a scene that uses one of the ethereum libraries, you must have Metamask open in your browser and you must run the preview with:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dcl start --web3
+</code></pre></div></div>
+
+<!--
+
+## User identity
+
+#### Import the identity library
+
+The identity library is ported with the Decentraland ECS. Simply import it into a scene, no additional steps are needed.
+
+```ts
+import { getUserPublicKey, getUserData } from '@decentraland/Identity'
+```
+
+#### Get a public key
+
+You can obtain a user's public Ethereum key by using the `getUserPublicKey()` function.
+
+
+```ts
+import { getUserPublicKey } from '@decentraland/Identity'
+
+executeTask(async () => {
+  let key = await getUserPublicKey()
+  log(key)
+})
+
+```
+The user's public key is necessary to send payments or other transactions that involve the user. The public key can also be used as a persisting ID to recognize a user over multiple sessions.
+
+> Note: The user must be logged into their Metamask account on their browser for this method to work.
+
+#### Get other user data
+
+You can obtain other user data via the `getUserData()` function. This function returns the following data:
+
+- displayName: the user's name Decentraland
+- publicKey: the user's Ethereum public key
+
+```ts
+import { getUserPublicKey } from '@decentraland/Identity'
+
+executeTask(async () => {
+  let userData = await getUserData()
+  log(userData)
+})
+```
+
+Users can change their display name at any time while in Decentraland. For this reason, the public key is generally a more recommendable way to keep track of users over time.
+
+> Note: The user must be logged into their Metamask account on their browser for this method to work.
+
+-->
+
+<h2 id="ethereum-controller-library">Ethereum controller library</h2>
+
+<p>The simplest way to perform operations on the Ethereum blockchain is through the <em>ethereum controller</em> library. This controller is packaged with the SDK, so you don’t need to run any manual installations.</p>
+
+<p>To import the Ethereum controller into your scene file:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">EthereumController</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@decentraland/EthereumController</span><span class="dl">"</span>
+</code></pre></div></div>
+
+<p>Below we explain some of the things you can do with this controller.</p>
+
+<h2 id="get-a-players-ethereum-account">Get a player’s ethereum account</h2>
+
+<p>Use the <code class="language-plaintext highlighter-rouge">getUserAccount()</code> function from the EthereumController to find a player’s Ethereum public key.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">getUserAccount</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@decentraland/EthereumController</span><span class="dl">"</span>
+
+<span class="nx">executeTask</span><span class="p">(</span><span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">address</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">getUserAccount</span><span class="p">()</span>
+    <span class="nx">log</span><span class="p">(</span><span class="nx">address</span><span class="p">)</span>
+  <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">toString</span><span class="p">())</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>As shown in the example above, you should wrap the function in an <code class="language-plaintext highlighter-rouge">async()</code> function, learn more about this in <a href="/development-guide/async-functions/">async functions</a></p>
+
+<p>The following example keeps track of provided addresses.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">getUserAccount</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@decentraland/EthereumController</span><span class="dl">"</span>
+
+<span class="kd">let</span> <span class="nx">registeredAddresses</span><span class="p">:</span> <span class="nb">String</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="nx">executeTask</span><span class="p">(</span><span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">address</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">getUserAccount</span><span class="p">()</span>
+    <span class="kd">let</span> <span class="nx">lowerCaseAddress</span> <span class="o">=</span> <span class="nx">address</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">registeredAddresses</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">lowerCaseAddress</span> <span class="o">==</span> <span class="nx">registeredAddresses</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="p">{</span>
+        <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">already registered</span><span class="dl">"</span><span class="p">)</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">registeredAddresses</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">lowerCaseAddress</span><span class="p">)</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">toString</span><span class="p">())</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>Note: Even though the eth address may contain upper case characters, some browsers convert the returned string to lower case automatically. If you wish compare address values and have it work on all browsers, use the <code class="language-plaintext highlighter-rouge">.toLowerCase()</code> method to convert the value into lower case.</p>
+</blockquote>
+
+<h2 id="sign-messages">Sign messages</h2>
+
+<p>A player can sign a message using their Ethereum public key. This signature is a secure way to give consent or to register an accomplishment or action that is registered with the block chain.</p>
+
+<p>The signing of a message isn’t a transaction, so it doesn’t imply paying any gas fees on the Ethereum network, it does however open a pop-up to ask the player for consent.</p>
+
+<p>Messages that can be signed need to follow a specific format to match safety requirements. They must include the “Decentraland signed header” at the top, this prevents the possibility of any mismanagement of the player’s wallet.</p>
+
+<p>Signable messages should follow this format:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># DCL Signed message
+&lt;key 1&gt;: &lt;value 1&gt;
+&lt;key 2&gt;: &lt;value 2&gt;
+&lt;key n&gt;: &lt;value n&gt;
+Timestamp: &lt;time stamp&gt;
+</code></pre></div></div>
+
+<p>For example, a signable message for a game might look like this:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">#</span> <span class="nx">DCL</span> <span class="nx">Signed</span> <span class="nx">message</span>
+<span class="nx">Attacker</span><span class="p">:</span> <span class="mi">10</span>
+<span class="nx">Defender</span><span class="p">:</span> <span class="mi">123</span>
+<span class="nx">Timestamp</span><span class="p">:</span> <span class="mi">1512345678</span>
+</code></pre></div></div>
+
+<p>Before a player can sign a message, you must first convert it from a string into an object using the <code class="language-plaintext highlighter-rouge">convertMessageToObject()</code> function, then it can be signed with the <code class="language-plaintext highlighter-rouge">signMessage()</code> function.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">EthereumController</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@decentraland/EthereumController</span><span class="dl">"</span>
+
+<span class="kd">const</span> <span class="nx">messageToSign</span> <span class="o">=</span> <span class="s2">`# DCL Signed message
+Attacker: 10
+Defender: 123
+Timestamp: 1512345678`</span>
+
+<span class="kd">let</span> <span class="nx">eth</span> <span class="o">=</span> <span class="nx">EthereumController</span>
+
+<span class="nx">executeTask</span><span class="p">(</span><span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">convertedMessage</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">eth</span><span class="p">.</span><span class="nx">convertMessageToObject</span><span class="p">(</span><span class="nx">messageToSign</span><span class="p">)</span>
+  <span class="kd">const</span> <span class="p">{</span> <span class="nx">message</span><span class="p">,</span> <span class="nx">signature</span> <span class="p">}</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">eth</span><span class="p">.</span><span class="nx">signMessage</span><span class="p">(</span><span class="nx">convertedMessage</span><span class="p">)</span>
+  <span class="nx">log</span><span class="p">({</span> <span class="nx">message</span><span class="p">,</span> <span class="nx">signature</span> <span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<h2 id="check-if-a-message-is-correct">Check if a message is correct</h2>
+
+<p>To verify that the message that the player signed is in fact the one that you want to send, you can use the <code class="language-plaintext highlighter-rouge">toHex()</code> function from <code class="language-plaintext highlighter-rouge">eth-connect</code> library, to convert it and easily compare it. See further below for instructions on how to import the <code class="language-plaintext highlighter-rouge">eth-connect</code> library.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">toHex</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">eth-connect</span><span class="dl">"</span>
+<span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">EthereumController</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@decentraland/EthereumController</span><span class="dl">"</span>
+
+<span class="kd">const</span> <span class="nx">messageToSign</span> <span class="o">=</span> <span class="s2">`# DCL Signed message
+Attacker: 10
+Defender: 123
+Timestamp: 1512345678`</span>
+
+<span class="kd">let</span> <span class="nx">eth</span> <span class="o">=</span> <span class="nx">EthereumController</span>
+
+<span class="kd">function</span> <span class="nx">signMessage</span><span class="p">(</span><span class="nx">msg</span><span class="p">:</span> <span class="kr">string</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">executeTask</span><span class="p">(</span><span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">convertedMessage</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">eth</span><span class="p">.</span><span class="nx">convertMessageToObject</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span>
+    <span class="kd">const</span> <span class="p">{</span> <span class="nx">message</span><span class="p">,</span> <span class="nx">signature</span> <span class="p">}</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">eth</span><span class="p">.</span><span class="nx">signMessage</span><span class="p">(</span><span class="nx">convertedMessage</span><span class="p">)</span>
+    <span class="nx">log</span><span class="p">({</span> <span class="nx">message</span><span class="p">,</span> <span class="nx">signature</span> <span class="p">})</span>
+
+    <span class="kd">const</span> <span class="nx">originalMessageHex</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">toHex</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span>
+    <span class="kd">const</span> <span class="nx">sentMessageHex</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">toHex</span><span class="p">(</span><span class="nx">message</span><span class="p">)</span>
+    <span class="kd">const</span> <span class="nx">isEqual</span> <span class="o">=</span> <span class="nx">sentMessageHex</span> <span class="o">===</span> <span class="nx">originalMessageHex</span>
+    <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">Is the message correct?</span><span class="dl">"</span><span class="p">,</span> <span class="nx">isEqual</span><span class="p">)</span>
+  <span class="p">})</span>
+<span class="p">}</span>
+
+<span class="nx">signMessage</span><span class="p">(</span><span class="nx">messageToSign</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="require-a-payment">Require a payment</h4>
+
+<p>The <code class="language-plaintext highlighter-rouge">requirePayment()</code> function prompts the player to accept paying a sum to an Ethereum wallet of your choice.</p>
+
+<p>Players must always accept payments manually, a payment can never be implied directly from the player’s actions in the scene.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">eth</span><span class="p">.</span><span class="nx">requirePayment</span><span class="p">(</span><span class="nx">receivingAddress</span><span class="p">,</span> <span class="nx">amount</span><span class="p">,</span> <span class="nx">currency</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>The function requires that you specify an Ethereum wallet address to receive the payment, an amount for the transaction and a specific currency to use (for now only <code class="language-plaintext highlighter-rouge">ETH</code> is supported).</p>
+
+<p>If accepted by the player, the function returns the hash number of the transaction.</p>
+
+<blockquote>
+  <p>Warning: This function informs you that a transaction was requested, but not that it was confirmed. If the gas price is too low, or it doesn’t get mined for any reason, the transaction won’t be completed.</p>
+</blockquote>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">myWallet</span> <span class="o">=</span> <span class="err">‘</span><span class="mh">0x0123456789</span><span class="p">...</span><span class="err">’</span>
+<span class="kd">const</span> <span class="nx">enterPrice</span> <span class="o">=</span> <span class="mf">0.05</span>
+
+<span class="kd">function</span> <span class="nx">payment</span><span class="p">(){</span>
+  <span class="nx">executeTask</span><span class="p">(</span><span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+      <span class="k">await</span> <span class="nx">eth</span><span class="p">.</span><span class="nx">requirePayment</span><span class="p">(</span><span class="nx">myWallet</span><span class="p">,</span> <span class="nx">enterPrice</span><span class="p">,</span> <span class="dl">'</span><span class="s1">ETH</span><span class="dl">'</span><span class="p">)</span>
+      <span class="nx">openDoor</span><span class="p">()</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">{</span>
+      <span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">failed process payment</span><span class="dl">"</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">})</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">button</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+<span class="nx">button</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">BoxShape</span><span class="p">())</span>
+<span class="nx">button</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">OnClick</span><span class="p">(</span> <span class="nx">e</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">payment</span><span class="p">()</span>
+  <span class="p">}))</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">button</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>The example above listens for clicks on a <em>button</em> entity. When clicked, the player is prompted to make a payment in ETH to a specific wallet for a given amount. Once the player accepts this payment, the rest of the function can be executed. If the player doesn’t accept the payment, the rest of the function won’t be executed.</p>
+
+<p><img src="/images/media/metamask_confirm.png" alt="" /></p>
+
+<blockquote>
+  <p>Tip: We recommend defining the wallet address and the amount to pay as global constants at the start of the <em>.ts</em> file. These are values you might need to change in the future, setting them as constants makes it easier to update the code.</p>
+</blockquote>
+
+<!--
+#### Wait for a transaction to be mined
+
+The Ethereum controller allows you to check if a specific transaction has been already mined. It looks for a specific transaction's hash number and verifies that it has been validated by a miner and added to the blockchain.
+
+> Important: Because of how a blockchain works, there might be [reorgs](/blockchain-integration/ethereum-essentials/#blockchain-reorgs) of the network that can lead to a mined transaction being reverted. A transaction that was confirmed once by one node has no guarantee of ending up in the official consensus of the network. We don't advise relying on this function for dealing with things that are of value.
+
+
+```ts
+await this.eth.waitForMinedTx(currency, tx, receivingAddress)
+```
+
+
+```ts
+const myWallet = ‘0x0123456789...’
+const enterPrice = 0.05
+
+function payment(){
+  executeTask(async () => {
+    try {
+      const tx = await eth.requirePayment(myWallet, entrancePrice, ‘ETH’)
+      await eth.waitForMinedTx(‘ETH’, tx, myWallet)
+      openDoor()
+    } catch {
+      log("failed process payment")
+    }
+  })
+}
+
+const button = new Entity()
+button.addComponent(new BoxShape())
+button.addComponent(new OnClick( e => {
+    payment()
+  }))
+engine.addEntity(button)
+```
+
+The example above first requires the player to accept a transaction, if the player accepts it, then `requirePayment` returns a hash that can be used to track the transaction and see if it's been mined. Once the transaction is mined and accepted as part of the blockchain, the `openDoor()` function is called.
+-->
+
+<h2 id="async-sending">Async sending</h2>
+
+<p>Use the function <code class="language-plaintext highlighter-rouge">sendAsync()</code> to send messages over <a href="https://en.wikipedia.org/wiki/Remote_procedure_call">RPC protocol</a>.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">EthereumController</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@decentraland/EthereumController</span><span class="dl">"</span>
+
+<span class="c1">// send a message</span>
+<span class="k">await</span> <span class="nx">eth</span><span class="o">!</span><span class="p">.</span><span class="nx">sendAsync</span><span class="p">(</span><span class="nx">myMessage</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="lower-level-operations">Lower level operations</h2>
+
+<p>The eth-connect library is made and maintained by Decentraland. It’s based on the popular <a href="https://github.com/ethereum/web3.js/">Web3.js</a> library, but it’s fully written in TypeScript and features a few security improvements.</p>
+
+<p>This controller operates at a lower level than the <em>Ethereum controller</em> (in fact the <em>Ethereum controller</em> is built upon it) so it’s tougher to use but more flexible.</p>
+
+<p>It’s main use is to call functions in a contract, it also offers a number of helper functions for various tasks. Check it out on <a href="https://github.com/decentraland/eth-connect">GitHub</a>.</p>
+
+<blockquote>
+  <p>Note: The eth-connect library is currently lacking more in-depth documentation. Since this library is mostly based on the Web3.js library and most of the function names are intentionally kept identical to those in Web3.js, it can often help to refer to <a href="https://web3js.readthedocs.io/en/1.0/">Web3’s documentation</a>.</p>
+</blockquote>
+
+<h4 id="download-and-import-the-eth-connect-library">Download and import the eth-connect library</h4>
+
+<p>To use eth-connect library, you must manually install the package via <code class="language-plaintext highlighter-rouge">npm</code> in your scene’s folder. To do so, run the following command in the scene folder:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm install eth-connect -B
+</code></pre></div></div>
+
+<blockquote>
+  <p>Note: Decentraland scenes don’t support older versions than 4.0 of the eth-connect library.</p>
+</blockquote>
+
+<blockquote>
+  <p>Note: Currently, we don’t allow installing other dependencies via npm that are not created by Decentraland. This is to keep scenes well sandboxed and prevent malicious code.</p>
+</blockquote>
+
+<p>Once installed, you can import whatever you need from <code class="language-plaintext highlighter-rouge">eth-connect</code> to the scene’s code:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">toHex</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">eth-connect</span><span class="dl">"</span>
+</code></pre></div></div>
+
+<h4 id="import-a-contract-abi">Import a contract ABI</h4>
+
+<p>An ABI (Application Binary Interface) describes how to interact with an Ethereum contract, determining what functions are available, what inputs they take and what they output. Each Ethereum contract has its own ABI, you should import the ABIs of all the contracts you wish to use in your project.</p>
+
+<p>For example, here’s an example of one function in the MANA ABI:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span>
+  <span class="nl">anonymous</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+  <span class="nx">inputs</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="na">indexed</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+      <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">burner</span><span class="dl">'</span><span class="p">,</span>
+      <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">address</span><span class="dl">'</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="na">indexed</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+      <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">value</span><span class="dl">'</span><span class="p">,</span>
+      <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">uint256</span><span class="dl">'</span>
+    <span class="p">}</span>
+  <span class="p">],</span>
+  <span class="nx">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Burn</span><span class="dl">'</span><span class="p">,</span>
+  <span class="kd">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">event</span><span class="dl">'</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>ABI definitions can be quite lengthy, as they often include a lot of functions, so we recommend pasting the JSON contents of an ABI file into a separate <code class="language-plaintext highlighter-rouge">.ts</code> file and importing it into other scene files from there. We also recommend holding all ABI files in a separate folder of your scene, named <code class="language-plaintext highlighter-rouge">/contracts</code>.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">abi</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">../contracts/mana</span><span class="dl">"</span>
+</code></pre></div></div>
+
+<p>Here are links to different Decentraland contracts. Obtain the ABI for each contract by clicking <em>Export ABI</em> and choosing <em>JSON Format</em>.</p>
+
+<ul>
+  <li><a href="https://etherscan.io/address/0x0f5d2fb29fb7d3cfee444a200298f468908cc942#code">MANA Token ABI</a></li>
+  <li><a href="https://etherscan.io/address/0x19a8ed4860007a66805782ed7e0bed4e44fc6717#code">Decentraland Marketplace</a></li>
+  <li><a href="https://etherscan.io/address/0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d#code">LAND ABI</a></li>
+  <li><a href="https://etherscan.io/address/0x959e104e1a4db6317fa58f8295f586e1a978c297#code">Estate ABI</a></li>
+  <li><a href="https://etherscan.io/address/0x894b883905bfEe2CC448880F1b59f4A762E67566">AvatarNameRegistry ABI</a></li>
+  <li><a href="https://etherscan.io/address/0xcc054fab08127c19f621ab83ade5962cd10584ec">Catalyst ABI</a></li>
+</ul>
+
+<p>These are the contracts for the various wearable collections: (each collection was emitted as a separate contract)</p>
+
+<ul>
+  <li><a href="https://etherscan.io/address/0xc04528c14c8ffd84c7c1fb6719b4a89853035cdd">ExclusiveMasksCollection ABI</a></li>
+  <li><a href="https://etherscan.io/address/0xc1f4b0eea2bd6690930e6c66efd3e197d620b9c2">Halloween2019Collection ABI</a></li>
+  <li><a href="https://etherscan.io/address/0x07ccfd0fbada4ac3c22ecd38037ca5e5c0ad8cfa">Halloween2019CollectionFactory ABI</a></li>
+  <li><a href="https://etherscan.io/address/0xc3af02c0fd486c8e9da5788b915d6fff3f049866">Xmas2019Collection ABI</a></li>
+  <li><a href="https://etherscan.io/address/0xf64dc33a192e056bb5f0e5049356a0498b502d50">MCHCollection ABI</a></li>
+  <li><a href="https://etherscan.io/address/0x32b7495895264ac9d0b12d32afd435453458b1c6">CommunityContestCollection ABI</a></li>
+  <li><a href="https://etherscan.io/address/0xd35147be6401dcb20811f2104c33de8e97ed6818">DCLLaunchCollection ABI</a></li>
+  <li><a href="https://etherscan.io/address/0x3163d2cfee3183f9874e2869942cc62649eeb004">DCGCollection ABI</a></li>
+</ul>
+
+<blockquote>
+  <p>TIP: To clearly see the functions exposed by a contract, open it in <a href="https://abitopic.io">abitopic.io</a>. Just paste the contract address there and open the <em>functions</em> tab to see the full list of supported functions and their arguments. You can even test calling the functions with different parameters via the webpage.</p>
+</blockquote>
+
+<p>Configuring TypeScript to be able to import from a JSON file has its difficulties. The recommended easier workaround is to change the <code class="language-plaintext highlighter-rouge">ABI.JSON</code> file’s extension to <code class="language-plaintext highlighter-rouge">.ts</code> and modifying it slightly so that it its content starts with <code class="language-plaintext highlighter-rouge">export default</code>.</p>
+
+<p>For example, if the ABI file’s contents starts with <code class="language-plaintext highlighter-rouge">[{"constant":true,"inputs":[{"internalType":"bytes4" ...etc</code>, modify it so that it starts with <code class="language-plaintext highlighter-rouge">export default [{"constant":true,"inputs":[{"internalType":"bytes4" ...etc</code>.</p>
+
+<h4 id="instance-a-contract">Instance a contract</h4>
+
+<p>After importing the <code class="language-plaintext highlighter-rouge">eth-connect</code> library and a contract’s <em>abi</em>, you must instance several objects that will allow you to use the functions in the contract and connect to Metamask in the player’s browser.</p>
+
+<p>You must also import the web3 provider. This is because Metamask in the player’s browser uses web3, so we need a way to interact with that.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">RequestManager</span><span class="p">,</span> <span class="nx">ContractFactory</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">eth-connect</span><span class="dl">"</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">abi</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">../contracts/mana</span><span class="dl">"</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">getProvider</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@decentraland/web3-provider</span><span class="dl">"</span>
+
+<span class="nx">executeTask</span><span class="p">(</span><span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="c1">// create an instance of the web3 provider to interface with Metamask</span>
+  <span class="kd">const</span> <span class="nx">provider</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">getProvider</span><span class="p">()</span>
+  <span class="c1">// Create the object that will handle the sending and receiving of RPC messages</span>
+  <span class="kd">const</span> <span class="nx">requestManager</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">RequestManager</span><span class="p">(</span><span class="nx">provider</span><span class="p">)</span>
+  <span class="c1">// Create a factory object based on the abi</span>
+  <span class="kd">const</span> <span class="nx">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ContractFactory</span><span class="p">(</span><span class="nx">requestManager</span><span class="p">,</span> <span class="nx">abi</span><span class="p">)</span>
+  <span class="c1">// Use the factory object to instance a `contract` object, referencing a specific contract</span>
+  <span class="kd">const</span> <span class="nx">contract</span> <span class="o">=</span> <span class="p">(</span><span class="k">await</span> <span class="nx">factory</span><span class="p">.</span><span class="nx">at</span><span class="p">(</span>
+    <span class="dl">"</span><span class="s2">0x2a8fd99c19271f4f04b1b7b9c4f7cf264b626edb</span><span class="dl">"</span>
+  <span class="p">))</span> <span class="k">as</span> <span class="kr">any</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>Note that several of these functions must be called using <code class="language-plaintext highlighter-rouge">await</code>, since they rely on fetching external data and can take some time to be completed.</p>
+
+<blockquote>
+  <p>Tip: For contracts that follow a same standard, such as ERC20 or ERC721, you can import a single generic ABI for all. You then generate a single <code class="language-plaintext highlighter-rouge">ContractFactory</code> object with that ABI and use that same factory to instance interfaces for each contract.</p>
+</blockquote>
+
+<h4 id="call-the-methods-in-a-contract">Call the methods in a contract</h4>
+
+<p>Once you’ve created a <code class="language-plaintext highlighter-rouge">contract</code> object, you can easily call the functions that are defined in its ABI, passing it the specified input parameters.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">getProvider</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@decentraland/web3-provider</span><span class="dl">"</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">getUserAccount</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@decentraland/EthereumController</span><span class="dl">"</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">RequestManager</span><span class="p">,</span> <span class="nx">ContractFactory</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">eth-connect</span><span class="dl">"</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">abi</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">../contracts/mana</span><span class="dl">"</span>
+
+<span class="nx">executeTask</span><span class="p">(</span><span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="c1">// Setup steps explained in the section above</span>
+    <span class="kd">const</span> <span class="nx">provider</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">getProvider</span><span class="p">()</span>
+    <span class="kd">const</span> <span class="nx">requestManager</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">RequestManager</span><span class="p">(</span><span class="nx">provider</span><span class="p">)</span>
+    <span class="kd">const</span> <span class="nx">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ContractFactory</span><span class="p">(</span><span class="nx">requestManager</span><span class="p">,</span> <span class="nx">abi</span><span class="p">)</span>
+    <span class="kd">const</span> <span class="nx">contract</span> <span class="o">=</span> <span class="p">(</span><span class="k">await</span> <span class="nx">factory</span><span class="p">.</span><span class="nx">at</span><span class="p">(</span>
+      <span class="dl">"</span><span class="s2">0x2a8fd99c19271f4f04b1b7b9c4f7cf264b626edb</span><span class="dl">"</span>
+    <span class="p">))</span> <span class="k">as</span> <span class="kr">any</span>
+    <span class="kd">const</span> <span class="nx">address</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">getUserAccount</span><span class="p">()</span>
+    <span class="nx">log</span><span class="p">(</span><span class="nx">address</span><span class="p">)</span>
+
+    <span class="c1">// Perform a function from the contract</span>
+    <span class="kd">const</span> <span class="nx">res</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">contract</span><span class="p">.</span><span class="nx">setBalance</span><span class="p">(</span>
+      <span class="dl">"</span><span class="s2">0xaFA48Fad27C7cAB28dC6E970E4BFda7F7c8D60Fb</span><span class="dl">"</span><span class="p">,</span>
+      <span class="mi">100</span><span class="p">,</span>
+      <span class="p">{</span>
+        <span class="na">from</span><span class="p">:</span> <span class="nx">address</span><span class="p">,</span>
+      <span class="p">}</span>
+    <span class="p">)</span>
+    <span class="c1">// Log response</span>
+    <span class="nx">log</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span>
+  <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">toString</span><span class="p">())</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>The example above uses the abi for the Ropsten MANA contract and transfers 100 <em>fake MANA</em> to your account in the Ropsten test network.</p>
+
+<h4 id="other-functions">Other functions</h4>
+
+<p>The eth-connect library includes a number of other helpers you can use. For example to:</p>
+
+<ul>
+  <li>Get an estimated gas price</li>
+  <li>Get the balance of a given address</li>
+  <li>Get a transaction receipt</li>
+  <li>Get the number of transactions sent from an address</li>
+  <li>Convert between various formats including hexadecimal, binary, utf8, etc.</li>
+</ul>
+
+<!--
+
+#### Obtain gas price
+
+
+ * Generates and returns an estimate of how much gas is necessary to allow the transaction to complete.
+     * The transaction will not be added to the blockchain. Note that the estimate may be significantly more
+     * than the amount of gas actually used by the transaction, for a variety of reasons including EVM mechanics
+     * and node performance.
+     */
+    eth_estimateGas: (data: Partial<TransactionCallOptions> & Partial<TransactionOptions>) => Promise<Quantity>;
+    /** Returns information about a block by hash. */
+
+  @exposeMethod
+  async estimateGas(data: Partial<TransactionCallOptions> & Partial<TransactionOptions>): Promise<Quantity> {
+    return requestManager.eth_estimateGas(data)
+  }
+
+#### Get Balance
+
+ /** Returns the balance of the account of given address. */
+    eth_getBalance: (address: Address, block: BlockIdentifier) => Promise<BigNumber>;
+
+
+      @exposeMethod
+  async getBalance(address: Address, block: Quantity | Tag): Promise<BigNumber> {
+    return requestManager.eth_getBalance(address, block)
+  }
+
+## Get data from executed transactions
+
+ /**
+     * Returns the receipt of a transaction by transaction hash.
+     * Note That the receipt is not available for pending transactions.
+     */
+    eth_getTransactionReceipt: (hash: TxHash) => Promise<TransactionReceipt>;
+
+@exposeMethod
+  async getTransactionReceipt(hash: TxHash): Promise<TransactionReceipt> {
+    return requestManager.eth_getTransactionReceipt(hash)
+  }
+
+
+  /** Returns the number of transactions sent from an address. */
+    eth_getTransactionCount: (address: Address, block: BlockIdentifier) => Promise<number>;
+
+  @exposeMethod
+  async getTransactionCount(address: Address, block: Quantity | Tag): Promise<number> {
+    return requestManager.eth_getTransactionCount(address, block)
+  }
+-->
+
+<!--
+## Web3 API
+
+We have only whitelisted the following methods from the API, all others are currently not supported:
+
+- eth_sendTransaction
+- eth_getTransactionReceipt
+- eth_estimateGas
+- eth_call
+- eth_getBalance
+- eth_getStorageAt
+- eth_blockNumber
+- eth_gasPrice
+- eth_protocolVersion
+- net_version
+- eth_getTransactionCount
+- eth_getBlockByNumber
+
+
+Below is a sample that uses this API to get the contents of a block in the blockchain.
+
+
+```ts
+import { createElement, ScriptableScene } from "decentraland-api"
+import Web3 = require("web3")
+
+export default class EthereumProvider extends ScriptableScene {
+  async sceneDidMount() {
+    const provider = await this.getEthereumProvider()
+    const web3 = new Web3(provider)
+
+    web3.eth.getBlock(48, function(error: Error, result: any) {
+      console.log("Eth block 48 (from scene)", result)
+    })
+  }
+
+  async render() {
+    return <scene />
+  }
+}
+```
+
+
+-->
+
+<!--
+
+const signature = await requestManager.personal_sign(message, account, 'test')
+const signerAddress = await requestManager.personal_ecRecover(message, signature)
+
+
+/**
+     * The sign method calculates an Ethereum specific signature with:
+     *   sign(keccack256("Ethereum Signed Message:" + len(message) + message))).
+     *
+     * By adding a prefix to the message makes the calculated signature recognisable as an Ethereum specific signature.
+     * This prevents misuse where a malicious DApp can sign arbitrary data (e.g. transaction) and use the signature to
+     * impersonate the victim.
+     *
+     * See ecRecover to verify the signature.
+     */
+    personal_sign: (data: Data, signerAddress: Address, passPhrase: Data) => Promise<Data>;
+    /**
+     * ecRecover returns the address associated with the private key that was used to calculate the signature in
+     * personal_sign.
+     */
+    personal_ecRecover: (message: Data, signature: Data) => Promise<Address>;
+    constructor(provider: any);
+
+-->
+
+<h2 id="using-the-ethereum-test-network">Using the Ethereum test network</h2>
+
+<p>While testing your scene, to avoid transferring real MANA currency, you can use the <em>Ethereum Ropsten test network</em> and transfer fake MANA instead.</p>
+
+<p>To use the test network you must set your Metamask Chrome extension to use the <em>Ropsten test network</em> instead of <em>Main network</em>.</p>
+
+<p>You must also own MANA in the Ropsten blockchain. To obtain free Ropsten mana in the test network, go to our <a href="https://faucet.decentraland.io/">MANA faucet</a>.</p>
+
+<blockquote>
+  <p>Tip: To run the transaction of transferring Ropsten MANA to your wallet, you will need to pay a gas fee in Ropsten Ether. If you don’t have Ropsten Ether, you can obtain it for free from various external faucets like <a href="https://faucet.ropsten.be/">this one</a>.</p>
+</blockquote>
+
+<p>To preview your scene using the test network, add the <code class="language-plaintext highlighter-rouge">DEBUG</code> property to the URL you’re using to access the scene preview on your browser. For example, if you’re accessing the scene via <code class="language-plaintext highlighter-rouge">http://127.0.0.1:8000/?position=0%2C-1</code>, you should set the URL to <code class="language-plaintext highlighter-rouge">http://127.0.0.1:8000/?DEBUG&amp;position=0%2C-1</code>.</p>
+
+<p>Any transactions that you accept while viewing the scene in this mode will only occur in the test network and not affect the MANA balance in your real wallet.</p>
+:ET

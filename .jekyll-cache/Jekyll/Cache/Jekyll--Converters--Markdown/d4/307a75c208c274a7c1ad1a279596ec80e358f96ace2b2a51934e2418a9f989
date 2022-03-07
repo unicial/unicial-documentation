@@ -1,0 +1,186 @@
+I"�<<p>Three dimensional scenes in Decentraland are based on the <a href="https://en.wikipedia.org/wiki/Entity%E2%80%93component%E2%80%93system">Entity-Component</a> model, where everything in a scene is an <em>entity</em>, and each entity can include <em>components</em> that shape its characteristics and functionality.</p>
+
+<p>The rendered shape of an entity is determined by what component it uses. Each entity can have only one shape component assigned to it.</p>
+
+<p><img src="/images/media/ecs-simple-components.png" alt="nested entities" width="400" /></p>
+
+<h2 id="primitive-shapes">Primitive shapes</h2>
+
+<p>Several basic shapes, often called <em>primitives</em>, can be added to an entity.</p>
+
+<p>The following primitive shape components are available:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">BoxShape</code></li>
+  <li><code class="language-plaintext highlighter-rouge">SphereShape</code></li>
+  <li><code class="language-plaintext highlighter-rouge">PlaneShape</code></li>
+  <li><code class="language-plaintext highlighter-rouge">CylinderShape</code></li>
+  <li><code class="language-plaintext highlighter-rouge">ConeShape</code></li>
+</ul>
+
+<p>Each of these components has certain fields that are specific to that shape, for example the <em>cylinder</em> shape has <code class="language-plaintext highlighter-rouge">arc</code>, <code class="language-plaintext highlighter-rouge">radiusTop</code>, <code class="language-plaintext highlighter-rouge">radiusBottom</code>, etc.</p>
+
+<p>To apply a component to an entity, you can instance a new component and assign it all in one operation:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">myEntity</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">SphereShape</span><span class="p">())</span>
+</code></pre></div></div>
+
+<p>Or you can first create the component instance and then assign it to the entity.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">sphere</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">SphereShape</span><span class="p">()</span>
+<span class="nx">myEntity</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="nx">sphere</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Primitive shapes don’t include materials. To give it a color or a texture, you must assign a <a href="/development-guide/materials/">material component</a> to the same entity.</p>
+
+<h2 id="3d-models">3D models</h2>
+
+<p>For more complex shapes, you can build a 3D model in an external tool like Blender and then import them in <em>.glTF</em> or <em>.glb</em> (binary <em>.glTF</em>). <a href="https://www.khronos.org/gltf">glTF</a> (GL Transmission Format) is an open project by Khronos providing a common, extensible format for 3D assets that is both efficient and highly interoperable with modern web technologies.</p>
+
+<p>To add an external model into a scene, add a <code class="language-plaintext highlighter-rouge">GLTFShape</code> component to an entity and set its <code class="language-plaintext highlighter-rouge">src</code> to the path of the glTF file containing the model.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">myEntity</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">GLTFShape</span><span class="p">(</span><span class="dl">"</span><span class="s2">models/House.gltf</span><span class="dl">"</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>Since the <code class="language-plaintext highlighter-rouge">src</code> field is required, you must give it a value when constructing the component.</p>
+
+<p>In the example above, the model is located in a <code class="language-plaintext highlighter-rouge">models</code> folder at root level of the scene project folder.</p>
+
+<blockquote>
+  <p>Tip: We recommend keeping your models separate in a <code class="language-plaintext highlighter-rouge">/models</code> folder inside your scene.</p>
+</blockquote>
+
+<p>glTF models can include their own embedded textures, materials, colliders and animations. See <a href="/3d-modeling/3d-models/">3D models</a> for more information on this.</p>
+
+<p>Keep in mind that all models, their shaders and their textures must be within the parameters of the <a href="/development-guide/scene-limitations/">scene limitations</a>.</p>
+
+<h4 id="free-libraries-for-3d-models">Free libraries for 3D models</h4>
+
+<p>Instead of building your own 3d models, you can also download them from several free or paid libraries.</p>
+
+<p>To get you started, below is a list of libraries that have free or relatively inexpensive content:</p>
+
+<ul>
+  <li><a href="https://github.com/decentraland/builder-assets/tree/master/assets">Assets from the Builder</a></li>
+  <li><a href="https://poly.google.com">Google Poly</a></li>
+  <li><a href="https://sketchfab.com/">SketchFab</a></li>
+  <li><a href="https://clara.io/">Clara.io</a></li>
+  <li><a href="https://archive3d.net/">Archive3D</a></li>
+  <li><a href="https://3dwarehouse.sketchup.com/">SketchUp 3D Warehouse</a></li>
+  <li><a href="https://www.thingiverse.com/">Thingiverse</a> (3D models made primarily for 3D printing, but adaptable to Virtual Worlds)</li>
+  <li><a href="https://www.sharecg.com/">ShareCG</a></li>
+  <li><a href="https://www.cgtrader.com/">CGTrader</a></li>
+</ul>
+
+<blockquote>
+  <p>Note: Pay attention to the license restrictions that the content you download has.</p>
+</blockquote>
+
+<p>Note that in several of these sites, you can choose what format to download the model in. Always choose <em>.glTF</em> format if available. If not available, you must convert them to <em>glTF</em> before you can use them in a scene. For that, we recommend importing them into Blender.</p>
+
+<h2 id="collisions">Collisions</h2>
+
+<p>Entities that have collisions enabled occupy space and block a player’s path, entities without collisions can be walked through by a player`s avatar.</p>
+
+<p>Collision settings currently don’t affect how other entities interact with each other, entities can always overlap. Collision settings only affect how the entity interacts with the player’s avatar.</p>
+
+<p>Decentraland currently doesn’t have a physics engine, so if you want entities to fall, crash or bounce, you must code this behavior into the scene.</p>
+
+<p>Entities don’t use collisions by default. Depending on the type of the shape component it has, collisions are enabled as follows:</p>
+
+<ul>
+  <li>
+    <p>For <em>primitive</em> shapes (boxes, spheres, planes etc), you enable collisions by setting the <code class="language-plaintext highlighter-rouge">withCollisions</code> field of the shape component to <em>true</em>.</p>
+
+    <p>This example defines a box entity that can’t be walked through.</p>
+
+    <div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">box</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">BoxShape</span><span class="p">()</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">withCollisions</span> <span class="o">=</span> <span class="kc">true</span>
+<span class="nx">myEntity</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="nx">box</span><span class="p">)</span>
+</code></pre></div>    </div>
+
+    <blockquote>
+      <p>Note: Planes only block movement in one direction.</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>To use collisions in a <em>glTF</em> shape, you can either:</p>
+
+    <ul>
+      <li>Overlay an invisible entity with a primitive shape and the <code class="language-plaintext highlighter-rouge">withCollisions</code> field set to <em>true</em>.</li>
+      <li>Edit the model in an external tool like Blender to include a <em>collider object</em>. The collider must be named <em>x_collider</em>, where <em>x</em> is the name of the model. So for a model named <em>house</em>, the collider must be named <em>house_collider</em>.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>A <em>collider</em> is a set of geometric shapes or planes that define which parts of the model are collided with. This allows for much greater control and is a lot less demanding on the system, as the collision object is usually a lot simpler (with less vertices) than the original model.</p>
+
+<p>See <a href="/3d-modeling/3d-models/">3D models</a> for more details on how to add colliders to a 3D model.</p>
+
+<h2 id="pointer-blocking">Pointer blocking</h2>
+
+<p>All shapes block player <a href="/development-guide/click-events/">button events</a> by default, so that for example a player can’t click through a wall, or pick something up that is locked inside a chest.</p>
+
+<p>You can however disable this behavior on any shape, no matter if it’s a primitive or an imported 3D model.</p>
+
+<p>To do so, set the <code class="language-plaintext highlighter-rouge">isPointerBlocker</code> property of the shape component to <em>false</em>.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">box</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">BoxShape</span><span class="p">()</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">isPointerBlocker</span> <span class="o">=</span> <span class="kc">false</span>
+<span class="nx">myEntity</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="nx">box</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>By using this property, you could for example have an invisible wall that players can’t walk through, but that does allow them to click on items on the other side of the wall.</p>
+
+<h2 id="make-invisible">Make invisible</h2>
+
+<p>You can make an entity invisible by setting the <code class="language-plaintext highlighter-rouge">visible</code> field in its shape component. Doing this is especially useful when using the shape as a collider.</p>
+
+<p>All components for primitive shape and 3D models are visible by default.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">myEntity</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+<span class="nx">myEntity</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">BoxShape</span><span class="p">())</span>
+<span class="nx">myEntity</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">BoxShape</span><span class="p">).</span><span class="nx">visible</span> <span class="o">=</span> <span class="kc">false</span>
+</code></pre></div></div>
+
+<p>If an entity is invisible, its collider can block a player’s path, but it can’t be clicked. To make an entity that’s both invisible and clickable, keep the <code class="language-plaintext highlighter-rouge">visible</code> property set to <em>true</em>, and instead give it a <a href="/development-guide/materials/#pooling-entities-and-components">material</a> with 100% transparency.</p>
+
+<h2 id="optimize-3d-models">Optimize 3D models</h2>
+
+<p>To ensure that 3D models in your scene load faster and take up less memory, follow these best practices:</p>
+
+<ul>
+  <li>Save your models in <em>.glb</em> format, which is a lighter version of <em>.gltf</em>.</li>
+  <li>If you have multiple models that share the same textures, export your models with textures in a separate file. That way multiple models can refer to a single texture file that only needs to be loaded once.</li>
+  <li>If you have multiple entities using the same 3D model, instance a single <code class="language-plaintext highlighter-rouge">GLTFShape</code> component and assign that same one to the entities that will use it.</li>
+  <li>If your scene has entities that appear and disappear, it might be a good idea to pool these entities and keep them already defined but removed from the engine until needed. This will help them appear faster, the trade-off is that they will occupy memory when not in use. See <a href="/development-guide/entities-components/#pooling-entities-and-components">entities and components</a></li>
+</ul>
+
+<h2 id="reuse-shapes">Reuse shapes</h2>
+
+<p>If multiple entities in your scene use a same primitive or 3D model, there’s no need to create an instance of the shape component for each. All entities can share one same instance.</p>
+
+<p>This keeps your scene lighter to load and prevents you from exceeding the <a href="/development-guide/scene-limitations/">maximum amount</a> of <em>bodies</em> per scene.</p>
+
+<blockquote>
+  <p>Note: Reused shapes are added to the <em>triangle</em> count of the scene. So it is possible to exceed the triangle limit by reusing shapes.</p>
+</blockquote>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Create shape component</span>
+<span class="kd">const</span> <span class="nx">house</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GLTFShape</span><span class="p">(</span><span class="dl">"</span><span class="s2">models/House.gltf</span><span class="dl">"</span><span class="p">)</span>
+
+<span class="c1">// Create entities</span>
+<span class="kd">const</span> <span class="nx">myEntity</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+<span class="kd">const</span> <span class="nx">mySecondEntity</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+<span class="kd">const</span> <span class="nx">myThirdEntity</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+
+<span class="c1">// Assign shape component to entities</span>
+<span class="nx">myEntity</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="nx">house</span><span class="p">)</span>
+<span class="nx">mySecondEntity</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="nx">house</span><span class="p">)</span>
+<span class="nx">myThirdEntity</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="nx">house</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Each entity that shares a shape can apply different scales, rotations or even materials (in the case of primitives) without affecting how the other entities are being rendered.</p>
+
+<p>Entities that share a 3D model instance can also have animations that run independently of each other. Each must have a separate <code class="language-plaintext highlighter-rouge">Animator</code> component, with separate <code class="language-plaintext highlighter-rouge">AnimationState</code> objects to keep track of what part of the animation is currently being played. See <a href="/development-guide/3d-model-animations/">3D model animations</a></p>
+:ET

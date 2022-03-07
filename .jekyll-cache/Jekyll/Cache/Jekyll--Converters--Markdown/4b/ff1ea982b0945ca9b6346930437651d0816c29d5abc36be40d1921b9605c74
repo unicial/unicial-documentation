@@ -1,0 +1,80 @@
+I"<p>To enable collisions between a 3D model and users of your scene, you must create a new object to serve as a collider. Without a collider, players are able to walk through models as if they weren’t there. For performance reasons, colliders usually have a much simpler geometry than the model itself.</p>
+
+<p>Colliders currently don’t affect how models and entities interact with each other, they can always overlap. Colliders only affect how the model interacts with the player’s avatar.</p>
+
+<p>For an object to be recognized by a Decentraland scene as a collider, all it needs is to be named in a certain way. The object’s name must include the the suffix “_collider” at the end.</p>
+
+<p>For example, to create a collider for a tree, you can create a simple box object surrounding its trunk. Players in the scene won’t see this box, but it will block their path.</p>
+
+<p><img src="/images/media/collision-tree.png" alt="Entity tree" width="500" /></p>
+
+<p>In this case, we can name the box “Box<em>Tree_collider” and export both the tree and the box as a single _gltf</em> model. The _collider tag alerts the Decentraland world engine that the box object belongs to the collection of colliders, making the _collider mesh invisible.</p>
+
+<p><img src="/images/media/collision-hierarchy.png" alt="Entity tree" width="350" /></p>
+
+<p>Whenever a player views the tree model in your scene, they will see the complex model for your tree. However, when they walk into your tree, they will collide with the box, not the tree.</p>
+
+<h2 id="player-spatial-constraints">Player spatial constraints</h2>
+
+<p>When you design models that are meant for players to walk around in, you need to keep in mind the following reference measurements:</p>
+
+<ul>
+  <li>Players can walk up a step of up to 30 centimeters in height without jumping</li>
+  <li>Players can walk up slopes of an angle of up to 45 degrees without jumping</li>
+  <li>Players can jump up to 1,8 meters in height</li>
+  <li>Avatars measure around 1.9 meters in height, but consider that they might have hats or other wearables on their head.</li>
+</ul>
+
+<h2 id="add-a-collider-to-a-staircase">Add a collider to a staircase</h2>
+
+<p>Stairs are a very common use-case for collider objects. In order for players to climb stairs, there must be a corresponding _collider object that the players are able to step on.</p>
+
+<p>We recommend using a ramp object for your stair colliders, this provides a much better experience when walking up or down. When they climb up your stairs, it will appear as a smooth ascent or descent, instead of requiring them to “jump” up each individual step.</p>
+
+<p>Using a ramp object also avoids creating unnecessary geometry, saving room for other more complicated models. Keep in mind that collider geometry is also taken into account when calculating the <a href="/development-guide/scene-limitations/">scene limitations</a></p>
+
+<ol>
+  <li>
+    <p>Create a new object in the shape of a ramp that resembles the size and proportions of the original stairs.</p>
+
+    <p><img src="/images/media/collision-stairs-both.png" alt="Staircase mesh and collider side by side" width="300" /></p>
+  </li>
+  <li>
+    <p>Name the ramp object something similar to <em>stairs_collider</em>. It must end in _<em>collider</em>.</p>
+  </li>
+  <li>
+    <p>Overlay the ramp object to the stairs so that they occupy the same space.</p>
+
+    <p><img src="/images/media/collision-stairs-collider.png" alt="Overlaid mesh and collider" width="300" /></p>
+  </li>
+  <li>
+    <p>Export both objects together as a single <em>glTF</em> model.</p>
+
+    <p><img src="/images/media/collision-stairs.png" alt="Exported 3D model with invisible collider" width="300" /></p>
+  </li>
+</ol>
+
+<p>Now when players view the stairs in your scene, they’ll see the more elaborate model of the stairs, but when they climb them, they’ll collide with the ramp.</p>
+
+<h2 id="best-practices-with-colliders">Best practices with colliders</h2>
+
+<ul>
+  <li>Always use the smallest number of triangles possible when creating colliders. Avoid making a copy of a complex object to use as a collider. Simple colliders guarantee a good user-experience in and keep your scene within the triangle limitations.</li>
+  <li>Collider objects shouldn’t have any material, as players of your scene will never see it. Colliders are invisible to players.
+    <blockquote>
+      <p>Note: Remember that each scene is limited to log2(n+1) x 10000 triangles, where n is the number of parcels in your scene.</p>
+    </blockquote>
+  </li>
+  <li>All collider objects names must end with _<em>collider</em>. For example, <em>tree_collider</em>.</li>
+  <li>
+    <p>If you use a <em>plane</em> as a collider, it will only block in one direction. If you want colliders to block from both sides, for example for a wall, you need to create two planes with their normals facing in opposite directions.</p>
+  </li>
+  <li>
+    <p>When duplicating collider objects, pay attention to their names. Some programs append a _<em>1</em> to the end of the filename to avoid duplicates, for example <em>tree_collider_1</em>. Objects that are named like this will be interpreted by the Decentraland World Engine as normal objects, not colliders.</p>
+  </li>
+  <li>
+    <p>You can avoid adding a collider mesh if you add an invisible primitive shape that overlaps to your 3D model in your scene. Primitive shapes have collisions on by default. For example, an entity with a BoxShape() component, and its <code class="language-plaintext highlighter-rouge">visible</code> property set to false can do the trick.</p>
+  </li>
+  <li>If you’re creating a 3D model with many mesh shapes that each need their collider, there are some handy add-ons that can help. For Blender you can use <a href="https://github.com/Weisl/simple_renaming_panel">Simple Renaming Panel</a> to automatically add a <code class="language-plaintext highlighter-rouge">_collider</code> suffix to all mesh names in a group.</li>
+</ul>
+:ET

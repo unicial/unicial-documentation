@@ -1,0 +1,120 @@
+I"�<h1 id="lets-build-the-metaverse-together">Let’s build the metaverse together</h1>
+
+<p>Decentraland is made up of <em>parcels</em> of LAND, each 16 meters by 16 meters. A <em>scene</em> is an experience that is built on one or several parcels.</p>
+
+<p>Scenes are displayed one next to the other and players can freely walk from one to the other. Each scene is its own contained little world, items from one scene can’t extend out into another scene, and the code for each scene is sandboxed from all others.</p>
+
+<p>There are two tools you can use for creating interactive Decentraland scenes:</p>
+
+<ul>
+  <li>
+    <p><strong>The Builder</strong>: a simple <em>drag and drop</em> editor. No coding required, everything is visual and many default items are at your disposal to use.</p>
+  </li>
+  <li>
+    <p><strong>The Decentraland SDK</strong>: write code to create your scene. This gives you much greater freedom and is a lot more powerful.</p>
+  </li>
+</ul>
+
+<p>The Builder uses the Decentraland SDK under the hood, generating the required code without you ever needing to look at it. You can start a scene with the Builder, and then export it to continue working on it with the SDK.</p>
+
+<blockquote>
+  <p>Note: If a scene is created by or modified by the SDK, you can’t import it into the Builder. You can only go from the Builder to the SDK, not in the other direction.</p>
+</blockquote>
+
+<h1 id="the-builder">The Builder</h1>
+
+<p><a href="https://builder.decentraland.org">Try the Builder</a>! It’s a fun tool to explore on your own.</p>
+
+<p>See our <a href="/examples/builder-video-tutorials/">video tutorials</a>.</p>
+
+<p>Or read the <a href="/builder/builder-101/">documentation</a>.</p>
+
+<h1 id="the-sdk">The SDK</h1>
+
+<p>Follow the <a href="/development-guide/SDK-101/">SDK 101</a> tutorial for a quick crash course.</p>
+
+<p>Take a look at the <a href="https://hardlydifficult.github.io/dcl-escape-room-tutorial/">escape room video tutorial series</a>.</p>
+
+<p>Or read the <a href="/development-guide/entities-components/">documentation</a> to grasp some of the fundamental concepts.</p>
+
+<h4 id="sdk-shortcuts">SDK Shortcuts</h4>
+
+<div class="shortcuts">
+  <a href="/decentraland/introduction/">
+    <div>
+      <div class="image"><img src="/images/univeres.png" width="380" height="380" /></div>
+      <div class="title">Universe</div>
+      <div class="description">General info for players.</div>
+    </div>
+  </a>
+  <a href="/market/marketplace/">
+    <div>
+      <div class="image"><img src="/images/market.png" width="380" height="380" /></div>
+      <div class="title">Market</div>
+      <div class="description">Learn how to trade exclusive tokens.</div>
+    </div>
+  </a>
+  <a href="/content-intro/">
+    <div>
+      <div class="image"><img src="/images/BackCreate.png" width="380" height="380" /></div>
+      <div class="title">Create</div>
+      <div class="description">Learn to build and share your creations.</div>
+    </div>
+  </a>
+  <a href="/examples/get-a-wallet/">
+    <div>
+      <div class="image"><img src="/images/BackEth.png" width="380" height="380" /></div>
+      <div class="title">Ethereum Essentials</div>
+      <div class="description">Learn how we use the blockchain.</div>
+    </div>
+  </a>
+</div>
+
+<p>Several libraries are built upon the Decentraland SDK to help you build faster:</p>
+
+<ul>
+  <li>
+    <p><a href="https://www.npmjs.com/package/decentraland-ecs-utils">Utils library</a>: Simplifies a lot of common tasks like moving or rotating an entity, or triggering a function when the player walks into a cube.</p>
+  </li>
+  <li>
+    <p><a href="https://www.decentral.io/docs/dcl/overview/">Decentral API</a>: Simplifies making fast and cheap blockchain transactions triggered by the scene, using the Matic network.</p>
+  </li>
+</ul>
+
+<h4 id="sdk-scene-examples">SDK Scene examples</h4>
+
+<div class="examples">
+  <a target="_blank" href="https://github.com/decentraland-scenes/Hypno-wheels">
+    <div>
+      <img src="/images/home/example-hypno-wheel.png" />
+      <span>Hypno wheels</span>
+    </div>
+  </a>
+  <a target="_blank" href="https://github.com/decentraland-scenes/Hummingbirds">
+    <div>
+      <img src="/images/home/hummingbirds.png" />
+      <span>Hummingbirds</span>
+    </div>
+  </a>
+  <a target="_blank" href="https://github.com/decentraland-scenes/Gnark-patrol">
+    <div>
+      <img src="/images/home/example-gnark.png" />
+      <span>Gnark patrolling</span>
+    </div>
+  </a>
+</div>
+
+<p>See more <a href="https://github.com/decentraland-scenes/Awesome-Repository#examples">scene examples</a>.</p>
+
+<p>Also see <a href="https://github.com/decentraland-scenes/Awesome-Repository#Tutorials">tutorials</a> for detailed instructions for building scenes like these.</p>
+
+<h1 id="3d-modeling">3d Modeling</h1>
+
+<p>If you have experience with 3D modeling, you can use any 3rd party modeling tool to create 3D models that can be used in Decentraland scenes. It’s easy to <a href="/builder/import-items/">import them into the Builder</a>.</p>
+
+<p>See <a href="/3d-modeling/3d-models/">3D modeling</a> for tips and tricks, and information about supported features and formats for 3D models.</p>
+
+<h1 id="design-your-experience">Design your experience</h1>
+
+<p>No matter which tools you’ll use, it’s always recommended that you think carefully about what you want to build before you start building it. Read the <a href="/design-experience/mvp-guidelines/">Design experiences</a> section to better understand the context, limitations and possibilities that you’ll have as your design space when creating a scene for Decentraland.</p>
+:ET

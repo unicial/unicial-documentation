@@ -1,0 +1,36 @@
+.heading {
+    padding: 50px 36px 0 0;
+}
+.title {
+    color: white;
+    position: relative;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 35px;
+    line-height: 24px;
+    text-transform: capitalize;
+    height: 40px;
+    display: flex;
+    //align-items: center;
+    justify-content: left;
+    -webkit-font-smoothing: auto;
+
+    _:-ms-lang(x),
+    & {
+      font-weight: 600;
+    }
+  }
+
+  .description {
+    margin-top: 20px;
+    margin-bottom: 40px;
+    font-style: normal;
+    font-weight: normal;
+    font-family: sans-serif;
+    font-size: 15px;
+    line-height: 18px;
+    position: relative;
+    top: -10px;
+    color: #96A1DB;
+    word-wrap: break-word;
+  }

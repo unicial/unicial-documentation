@@ -1,0 +1,19 @@
+I"ô<h2 id="next-features">Next features</h2>
+
+<ul>
+  <li>Collision triggers: - When overlapping with area - When in contact with surface</li>
+  <li>Raycasting additional features: - Ray hits on avatars - Filtering layers - Sphere casting</li>
+</ul>
+
+<h2 id="later">Later</h2>
+
+<ul>
+  <li>Easier Multiplayer tools</li>
+  <li>Extensions to Transform component: - Global position/rotation/scale (not relative to parent) - Forward vector - Clone Transform component</li>
+  <li>Event when player leaves scene</li>
+  <li>Attach an entity to be fixed to the player</li>
+  <li>Improvements adding sound to a scene</li>
+  <li>Reposition a player to a spawn point via code</li>
+  <li>Fetch data from the sceneâ€™s parcels to know size and shape of the scene</li>
+</ul>
+:ET

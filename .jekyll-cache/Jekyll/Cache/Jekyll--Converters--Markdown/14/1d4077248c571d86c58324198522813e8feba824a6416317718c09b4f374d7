@@ -1,0 +1,222 @@
+I"�F<p>The Decentraland SDK is a powerful tool that lets you create scenes by writing code.</p>
+
+<h2 id="install-the-cli">Install the CLI</h2>
+
+<p>To get started, install the Command Line Interface (CLI).</p>
+
+<p>The CLI allows you to compile and preview your scene locally. After testing your scene locally, you can use the CLI to upload your content.</p>
+
+<blockquote>
+  <p><strong>Note</strong>: Install the following dependencies before you install the CLI:</p>
+
+  <ul>
+    <li><a href="https://nodejs.org/">Node.js</a> (version 8 or later)</li>
+  </ul>
+</blockquote>
+
+<p>To install the CLI, run the following command in your command line tool of choice:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm <span class="nb">install</span> <span class="nt">-g</span> decentraland
+</code></pre></div></div>
+
+<p>Read <a href="/development-guide/installation-guide/">Installation guide</a> for more details about installing the CLI.</p>
+
+<h2 id="create-your-first-scene">Create your first scene</h2>
+
+<p>Create a new scene by going to an <em>empty folder</em> and running the following command line command:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dcl init
+</code></pre></div></div>
+<p>The <code class="language-plaintext highlighter-rouge">dcl init</code> command will prompt you about what kind of project to create. Select <strong>Scene</strong>.</p>
+
+<p>Preview the 3D scene in your browser by running the following command in that same folder:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dcl start
+</code></pre></div></div>
+
+<p>Read more about the scene preview in <a href="/development-guide/preview-scene/">preview a scene</a></p>
+
+<h2 id="edit-the-scene">Edit the scene</h2>
+
+<p>Open the <code class="language-plaintext highlighter-rouge">src/game.ts</code> file from your scene folder with the source code editor of your choice.</p>
+
+<blockquote>
+  <p>Tip: We recommend using a source code editor like <a href="https://code.visualstudio.com/">Visual Studio Code</a> or <a href="https://atom.io/">Atom</a>. An editor like this helps you by marking syntax errors, autocompleting while you write and even showing smart suggestions that depend on context. Also click on an object to see the full definition of its class.</p>
+</blockquote>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">/// --- Set up a system ---</span>
+
+<span class="kd">class</span> <span class="nx">RotatorSystem</span> <span class="p">{</span>
+  <span class="c1">// this group will contain every entity that has a Transform component</span>
+  <span class="nx">group</span> <span class="o">=</span> <span class="nx">engine</span><span class="p">.</span><span class="nx">getComponentGroup</span><span class="p">(</span><span class="nx">Transform</span><span class="p">)</span>
+
+  <span class="nx">update</span><span class="p">(</span><span class="nx">dt</span><span class="p">:</span> <span class="kr">number</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// iterate over the entities of the group</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">entity</span> <span class="k">of</span> <span class="k">this</span><span class="p">.</span><span class="nx">group</span><span class="p">.</span><span class="nx">entities</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// get the Transform component of the entity</span>
+      <span class="kd">const</span> <span class="nx">transform</span> <span class="o">=</span> <span class="nx">entity</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">Transform</span><span class="p">)</span>
+
+      <span class="c1">// mutate the rotation</span>
+      <span class="nx">transform</span><span class="p">.</span><span class="nx">rotate</span><span class="p">(</span><span class="nx">Vector3</span><span class="p">.</span><span class="nx">Up</span><span class="p">(),</span> <span class="nx">dt</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Add a new instance of the system to the engine</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addSystem</span><span class="p">(</span><span class="k">new</span> <span class="nx">RotatorSystem</span><span class="p">())</span>
+
+<span class="c1">/// --- Spawner function ---</span>
+
+<span class="kd">function</span> <span class="nx">spawnCube</span><span class="p">(</span><span class="nx">x</span><span class="p">:</span> <span class="kr">number</span><span class="p">,</span> <span class="nx">y</span><span class="p">:</span> <span class="kr">number</span><span class="p">,</span> <span class="nx">z</span><span class="p">:</span> <span class="kr">number</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// create the entity</span>
+  <span class="kd">const</span> <span class="nx">cube</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+
+  <span class="c1">// set a transform to the entity</span>
+  <span class="nx">cube</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">Transform</span><span class="p">({</span> <span class="na">position</span><span class="p">:</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">z</span><span class="p">)</span> <span class="p">}))</span>
+
+  <span class="c1">// set a shape to the entity</span>
+  <span class="nx">cube</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">BoxShape</span><span class="p">())</span>
+
+  <span class="c1">// add the entity to the engine</span>
+  <span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">cube</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="nx">cube</span>
+<span class="p">}</span>
+
+<span class="c1">/// --- Spawn a cube ---</span>
+
+<span class="kd">const</span> <span class="nx">cube</span> <span class="o">=</span> <span class="nx">spawnCube</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+
+<span class="nx">cube</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">OnClick</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">cube</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">Transform</span><span class="p">).</span><span class="nx">scale</span><span class="p">.</span><span class="nx">z</span> <span class="o">*=</span> <span class="mf">1.1</span>
+    <span class="nx">cube</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">Transform</span><span class="p">).</span><span class="nx">scale</span><span class="p">.</span><span class="nx">x</span> <span class="o">*=</span> <span class="mf">0.9</span>
+
+    <span class="nx">spawnCube</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">8</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">8</span><span class="p">,</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">8</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="p">})</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Change anything you want from this code, for example change the <em>x</em> position of the first <code class="language-plaintext highlighter-rouge">cube</code> entity that’s spawned. If you kept the preview running in a browser tab, you should now see the changes show in the preview.</p>
+
+<p>Download this 3D model of an avocado from the scene’s <a href="https://github.com/decentraland-scenes/avocado">GitHub repo</a> in <em>glTF</em> format. <a href="https://github.com/decentraland-scenes/avocado/raw/main/Avocado.zip">link</a>.</p>
+
+<p><img src="/images/media/avocado.jpg" alt="" /></p>
+
+<p>Create a new folder under your scene’s directory named <code class="language-plaintext highlighter-rouge">/models</code>. Extract the downloaded file and place all of its contents in that folder. Note that there are several files that make up the 3D model, all of them must be in the same path.</p>
+
+<p>At the end of your scene’s code, add the following lines:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">avocado</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+<span class="nx">avocado</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">GLTFShape</span><span class="p">(</span><span class="dl">"</span><span class="s2">models/avocado.gltf</span><span class="dl">"</span><span class="p">))</span>
+<span class="nx">avocado</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">Transform</span><span class="p">({</span>
+    <span class="na">position</span><span class="p">:</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="na">scale</span><span class="p">:</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+  <span class="p">})</span>
+<span class="p">)</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">avocado</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>You can also download the finished scene from its <a href="https://github.com/decentraland-scenes/avocado">GitHub repo</a>.</p>
+
+<p>Check your scene preview once again to see that the 3D model is now there too.</p>
+
+<p><img src="/images/media/landing_avocado_in_scene.png" alt="" /></p>
+
+<p>The lines you just added create a new <a href="/development-guide/entities-components/">entity</a>, give it a <a href="/development-guide/shape-components/">shape</a> based on the 3D model you downloaded, and <a href="/development-guide/entity-positioning/">set its position and scale</a>.</p>
+
+<p>Note that the avocado you added rotates, just like all other entities in the scene. That’s because the <code class="language-plaintext highlighter-rouge">RotatorSystem</code> <a href="/development-guide/systems/">system</a> that was defined in the default code of this scene is iterating over every entity in the scene and rotating it.</p>
+
+<p>Read <a href="/development-guide/coding-scenes/">coding-scenes</a> for a high-level understanding of how Decentraland scenes function.</p>
+
+<p>See the <strong>Development guide</strong> section for more instructions about adding content to your scene.</p>
+
+<h2 id="publish-your-scene">Publish your scene</h2>
+
+<p>Once you’re done creating the scene and want to upload it to your LAND, see <a href="/development-guide/publishing/">publishing</a>.</p>
+
+<h2 id="more-tutorials">More Tutorials</h2>
+
+<p>Read our <a href="https://github.com/decentraland-scenes/Awesome-Repository#Tutorials">tutorials</a> or view or <a href="https://www.youtube.com/playlist?list=PLAcRraQmr_GPi-8qgv17ewdGl50OHuOhH">video tutorials</a> for detailed instructions for building basic scenes.</p>
+
+<p>To see our official example scenes, with links to their code, see <a href="https://github.com/decentraland-scenes/Awesome-Repository#Examples">scene examples</a>.</p>
+
+<h2 id="engage-with-other-developers">Engage with other developers</h2>
+
+<p>Visit <a href="https://dcl.gg/discord">Discord</a>, join a lively discussion about what’s possible and how!</p>
+
+<p>To debug any issues, we encourage that you post issues to the <a href="https://forum.decentraland.org/c/support-sdk/11">SDK Support category</a> Decentraland Forum.</p>
+
+<p>You can also post to <a href="https://stackoverflow.com/questions/ask?tags=+[decentraland-ecs]">Stack Overflow</a>, using the tags <code class="language-plaintext highlighter-rouge">decentraland</code> or <code class="language-plaintext highlighter-rouge">decentraland-ecs</code>.</p>
+
+<p>You can also ask in <a href="https://dcl.gg/discord">Discord</a>. In the <strong>Support</strong> section, the <strong>#sdk</strong> channel is for questions regarding code, the <strong>#builder-and-3d</strong> channel is for questions regarding 3D models and art. <strong>#code-contribution</strong> is for discussing PRs to the SDK codebase.</p>
+
+<h2 id="the-utils-library">The Utils library</h2>
+
+<p>The Decentraland ESC Utils library includes a number of helper methods that make it easier to carry out a lot of common use cases.</p>
+
+<p>To use any of the helpers provided by the Utils library:</p>
+
+<ol>
+  <li>
+    <p>Install it as an npm package. Run this command in your scene’s project folder:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm install @dcl/ecs-scene-utils -B
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Run one of the following for the scene to build the necessary files inside the library’s folder:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dcl build
+</code></pre></div>    </div>
+
+    <p>or</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dcl start
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Import the library into the scene’s script. Add this line at the start of your <code class="language-plaintext highlighter-rouge">game.ts</code> file, or any other TypeScript files that require it:</p>
+
+    <div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">utils</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@dcl/ecs-scene-utils</span><span class="dl">"</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>In your TypeScript file, write <code class="language-plaintext highlighter-rouge">utils.</code> and let the suggestions of your IDE show the available helpers.</p>
+  </li>
+</ol>
+
+<p>Read the full documentation of the ECS Utils library <a href="https://github.com/decentraland/decentraland-ecs-utils">here</a></p>
+
+<h2 id="3d-art-assets">3D Art Assets</h2>
+
+<p>A good experience will have great 3D art to go with it. If you’re keen on creating those 3D models yourself, you’re encouraged to, see the <a href="/3d-modeling/3d-models/">3D Modeling section of our docs</a> for more info. But if you prefer to focus on the coding or game design side of things, you don’t need to create your own assets!</p>
+
+<p>Here are a few tips to get great 3D models that you can use in a Decentraland scene:</p>
+
+<ul>
+  <li>Build a scene in the Decentraland <a href="https://builder.decentraland.org">Builder</a> and export it, together with all its assets, to keep working on it with the SDK.</li>
+  <li>Download all the 3D assets available in the Builder from <a href="https://github.com/decentraland/builder-assets/tree/master/assets">this repo</a></li>
+  <li><a href="https://sketchfab.com/">SketchFab</a></li>
+  <li><a href="https://clara.io/">Clara.io</a></li>
+  <li><a href="https://archive3d.net/">Archive3D</a></li>
+  <li><a href="https://3dwarehouse.sketchup.com/">SketchUp 3D Warehouse</a></li>
+  <li><a href="https://www.thingiverse.com/">Thingiverse</a> (3D models made primarily for 3D printing, but adaptable to Virtual Worlds)</li>
+  <li><a href="https://www.sharecg.com/">ShareCG</a></li>
+</ul>
+
+<blockquote>
+  <p>Note: Models must be in the supported <code class="language-plaintext highlighter-rouge">.gltf</code> or <code class="language-plaintext highlighter-rouge">.glb</code> formats, and must have a number of triangles, textures and materials that adhere to the <a href="/development-guide/scene-limitations/">scene limitations</a>. If getting models from a third party site, pay attention to the licence restrictions that the content you download has.</p>
+</blockquote>
+
+<h2 id="other-useful-information">Other useful information</h2>
+
+<ul>
+  <li><a href="https://github.com/decentraland-scenes/Awesome-Repository">Awesome Repository</a></li>
+  <li><a href="https://github.com/decentraland/decentraland-ecs-utils">ECS Utils library</a></li>
+  <li><a href="/design-experience/design-games/">Design constraints for games</a></li>
+  <li><a href="/3d-modeling/3d-models/">3D modeling</a></li>
+  <li><a href="/development-guide/scene-limitations/">Scene limitations</a></li>
+</ul>
+:ET

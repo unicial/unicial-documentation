@@ -1,0 +1,176 @@
+I"p2<p>The <strong>Decentraland DAO</strong> is a fully functional <em>Decentralized Autonomous Organization</em>, where token holders can vote over decisions that impact on the content and future operation of the platform.</p>
+
+<p>By visiting <a href="https://governance.decentraland.org">governance.decentraland.org</a>, you can see what’s currently being decided upon, cast your votes, and even post your own proposals to be voted on by others.</p>
+
+<p>When you vote, you use your Ethereum wallet as a unique identifier.</p>
+
+<h2 id="connecting-to-the-app">Connecting to the app</h2>
+
+<p>In order to vote, you must first connect to the governance app.</p>
+
+<ol>
+  <li>Click on the <strong>Sign In</strong> button.</li>
+  <li>Your browser wallet will open a pop up requiring that you sign to accept connecting your wallet to this app.</li>
+</ol>
+
+<p>Once you’re connected, you can vote on any of the open proposals on the <code class="language-plaintext highlighter-rouge">Proposals</code> tab, or create your own proposals.</p>
+
+<h2 id="voting-power">Voting power</h2>
+
+<p>The weight of your votes depend on the <em>voting power</em> of your account. Each account’s voting power is determined by three sources of power.</p>
+
+<ul>
+  <li><strong>Wrapped MANA</strong>: MANA that is converted to <em>WMANA</em>, and is temporarily held by the governance contract. For each unit of WMANA that you hold, you get one (1) voting power unit.</li>
+  <li><strong>LAND parcels</strong>: 2000 voting power units per parcel.</li>
+  <li><strong>Estates</strong>: 2000 voting power units per parcel in each estate.</li>
+</ul>
+
+<p>For these tokens to contribute to your voting power, you need to own them in the Ethereum address you’re voting with. In the case of LAND and Estate tokens, you also need to register them for voting.</p>
+
+<blockquote>
+  <p>Note: You need to be the owner of the LAND or Estate tokens. Holding a role over them is not valid for voting.</p>
+</blockquote>
+
+<p>Any changes to your voting power are only valid for proposals that are created or that move forward after that change. If you wrap MANA to increase your voting power while a proposal is already open, voting on that proposal will only reflect the voting power you had at the time that the voting started. If the proposal then transitions to the next voting stage, you will be able to use your updated voting power on the next stage.</p>
+
+<h3 id="wrapping-mana">Wrapping MANA</h3>
+
+<p>Wrapped MANA, or <em>WMANA</em>, is not spendable while wrapped onto the governance app. To spend or transfer this WMANA freely, you need to first unwrap it back into regular MANA.</p>
+
+<p>To wrap MANA:</p>
+
+<ul>
+  <li>Go to the <code class="language-plaintext highlighter-rouge">Voting Power</code> tab. There you will see your available tokens for wrapping.</li>
+  <li>Click <em>Unlock MANA</em>. Your browser wallet will then ask you to approve a transaction to enable MANA for being wrapped.</li>
+  <li>When that transaction is complete, you can specify how much MANA you want to wrap, and carry out another transaction to convert the MANA.</li>
+</ul>
+
+<blockquote>
+  <p>Note: Both the transaction of unlocking MANA for wrapping, and the act of wrapping the MANA require that you pay a gas fee to the Ethereum blockchain, make sure you have Ether on that account to pay for that. You must then wait for the transaction to be completed, which can take up to a couple of minutes.</p>
+</blockquote>
+
+<h3 id="registering-land-and-estates">Registering LAND and Estates</h3>
+
+<p>LAND and Estate tokens can be registered to the DAO so that they add to your voting power. Unlike MANA, LAND and Estate tokens that you use for voting continue to be on your wallet and can still be used normally. You’re still free to deploy content to them, and any holders of operator or manager permissions retain their permissions on the land.</p>
+
+<p>You can also sell a registered LAND or Estate. If the buyer of your LAND or Estate tokens wants to use these to vote for themselves, they’ll have to register them again using their own address.</p>
+
+<p>To register LAND or Estates:</p>
+
+<ul>
+  <li>Go to the <code class="language-plaintext highlighter-rouge">Voting Power</code> tab. There you will see your available tokens for wrapping.</li>
+  <li>Click <em>Commit LANDS</em> or <em>Commit Estates</em></li>
+  <li>Your browser wallet will ask you to approve a transaction to register all of the tokens of the selected type that you currently hold in your wallet.</li>
+</ul>
+
+<p>If you acquire new tokens after going through this process, these new tokens won’t contribute to your voting power until you repeat the transactions to register them.</p>
+
+<blockquote>
+  <p>Note: Registering your LAND or estates is a transaction that requires that you pay a gas fee to the Ethereum blockchain, make sure you have Ether on that account to pay for that. You must then wait for the transaction to be completed, which can take up to a couple of minutes.</p>
+</blockquote>
+
+<h2 id="browsing-proposals">Browsing Proposals</h2>
+
+<p>You can browse all the current and past proposals that took place on the DAO on the <strong>Proposals</strong> tab. In this view you can filter the proposal list to only view those that are in a specific state. If a proposal is still active, you can vote on it.</p>
+
+<p>Click on a proposal to open its details. There you can see the amount of votes in favor and against the proposal, the remaining time it has to still be voted, the minimum thresholds it must reach to move forward to the next stage, as well as the different stages the proposal has already gone through.</p>
+
+<h2 id="voting">Voting</h2>
+
+<p>If you have voting power and find a proposal you care about, open its details and then click <code class="language-plaintext highlighter-rouge">Yes</code> or <code class="language-plaintext highlighter-rouge">No</code> to approve or reject it.</p>
+
+<p>Your browser wallet will open a pop up requiring that you accept the vote transaction.</p>
+
+<blockquote>
+  <p>Note: This transaction requires that you pay a gas fee, so make sure you have Ether on that account to pay for that.</p>
+</blockquote>
+
+<p>As a community member, there are two stages where you’ll be able to vote for a proposal: in the <em>Inbox</em> stage, to help filter out proposals that don’t have minimal approval, and in the <em>Community</em> stage, where proposals are voted to be implemented.</p>
+
+<p>To move forward to the next stage, a proposal must meet the minimum requirements of the stage. These are measured by looking at two metrics:</p>
+
+<ul>
+  <li><strong>Minimum approval</strong>: Out of the total voting power distributed throughout the total supply of wrapped MANA and registered LAND and Estates, how much of that has been used to vote in approval of this proposal.</li>
+  <li><strong>Support</strong>: Out of the votes that were casted for this proposal, how much voting power has been used to vote in favor of the proposal vs against it.</li>
+</ul>
+
+<p>Voting against a proposal affects the <em>Support</em> metric of the proposal, but has no effect on the <em>Minimum Approval</em> metric, because this metric only looks at the amount of positive votes.</p>
+
+<h2 id="the-lifecycle-of-a-proposal">The Lifecycle of a Proposal</h2>
+
+<p>A newly created proposal goes through the following stages of revision:</p>
+
+<p><img src="/images/media/voting-cycle.png" alt="" /></p>
+
+<ol>
+  <li>
+    <p><strong>Inbox filtering</strong>: The community has seven days to view it. This phase serves as an initial filter to find proposals that the community has an interest in.
+<em>&gt;1 % Minimum Approval and &gt;25% Support needed</em></p>
+
+    <p><em>After 7 days and if approved, the proposal can be <strong>Enacted</strong> to move to the next stage.</em></p>
+  </li>
+  <li>
+    <p><strong>Security Advisory Board revision</strong>: The Security Advisory Board has 24 hours to review the proposal. This phase serves to protect the DAO from proposals that are badly intended or that could harm the ecosystem. At this stage, the Security Advisory Board can choose to reject or delay the proposal. This delay also serves to give community members enough time to register to vote or to wrap MANA before the vote.</p>
+
+    <p><em>After 24 hours and if not rejected or delayed, the proposal can be <strong>Executed</strong> to move to the next stage.</em></p>
+  </li>
+  <li>
+    <p><strong>Community vote</strong>: Once someone executes the vote for the proposal, the community has another seven days to vote for the proposal. This phase determines if the proposal should be acted upon or not.
+<em>20 % Minimum Approval and 66 % Support needed</em></p>
+
+    <p><em>After 7 days and if approved, the proposal can be <strong>Enacted</strong> so that its changes are made on-chain.</em></p>
+  </li>
+</ol>
+
+<p>To <strong>enact</strong> or <strong>execute</strong> a proposal:</p>
+
+<ul>
+  <li>Open the proposal’s details.</li>
+  <li>Click the <em>Enact</em> or <em>Execute</em> button. If the proposal is not ready, the button will be grayed out.</li>
+  <li>Your browser wallet will require that you approve a transaction</li>
+</ul>
+
+<blockquote>
+  <p>Note: Any user with or without voting power can execute or enact proposals. Both these transactions require that you pay a gas fee to the Ethereum network.</p>
+</blockquote>
+
+<p>If a proposal gathers enough positive votes so that it’s assured to succeed, even if all of the remaining voting power were to vote against it, then it’s not necessary to wait the full duration of the stage. The same transaction for the vote that makes the proposal reach this level of approval also enacts the proposal.</p>
+
+<p>Miscellaneous proposals without on-chain consequences don’t need to be enacted after the final stage, they are forwarded to the Decentraland Foundation to be enacted upon by them.</p>
+
+<h3 id="create-a-proposal">Create a Proposal</h3>
+
+<p>You can submit your own proposal to be voted on by the community. To do this, click <em>New Proposal</em> and select the type of proposal:</p>
+
+<!--
+- **Poll**: Ask a question that can be responded to with a _Yes_ or _No_. This serves as a catch-all alternative for any proposal that doesn’t fit into the other categories.
+-->
+
+<ul>
+  <li><strong>Catalyst</strong>: Propose adding a server to the <em>Catalyst</em> network that makes up the backend of Decentraland. The servers on the Catalyst network are owned by community members and hold copies of all scenes deployed to Decentraland, serving this content to players as they explore the virtual world. These servers also handle the messaging and interactions between players.</li>
+  <li><strong>Point of interest</strong>: These are highlighted locations on the Decentraland map, places where we’d like to direct players so that they don’t miss out on the best content out there.</li>
+  <li><strong>Ban Name</strong>: Prevent an offensive or abusive player name from being displayed for other players to see.</li>
+</ul>
+
+<p>Once a proposal has been created, it goes through the proposal lifecycle to determine if it has enough support.</p>
+
+<blockquote>
+  <p>Tip: If you intend to vote on your own proposal, remember that any changes you make to your voting power after the creation of a proposal aren’t considered when voting. Make sure that any MANA you want to wrap is already wrapped, or any LAND or Estates that you want to register are already registered before creating the proposal.</p>
+</blockquote>
+
+<p>Proposals of type <em>Catalyst</em>, <em>Point of interest</em>, and <em>Ban Name</em> that are voted affirmatively have direct on-chain consequences, without requiring any human intervention. Proposals of type <em>Poll</em> are forwarded to the Decentraland Foundation for enacting them.</p>
+
+<h2 id="about-the-security-advisory-board">About The Security Advisory Board</h2>
+
+<p>A body known as the <strong>Security Advisory Board (SAB)</strong> safeguards some of the most advanced behind-the-scenes functionality that Aragon – the software that powers the DAO – has to offer for the benefit of the community.</p>
+
+<p>The SAB has the following structure:</p>
+
+<ul>
+  <li>Five members, who can be voted in and out by DAO vote</li>
+  <li>Full consensus is required for contract upgrades. This means that if any one of the five members decides to vote against an upgrade, the four remaining members can’t force a change on the smart contract.</li>
+  <li>SAB members can install new applications to the DAO and can add or remove permissions of applications.</li>
+</ul>
+
+<p>When a proposal makes it past the <em>Inbox</em> stage, the members of the SAB have one day to review it before it makes its way forward to the <em>Community</em> stage. The members of the council are tasked not with voting based on personal preference, but only against things they consider harmful.</p>
+:ET

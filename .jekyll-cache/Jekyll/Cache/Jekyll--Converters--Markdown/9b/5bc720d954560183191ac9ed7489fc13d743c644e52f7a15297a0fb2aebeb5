@@ -1,0 +1,1146 @@
+I"ٯ<p>The <strong>Decentraland ECS Utils</strong> library includes a number of helpful pre-built tools that include components, methods, and systems. They offer simple solutions to common scenarios that you’re likely to run into while building scenes.</p>
+
+<ul>
+  <li><a href="#gradual-movement">Gradual Movement</a>
+    <ul>
+      <li><a href="#move-an-entity">Move an entity</a></li>
+      <li><a href="#follow-a-path">Follow a path</a></li>
+      <li><a href="#follow-a-curved-path">Follow a curved path</a></li>
+      <li><a href="#rotate-an-entity">Rotate an entity</a></li>
+      <li><a href="#sustain-rotation">Sustain rotation</a></li>
+      <li><a href="#change-scale">Change scale</a></li>
+      <li><a href="#non-linear-changes">Non-linear changes</a></li>
+      <li><a href="#callback-on-finish">Callback on finish</a></li>
+    </ul>
+  </li>
+  <li><a href="#toggle">Toggle</a></li>
+  <li><a href="#time">Time</a>
+    <ul>
+      <li><a href="#delay-a-function">Delay a function</a></li>
+      <li><a href="#delay-removing-an-entity">Delay removing an entity</a></li>
+      <li><a href="#repeat-at-an-interval">Repeat at an Interval</a></li>
+    </ul>
+  </li>
+  <li><a href="#triggers">Triggers</a>
+    <ul>
+      <li><a href="#trigger-component">Trigger Component</a></li>
+      <li><a href="#trigger-layers">Trigger layers</a></li>
+    </ul>
+  </li>
+  <li><a href="#conversions">Conversions</a>
+    <ul>
+      <li><a href="#clamp">clamp</a></li>
+      <li><a href="#map">map</a></li>
+      <li><a href="#world-position">world position</a></li>
+      <li><a href="#world-rotation">world rotation</a></li>
+    </ul>
+  </li>
+  <li><a href="#send-requests">Send requests</a></li>
+  <li><a href="#labels">Labels</a></li>
+  <li><a href="#debug-helpers">Debug helpers</a>
+    <ul>
+      <li><a href="#debug-cube">Debug cube</a></li>
+    </ul>
+  </li>
+  <li><a href="#action-sequence">Action sequence</a>
+    <ul>
+      <li><a href="#iaction">IAction</a></li>
+      <li><a href="#action-sequence-builder">Action Sequence Builder</a></li>
+      <li><a href="#action-aequence-system">Action Sequence System</a></li>
+      <li><a href="#full-example">Full example</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="using-the-utils-library">Using the Utils library</h2>
+
+<p>To use any of the helpers provided by the utils library</p>
+
+<ol>
+  <li>Install it as an <code class="language-plaintext highlighter-rouge">npm</code> package. Run this command in your scene’s project folder:</li>
+</ol>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm install @dcl/ecs-scene-utils -B
+</code></pre></div></div>
+
+<ol>
+  <li>Run <code class="language-plaintext highlighter-rouge">dcl start</code> or <code class="language-plaintext highlighter-rouge">dcl build</code> so the dependencies are correctly installed.</li>
+</ol>
+
+<p>3) Import the library into the scene’s script. Add this line at the start of your <code class="language-plaintext highlighter-rouge">game.ts</code> file, or any other TypeScript files that require it:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">utils</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@dcl/ecs-scene-utils</span><span class="dl">'</span>
+</code></pre></div></div>
+
+<ol>
+  <li>In your TypeScript file, write <code class="language-plaintext highlighter-rouge">utils.</code> and let the suggestions of your IDE show the available helpers.</li>
+</ol>
+
+<h2 id="gradual-movement">Gradual Movement</h2>
+
+<h3 id="move-an-entity">Move an entity</h3>
+
+<p>To move an entity over a period of time, from one position to another, use the <code class="language-plaintext highlighter-rouge">MoveTransformComponent</code> component.</p>
+
+<p><code class="language-plaintext highlighter-rouge">MoveTransformComponent</code> has three required arguments:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">start</code>: <code class="language-plaintext highlighter-rouge">Vector3</code> for the start position</li>
+  <li><code class="language-plaintext highlighter-rouge">end</code>: <code class="language-plaintext highlighter-rouge">Vector3</code> for the end position</li>
+  <li><code class="language-plaintext highlighter-rouge">duration</code>: duration (in seconds) of the translation</li>
+</ul>
+
+<p>This example moves an entity from one position to another over 2 seconds:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">utils</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@dcl/ecs-scene-utils</span><span class="dl">'</span>
+
+<span class="c1">// Create entity</span>
+<span class="kd">const</span> <span class="nx">box</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+
+<span class="c1">// Give entity a shape and transform</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">BoxShape</span><span class="p">())</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">Transform</span><span class="p">())</span>
+
+<span class="c1">//Define start and end positions</span>
+<span class="kd">let</span> <span class="nx">StartPos</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="kd">let</span> <span class="nx">EndPos</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+
+<span class="c1">// Move entity</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">MoveTransformComponent</span><span class="p">(</span><span class="nx">StartPos</span><span class="p">,</span> <span class="nx">EndPos</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+<span class="c1">// Add entity to engine</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">box</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="follow-a-path">Follow a path</h3>
+
+<p>To move an entity over several points of a path over a period of time, use the <code class="language-plaintext highlighter-rouge">FollowPathComponent</code> component.</p>
+
+<p><code class="language-plaintext highlighter-rouge">FollowPathComponent</code> has two required arguments:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">points</code>: An array of <code class="language-plaintext highlighter-rouge">Vector3</code> positions that form the path.</li>
+  <li><code class="language-plaintext highlighter-rouge">duration</code>: The duration (in seconds) of the whole path.</li>
+</ul>
+
+<p>This example moves an entity over through four points over 5 seconds:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">utils</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@dcl/ecs-scene-utils</span><span class="dl">'</span>
+
+<span class="c1">// Create entity</span>
+<span class="kd">const</span> <span class="nx">box</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+
+<span class="c1">// Give entity a shape and transform</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">BoxShape</span><span class="p">())</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">Transform</span><span class="p">())</span>
+
+<span class="c1">//Define the positions of the path</span>
+<span class="kd">let</span> <span class="nx">path</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="nx">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="nx">path</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+<span class="nx">path</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+<span class="nx">path</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c1">// Move entity</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">FollowPathComponent</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+<span class="c1">// Add entity to engine</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">box</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="follow-a-curved-path">Follow a curved path</h3>
+
+<p>To move an entity following a curved path over a period of time, use the <code class="language-plaintext highlighter-rouge">FollowCurvedPathComponent</code> component.</p>
+
+<p>The curved path is composed of multiple straight line segments put together. You only need to supply a series of fixed path points and a smooth curve is drawn to pass through all of these.</p>
+
+<p><code class="language-plaintext highlighter-rouge">FollowCurvedPathComponent</code> has three required arguments:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">points</code>: An array of <code class="language-plaintext highlighter-rouge">Vector3</code> positions that the curve must pass through.</li>
+  <li><code class="language-plaintext highlighter-rouge">duration</code>: The duration (in seconds) of the whole path.</li>
+  <li><code class="language-plaintext highlighter-rouge">numberOfSegments</code>: How many straight-line segments to use to construct the curve.</li>
+</ul>
+
+<blockquote>
+  <p>Tip: Each segment takes at least one frame to complete. Avoid using more than 30 segments per second in the duration of the path, or the entity will move significantly slower while it stops for each segment.</p>
+</blockquote>
+
+<p>This example moves an entity over through a curve that’s subdivided into 40 segments, over a period of 5 seconds. The curve passes through four key points.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">utils</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@dcl/ecs-scene-utils</span><span class="dl">'</span>
+
+<span class="c1">// Create entity</span>
+<span class="kd">const</span> <span class="nx">box</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+
+<span class="c1">// Give entity a shape and transform</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">BoxShape</span><span class="p">())</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">Transform</span><span class="p">())</span>
+
+<span class="c1">//Define the positions of the path</span>
+<span class="kd">let</span> <span class="nx">path</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="nx">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="nx">path</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+<span class="nx">path</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+<span class="nx">path</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c1">// Move entity</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">FollowCurvedPathComponent</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">40</span><span class="p">))</span>
+
+<span class="c1">// Add entity to engine</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">box</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">FollowCurvedPathComponent</code> also lets you set:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">turnToFaceNext</code>: If true, the entity will rotate on each segment of the curve to always face forward.</li>
+  <li><code class="language-plaintext highlighter-rouge">closedCircle</code>: If true, traces a circle that starts back at the beginning, keeping the curvature rounded in the seams too</li>
+</ul>
+
+<h3 id="rotate-an-entity">Rotate an entity</h3>
+
+<p>To rotate an entity over a period of time, from one direction to another, use the <code class="language-plaintext highlighter-rouge">rotateTransformComponent</code> component, which works very similarly to the <code class="language-plaintext highlighter-rouge">MoveTransformComponent</code> component.</p>
+
+<p><code class="language-plaintext highlighter-rouge">rotateTransformComponent</code> has three required arguments:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">start</code>: <code class="language-plaintext highlighter-rouge">Quaternion</code> for the start rotation</li>
+  <li><code class="language-plaintext highlighter-rouge">end</code>: <code class="language-plaintext highlighter-rouge">Quaternion</code> for the end rotation</li>
+  <li><code class="language-plaintext highlighter-rouge">duration</code>: duration (in seconds) of the rotation</li>
+</ul>
+
+<p>This example rotates an entity from one rotation to another over 2 seconds:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">utils</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@dcl/ecs-scene-utils</span><span class="dl">'</span>
+
+<span class="c1">// Create entity</span>
+<span class="kd">const</span> <span class="nx">box</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+
+<span class="c1">// Give entity a shape and transform</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">BoxShape</span><span class="p">())</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">Transform</span><span class="p">())</span>
+
+<span class="c1">//Define start and end directions</span>
+<span class="kd">let</span> <span class="nx">StartRot</span> <span class="o">=</span> <span class="nx">Quaternion</span><span class="p">.</span><span class="nx">Euler</span><span class="p">(</span><span class="mi">90</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="kd">let</span> <span class="nx">EndRot</span> <span class="o">=</span> <span class="nx">Quaternion</span><span class="p">.</span><span class="nx">Euler</span><span class="p">(</span><span class="mi">270</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="c1">// Rotate entity</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">RotateTransformComponent</span><span class="p">(</span><span class="nx">StartRot</span><span class="p">,</span> <span class="nx">EndRot</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+<span class="c1">// Add entity to engine</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">box</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="sustain-rotation">Sustain rotation</h3>
+
+<p>To rotates an entity continuously, use <code class="language-plaintext highlighter-rouge">KeepRotatingComponent</code>. The entity will keep rotating forever until it’s explicitly stopped or the component is removed.</p>
+
+<p><code class="language-plaintext highlighter-rouge">KeepRotatingComponent</code> has one required argument:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">rotationVelocity</code>: A quaternion describing the desired rotation to perform each second second. For example <code class="language-plaintext highlighter-rouge">Quaternion.Euler(0, 45, 0)</code> rotates the entity on the Y axis at a speed of 45 degrees per second, meaning that it makes a full turn every 8 seconds.</li>
+</ul>
+
+<p>The component also contains the following method:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">stop()</code>: stops rotation and removes the component from any entities its added to.</li>
+</ul>
+
+<p>In the following example, a cube rotates continuously until clicked:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">utils</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@dcl/ecs-scene-utils</span><span class="dl">'</span>
+
+<span class="c1">// Create entity</span>
+<span class="kd">const</span> <span class="nx">box</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+
+<span class="c1">// Give entity a shape and transform</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">BoxShape</span><span class="p">())</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">Transform</span><span class="p">({</span> <span class="na">position</span><span class="p">:</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="p">}))</span>
+
+<span class="c1">// Rotate entity</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">KeepRotatingComponent</span><span class="p">(</span><span class="nx">Quaternion</span><span class="p">.</span><span class="nx">Euler</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">0</span><span class="p">)))</span>
+
+<span class="c1">// Listen for click</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">OnClick</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">box</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">utils</span><span class="p">.</span><span class="nx">KeepRotatingComponent</span><span class="p">).</span><span class="nx">stop</span><span class="p">()</span>
+  <span class="p">})</span>
+<span class="p">)</span>
+
+<span class="c1">// Add entity to engine</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">box</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="change-scale">Change scale</h3>
+
+<p>To adjust the scale of an entity over a period of time, from one size to another, use the <code class="language-plaintext highlighter-rouge">ScaleTransformComponent</code> component, which works very similarly to the <code class="language-plaintext highlighter-rouge">MoveTransformComponent</code> component.</p>
+
+<p><code class="language-plaintext highlighter-rouge">ScaleTransformComponent</code> has three required arguments:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">start</code>: <code class="language-plaintext highlighter-rouge">Vector3</code> for the start scale</li>
+  <li><code class="language-plaintext highlighter-rouge">end</code>: <code class="language-plaintext highlighter-rouge">Vector3</code> for the end scale</li>
+  <li><code class="language-plaintext highlighter-rouge">duration</code>: duration (in seconds) of the scaling</li>
+</ul>
+
+<p>This example scales an entity from one size to another over 2 seconds:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">utils</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@dcl/ecs-scene-utils</span><span class="dl">'</span>
+
+<span class="c1">// Create entity</span>
+<span class="kd">const</span> <span class="nx">box</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+
+<span class="c1">// Give entity a shape and transform</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">BoxShape</span><span class="p">())</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">Transform</span><span class="p">())</span>
+
+<span class="c1">//Define start and end positions</span>
+<span class="kd">let</span> <span class="nx">StartSize</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="kd">let</span> <span class="nx">EndSize</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mf">0.75</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">)</span>
+
+<span class="c1">// Move entity</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">ScaleTransformComponent</span><span class="p">(</span><span class="nx">StartSize</span><span class="p">,</span> <span class="nx">EndSize</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+<span class="c1">// Add entity to engine</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">box</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="non-linear-changes">Non-linear changes</h3>
+
+<p>All of the translation components, the <code class="language-plaintext highlighter-rouge">MoveTransformComponent</code>, <code class="language-plaintext highlighter-rouge">rotateTransformComponent</code>, <code class="language-plaintext highlighter-rouge">ScaleTransformComponent</code>, and <code class="language-plaintext highlighter-rouge">FollowPathComponent</code> have an optional argument to set the rate of change. By default, the movement, rotation, or scaling occurs at a linear rate, but this can be set to other options.</p>
+
+<p>The following values are accepted:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">Interpolation.LINEAR</code></li>
+  <li><code class="language-plaintext highlighter-rouge">Interpolation.EASEINQUAD</code></li>
+  <li><code class="language-plaintext highlighter-rouge">Interpolation.EASEOUTQUAD</code></li>
+  <li><code class="language-plaintext highlighter-rouge">Interpolation.EASEQUAD</code></li>
+</ul>
+
+<p>The following example moves a box following an ease-in rate:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">MoveTransformComponent</span><span class="p">(</span>
+    <span class="nx">StartPos</span><span class="p">,</span>
+    <span class="nx">EndPos</span><span class="p">,</span>
+    <span class="mi">2</span><span class="p">,</span>
+    <span class="kc">null</span><span class="p">,</span>
+    <span class="nx">utils</span><span class="p">.</span><span class="nx">InterpolationType</span><span class="p">.</span><span class="nx">EASEINQUAD</span>
+  <span class="p">)</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="callback-on-finish">Callback on finish</h3>
+
+<p>All of the translation components, the <code class="language-plaintext highlighter-rouge">MoveTransformComponent</code>, <code class="language-plaintext highlighter-rouge">rotateTransformComponent</code>, <code class="language-plaintext highlighter-rouge">ScaleTransformComponent</code>, <code class="language-plaintext highlighter-rouge">FollowPathComponent</code>, and <code class="language-plaintext highlighter-rouge">FollowCurvedPathComponent</code> have an optional argument that executes a function when the translation is complete.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">onFinishCallback</code>: function to execute when movement is done.</li>
+</ul>
+
+<p>The following example logs a message when the box finishes its movement. The example uses <code class="language-plaintext highlighter-rouge">MoveTransformComponent</code>, but the same applies to <code class="language-plaintext highlighter-rouge">rotateTransformComponent</code> and <code class="language-plaintext highlighter-rouge">ScaleTransformComponent</code>.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">MoveTransformComponent</span><span class="p">(</span><span class="nx">StartPos</span><span class="p">,</span> <span class="nx">EndPos</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">finished moving box</span><span class="dl">'</span><span class="p">)</span>
+  <span class="p">})</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">FollowPathComponent</code> has a two optional arguments that execute functions when a section of the path is complete and when the whole path is complete.</p>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">onFinishCallback</code>: function to execute when movement is complete.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">onPointReachedCallback</code>: function to execute when each section of the path is done.</p>
+  </li>
+</ul>
+
+<p>The following example logs a messages when the box finishes each segment of the path, and another when the entire path is done.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">FollowPathComponent</span><span class="p">(</span>
+    <span class="nx">path</span><span class="p">,</span>
+    <span class="mi">2</span><span class="p">,</span>
+    <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">finished moving box</span><span class="dl">'</span><span class="p">)</span>
+    <span class="p">},</span>
+    <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">finished a segment of the path</span><span class="dl">'</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">)</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="toggle">Toggle</h2>
+
+<p>Use the <code class="language-plaintext highlighter-rouge">ToggleComponent</code> to switch an entity between two possible states, running a same function on every transition.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">ToggleComponent</code> has the following arguments:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">startingState</code>: Starting state of the toggle (ON or OFF)</li>
+  <li><code class="language-plaintext highlighter-rouge">onValueChangedCallback</code>: Function to call every time the toggle state changed.</li>
+</ul>
+
+<p>It exposes three methods:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">toggle()</code>: switches the state of the component between ON and OFF</li>
+  <li><code class="language-plaintext highlighter-rouge">isOn()</code>: reads the current state of the component, without altering it. It returns a boolean, where <code class="language-plaintext highlighter-rouge">true</code> means ON.</li>
+  <li><code class="language-plaintext highlighter-rouge">setCallback()</code>: allows you to change the function to be executed by <code class="language-plaintext highlighter-rouge">onValueChangedCallback</code>, for the next time it’s toggled.</li>
+</ul>
+
+<p>The following example switches the color of a box between two colors each time it’s clicked.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">utils</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@dcl/ecs-scene-utils</span><span class="dl">'</span>
+
+<span class="c1">// Create entity</span>
+<span class="kd">const</span> <span class="nx">box</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+
+<span class="c1">// Give entity a shape and transform</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">BoxShape</span><span class="p">())</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">Transform</span><span class="p">())</span>
+
+<span class="c1">//Define two different materials</span>
+<span class="kd">let</span> <span class="nx">greenMaterial</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Material</span><span class="p">()</span>
+<span class="nx">greenMaterial</span><span class="p">.</span><span class="nx">albedoColor</span> <span class="o">=</span> <span class="nx">Color3</span><span class="p">.</span><span class="nx">Green</span><span class="p">()</span>
+<span class="kd">let</span> <span class="nx">redMaterial</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Material</span><span class="p">()</span>
+<span class="nx">redMaterial</span><span class="p">.</span><span class="nx">albedoColor</span> <span class="o">=</span> <span class="nx">Color3</span><span class="p">.</span><span class="nx">Red</span><span class="p">()</span>
+
+<span class="c1">// Add a Toggle component</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">ToggleComponent</span><span class="p">(</span><span class="nx">utils</span><span class="p">.</span><span class="nx">ToggleState</span><span class="p">.</span><span class="nx">Off</span><span class="p">,</span> <span class="nx">value</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">value</span> <span class="o">==</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">ToggleState</span><span class="p">.</span><span class="nx">On</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">//set color to green</span>
+      <span class="nx">box</span><span class="p">.</span><span class="nx">addComponentOrReplace</span><span class="p">(</span><span class="nx">greenMaterial</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="c1">//set color to red</span>
+      <span class="nx">box</span><span class="p">.</span><span class="nx">addComponentOrReplace</span><span class="p">(</span><span class="nx">redMaterial</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">})</span>
+<span class="p">)</span>
+
+<span class="c1">//listen for click on the box and toggle it's state</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">OnClick</span><span class="p">(</span><span class="nx">event</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">box</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">utils</span><span class="p">.</span><span class="nx">ToggleComponent</span><span class="p">).</span><span class="nx">toggle</span><span class="p">()</span>
+  <span class="p">})</span>
+<span class="p">)</span>
+
+<span class="c1">// Add entity to engine</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">box</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="combine-toggle-with-translate">Combine Toggle with Translate</h3>
+
+<p>This example combines a toggle component with a move component to switch an entity between two positions every time it’s clicked.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">utils</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@dcl/ecs-scene-utils</span><span class="dl">'</span>
+
+<span class="c1">// Create entity</span>
+<span class="kd">const</span> <span class="nx">box</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+
+<span class="c1">// Give entity a shape and transform</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">BoxShape</span><span class="p">())</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">Transform</span><span class="p">())</span>
+
+<span class="c1">//Define two positions for toggling</span>
+<span class="kd">let</span> <span class="nx">Pos1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="kd">let</span> <span class="nx">Pos2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="c1">//toggle for wine bottle</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">ToggleComponent</span><span class="p">(</span><span class="nx">utils</span><span class="p">.</span><span class="nx">ToggleState</span><span class="p">.</span><span class="nx">Off</span><span class="p">,</span> <span class="nx">value</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">value</span> <span class="o">==</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">ToggleState</span><span class="p">.</span><span class="nx">On</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">box</span><span class="p">.</span><span class="nx">addComponentOrReplace</span><span class="p">(</span>
+        <span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">MoveTransformComponent</span><span class="p">(</span><span class="nx">Pos1</span><span class="p">,</span> <span class="nx">Pos2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+      <span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">box</span><span class="p">.</span><span class="nx">addComponentOrReplace</span><span class="p">(</span>
+        <span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">MoveTransformComponent</span><span class="p">(</span><span class="nx">Pos2</span><span class="p">,</span> <span class="nx">Pos1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+      <span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">})</span>
+<span class="p">)</span>
+
+<span class="c1">//listen for click on the box and toggle it's state</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">OnClick</span><span class="p">(</span><span class="nx">event</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">box</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">utils</span><span class="p">.</span><span class="nx">ToggleComponent</span><span class="p">).</span><span class="nx">toggle</span><span class="p">()</span>
+  <span class="p">})</span>
+<span class="p">)</span>
+
+<span class="c1">// Add entity to engine</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">box</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="time">Time</h2>
+
+<p>These tools are all related to the passage of time in the scene.</p>
+
+<h3 id="delay-a-function">Delay a function</h3>
+
+<p>Add a <code class="language-plaintext highlighter-rouge">Delay</code> component to an entity to execute a function only after an <code class="language-plaintext highlighter-rouge">n</code> amount of milliseconds.</p>
+
+<p>This example creates an entity that only becomes visible in the scene after 100000 milliseconds (100 seconds) have passed.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">utils</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@dcl/ecs-scene-utils</span><span class="dl">'</span>
+
+<span class="c1">// create entity</span>
+<span class="kd">const</span> <span class="nx">easterEgg</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+
+<span class="c1">// give entity a shape and set invisible</span>
+<span class="kd">const</span> <span class="nx">easterEggShape</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">BoxShape</span><span class="p">()</span>
+<span class="nx">easterEggShape</span><span class="p">.</span><span class="nx">visible</span> <span class="o">=</span> <span class="kc">false</span>
+<span class="nx">easterEgg</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="nx">easterEggShape</span><span class="p">)</span>
+
+<span class="c1">// add a delayed function</span>
+<span class="nx">easterEgg</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">Delay</span><span class="p">(</span><span class="mi">100000</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">easterEgg</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">BoxShape</span><span class="p">).</span><span class="nx">visible</span> <span class="o">=</span> <span class="kc">true</span>
+  <span class="p">})</span>
+<span class="p">)</span>
+
+<span class="c1">// add entity to scene</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">easterEgg</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>To delay the execution of a task that isn’t directly tied to any entity in the scene, create a dummy entity that only holds a <code class="language-plaintext highlighter-rouge">Delay</code> component.</p>
+
+<h3 id="delay-removing-an-entity">Delay removing an entity</h3>
+
+<p>Add an <code class="language-plaintext highlighter-rouge">ExpireIn</code> component to an entity to remove it from the scene after an <code class="language-plaintext highlighter-rouge">n</code> amount of milliseconds.</p>
+
+<p>This example creates an entity that is removed from the scene 500 milliseconds after it’s clicked.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">utils</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@dcl/ecs-scene-utils</span><span class="dl">'</span>
+
+<span class="c1">// create entity</span>
+<span class="kd">const</span> <span class="nx">box</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+
+<span class="c1">// give entity a shape</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">BoxShape</span><span class="p">())</span>
+
+<span class="c1">// add a function to run when clicked</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">OnClick</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">ExpireIn</span><span class="p">(</span><span class="mi">500</span><span class="p">))</span>
+  <span class="p">})</span>
+<span class="p">)</span>
+
+<span class="c1">// add entity to scene</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">box</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="repeat-at-an-interval">Repeat at an Interval</h3>
+
+<p>Add an <code class="language-plaintext highlighter-rouge">Interval</code> component to an entity to make it execute a same function every <code class="language-plaintext highlighter-rouge">n</code> milliseconds.</p>
+
+<p>This example creates an entity that changes its scale to a random size every 500 milliseconds.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">utils</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@dcl/ecs-scene-utils</span><span class="dl">'</span>
+
+<span class="c1">// create entity</span>
+<span class="kd">const</span> <span class="nx">box</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+
+<span class="c1">// give entity a shape and transform</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">BoxShape</span><span class="p">())</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">Transform</span><span class="p">())</span>
+
+<span class="c1">// add a repeated function</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">Interval</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">randomSize</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span>
+    <span class="nx">box</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">Transform</span><span class="p">).</span><span class="nx">scale</span><span class="p">.</span><span class="nx">setAll</span><span class="p">(</span><span class="nx">randomSize</span><span class="p">)</span>
+  <span class="p">})</span>
+<span class="p">)</span>
+
+<span class="c1">// add entity to scene</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">box</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>To repeat the execution of a task that isn’t directly tied to any entity in the scene, create a dummy entity that only holds an <code class="language-plaintext highlighter-rouge">Interval</code> component.</p>
+
+<h2 id="triggers">Triggers</h2>
+
+<h3 id="trigger-component">Trigger Component</h3>
+
+<p>The trigger component can execute whatever you want whenever the player’s position or the position of a specific entity or type of entity overlaps with an area.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">TriggerComponent</code> has the following arguments:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">shape</code>: Shape of the triggering collider area, either a cube or a sphere (<code class="language-plaintext highlighter-rouge">TriggerBoxShape</code> or <code class="language-plaintext highlighter-rouge">TriggerSphereShape</code>)</li>
+  <li><code class="language-plaintext highlighter-rouge">data</code>: An object of type <code class="language-plaintext highlighter-rouge">TriggerData</code> containing several optional parameters to configure the behavior of the trigger area.</li>
+</ul>
+
+<p>The <code class="language-plaintext highlighter-rouge">TriggerData</code> type may contain the following parameters:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">onCameraEnter</code>: Callback function for when the player enters the trigger area</li>
+  <li><code class="language-plaintext highlighter-rouge">onCameraExit</code>: Callback function for when the player leaves the trigger area</li>
+  <li><code class="language-plaintext highlighter-rouge">layer</code>: Layer of the Trigger, useful to discriminate between trigger events. You can set multiple layers by using a <code class="language-plaintext highlighter-rouge">|</code> symbol.</li>
+  <li><code class="language-plaintext highlighter-rouge">triggeredByLayer</code>: Against which layers to check collisions</li>
+  <li><code class="language-plaintext highlighter-rouge">onTriggerEnter</code>: Callback when an entity of a valid layer enters the trigger area</li>
+  <li><code class="language-plaintext highlighter-rouge">onTriggerExit</code>: Callback function for when an entity of a valid layer leaves the trigger area</li>
+  <li><code class="language-plaintext highlighter-rouge">enableDebug</code>: When true, makes the trigger area visible for debug purposes. Only visible when running a preview locally, not in production.</li>
+</ul>
+
+<p>The following example creates a trigger that changes its position randomly when triggered by the player.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">utils</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@dcl/ecs-scene-utils</span><span class="dl">'</span>
+
+<span class="c1">//create entity</span>
+<span class="kd">const</span> <span class="nx">box</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+
+<span class="c1">//create shape for entity and disable its collision</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">BoxShape</span><span class="p">())</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">BoxShape</span><span class="p">).</span><span class="nx">withCollisions</span> <span class="o">=</span> <span class="kc">false</span>
+
+<span class="c1">//set transform component with initial position</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">Transform</span><span class="p">({</span> <span class="na">position</span><span class="p">:</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="p">}))</span>
+
+<span class="c1">// create trigger area object, setting size and relative position</span>
+<span class="kd">let</span> <span class="nx">triggerBox</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">TriggerBoxShape</span><span class="p">()</span>
+
+<span class="c1">//create trigger for entity</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">TriggerComponent</span><span class="p">(</span>
+    <span class="nx">triggerBox</span><span class="p">,</span> <span class="c1">//shape</span>
+    <span class="p">{</span>
+      <span class="na">onCameraEnter</span> <span class="p">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+	  <span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">triggered!</span><span class="dl">'</span><span class="p">)</span>
+	  <span class="nx">box</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">Transform</span><span class="p">).</span><span class="nx">position</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span>
+		<span class="mi">1</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">14</span><span class="p">,</span>
+		<span class="mi">0</span><span class="p">,</span>
+		<span class="mi">1</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">14</span>
+	        <span class="p">)</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1">//add entity to engine</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">box</span><span class="p">)</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>Note: The trigger shape can be positioned or stretched, but it can’t be rotated on any axis. This is a design decision taken for performance reasons. To cover a slanted area, we recommend adding multiple triggers if applicable.</p>
+</blockquote>
+
+<p>Each trigger area has a shape for its area to check for collisions, which is completely independent of the visible shape of the entity. The shape of the area can either be determined by a <code class="language-plaintext highlighter-rouge">TriggerBoxShape</code> or a <code class="language-plaintext highlighter-rouge">TriggerSphereShape</code>. When instancing these, can set the scale and an offset position. By default, the trigger shape starts in the same position as the entity that has the <code class="language-plaintext highlighter-rouge">TriggerComponent</code>.</p>
+
+<p>You can check where exactly the trigger area is and its scale by setting the <code class="language-plaintext highlighter-rouge">enableDebug</code> flag to true. You will then see this shape in the scene when running a preview. This debug shape is only visible in the context of a preview, not once the scene is deployed.</p>
+
+<h3 id="dissable-a-collision-component">Dissable a collision component</h3>
+
+<p><code class="language-plaintext highlighter-rouge">TriggerComponent</code> components have an <code class="language-plaintext highlighter-rouge">enabled</code> property, which is set to <code class="language-plaintext highlighter-rouge">true</code> by default when creating it. You can use this property to disable the behavior of the component without removing it.</p>
+
+<pre><code class="language-TypeScript">box.getComponent(utils.TriggerComponent).enabled = false
+</code></pre>
+
+<h3 id="set-a-custom-shape-for-player">Set a custom shape for player</h3>
+
+<p>You can optionally configure a custom shape and size for the player’s trigger area, according to your needs:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">utils</span><span class="p">.</span><span class="nx">TriggerSystem</span><span class="p">.</span><span class="nx">instance</span><span class="p">.</span><span class="nx">setCameraTriggerShape</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">TriggerBoxShape</span><span class="p">(</span>
+    <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.8</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span>
+    <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.91</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="p">)</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Changing this configuration affects the behavior of all <code class="language-plaintext highlighter-rouge">onCameraEnter</code> and <code class="language-plaintext highlighter-rouge">onCameraExit</code> functions of all TriggerComponents in the scene.</p>
+
+<h3 id="trigger-layers">Trigger layers</h3>
+
+<p>You can define different layers (bitwise) for triggers, and set which other layers can trigger it.</p>
+
+<p>The following example creates a scene that has:</p>
+
+<ul>
+  <li>food (cones)</li>
+  <li>mice (spheres)</li>
+  <li>cats (boxes)</li>
+</ul>
+
+<p>Food is triggered (or eaten) by both cats or mice. Also, mice are eaten by cats, so a mouse’s trigger area is triggered by only cats.</p>
+
+<p>Cats and mice always move towards the food. When food or mice are eaten, they respawn in a random location.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">utils</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@dcl/ecs-scene-utils</span><span class="dl">'</span>
+
+<span class="c1">//define layers</span>
+<span class="kd">const</span> <span class="nx">foodLayer</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="kd">const</span> <span class="nx">mouseLayer</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="kd">const</span> <span class="nx">catLayer</span> <span class="o">=</span> <span class="mi">4</span>
+
+<span class="c1">//define a reusable collision shape object</span>
+<span class="kd">let</span> <span class="nx">triggerBox</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">TriggerBoxShape</span><span class="p">(</span><span class="nx">Vector3</span><span class="p">.</span><span class="nx">One</span><span class="p">(),</span> <span class="nx">Vector3</span><span class="p">.</span><span class="nx">Zero</span><span class="p">())</span>
+
+<span class="c1">//create food</span>
+<span class="kd">const</span> <span class="nx">food</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+<span class="nx">food</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">ConeShape</span><span class="p">())</span>
+<span class="nx">food</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">ConeShape</span><span class="p">).</span><span class="nx">withCollisions</span> <span class="o">=</span> <span class="kc">false</span>
+<span class="nx">food</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">Transform</span><span class="p">({</span>
+    <span class="na">position</span><span class="p">:</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">14</span><span class="p">)</span>
+  <span class="p">})</span>
+<span class="p">)</span>
+<span class="nx">food</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">TriggerComponent</span><span class="p">(</span>
+  <span class="nx">triggerBox</span><span class="p">,</span>
+  <span class="p">{</span>
+	<span class="na">layer</span><span class="p">:</span> <span class="nx">foodLayer</span>
+	<span class="na">triggeredByLayer</span><span class="p">:</span> <span class="nx">mouseLayer</span> <span class="o">|</span> <span class="nx">catLayer</span>
+	<span class="na">onTriggerEnter</span><span class="p">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+	  <span class="nx">food</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">Transform</span><span class="p">).</span><span class="nx">position</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span>
+	    <span class="mi">1</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">14</span><span class="p">,</span>
+	    <span class="mi">0</span><span class="p">,</span>
+	    <span class="mi">1</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">14</span>
+	  <span class="p">)</span>
+	  <span class="nx">mouse</span><span class="p">.</span><span class="nx">addComponentOrReplace</span><span class="p">(</span>
+	    <span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">MoveTransformComponent</span><span class="p">(</span>
+		<span class="nx">mouse</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">Transform</span><span class="p">).</span><span class="nx">position</span><span class="p">,</span>
+		<span class="nx">food</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">Transform</span><span class="p">).</span><span class="nx">position</span><span class="p">,</span>
+		<span class="mi">4</span>
+	    <span class="p">)</span>
+	  <span class="p">)</span>
+	  <span class="nx">cat</span><span class="p">.</span><span class="nx">addComponentOrReplace</span><span class="p">(</span>
+	    <span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">MoveTransformComponent</span><span class="p">(</span>
+		<span class="nx">cat</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">Transform</span><span class="p">).</span><span class="nx">position</span><span class="p">,</span>
+		<span class="nx">food</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">Transform</span><span class="p">).</span><span class="nx">position</span><span class="p">,</span>
+		<span class="mi">4</span>
+	    <span class="p">)</span>
+	 <span class="p">)</span>
+       <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">))</span>
+
+<span class="c1">//create mouse</span>
+<span class="kd">const</span> <span class="nx">mouse</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+<span class="nx">mouse</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">SphereShape</span><span class="p">())</span>
+<span class="nx">mouse</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">SphereShape</span><span class="p">).</span><span class="nx">withCollisions</span> <span class="o">=</span> <span class="kc">false</span>
+<span class="nx">mouse</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">Transform</span><span class="p">({</span>
+    <span class="na">position</span><span class="p">:</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">14</span><span class="p">),</span>
+    <span class="na">scale</span><span class="p">:</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+  <span class="p">})</span>
+<span class="p">)</span>
+<span class="nx">mouse</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">TriggerComponent</span><span class="p">(</span>
+  <span class="nx">triggerBox</span><span class="p">,</span>
+  <span class="p">{</span>
+	<span class="na">layer</span><span class="p">:</span> <span class="nx">mouseLayer</span>
+	<span class="na">triggeredByLayer</span><span class="p">:</span> <span class="nx">catLayer</span>
+	<span class="na">onTriggerEnter</span><span class="p">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+	  <span class="nx">mouse</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">Transform</span><span class="p">).</span><span class="nx">position</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span>
+	    <span class="mi">1</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">14</span><span class="p">,</span>
+	    <span class="mi">0</span><span class="p">,</span>
+	    <span class="mi">1</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">14</span>
+	  <span class="p">)</span>
+	  <span class="nx">mouse</span><span class="p">.</span><span class="nx">addComponentOrReplace</span><span class="p">(</span>
+	    <span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">MoveTransformComponent</span><span class="p">(</span>
+	      <span class="nx">mouse</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">Transform</span><span class="p">).</span><span class="nx">position</span><span class="p">,</span>
+	      <span class="nx">food</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">Transform</span><span class="p">).</span><span class="nx">position</span><span class="p">,</span>
+	      <span class="mi">4</span>
+	    <span class="p">)</span>
+          <span class="p">)</span>
+        <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">))</span>
+
+<span class="c1">//create cat</span>
+<span class="kd">const</span> <span class="nx">cat</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+<span class="nx">cat</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">BoxShape</span><span class="p">())</span>
+<span class="nx">cat</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">BoxShape</span><span class="p">).</span><span class="nx">withCollisions</span> <span class="o">=</span> <span class="kc">false</span>
+<span class="nx">cat</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">Transform</span><span class="p">({</span>
+    <span class="na">position</span><span class="p">:</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">14</span><span class="p">)</span>
+  <span class="p">})</span>
+<span class="p">)</span>
+<span class="nx">cat</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">TriggerComponen</span><span class="p">(</span>
+	<span class="nx">triggerBox</span><span class="p">,</span>
+	<span class="p">{</span>
+		<span class="na">layer</span><span class="p">:</span> <span class="nx">catLayer</span>
+	<span class="p">}</span>
+<span class="p">))</span>
+
+<span class="c1">//set initial movement for mouse and cat</span>
+<span class="nx">mouse</span><span class="p">.</span><span class="nx">addComponentOrReplace</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">MoveTransformComponent</span><span class="p">(</span>
+    <span class="nx">mouse</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">Transform</span><span class="p">).</span><span class="nx">position</span><span class="p">,</span>
+    <span class="nx">food</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">Transform</span><span class="p">).</span><span class="nx">position</span><span class="p">,</span>
+    <span class="mi">4</span>
+  <span class="p">)</span>
+<span class="p">)</span>
+<span class="nx">cat</span><span class="p">.</span><span class="nx">addComponentOrReplace</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">MoveTransformComponent</span><span class="p">(</span>
+    <span class="nx">cat</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">Transform</span><span class="p">).</span><span class="nx">position</span><span class="p">,</span>
+    <span class="nx">food</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">Transform</span><span class="p">).</span><span class="nx">position</span><span class="p">,</span>
+    <span class="mi">4</span>
+  <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1">//add entities to engine</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">food</span><span class="p">)</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">mouse</span><span class="p">)</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">cat</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="conversions">Conversions</h2>
+
+<p>This library includes a number of helpful functions for common value conversions.</p>
+
+<h4 id="clamp">Clamp</h4>
+
+<p>Use the <code class="language-plaintext highlighter-rouge">clamp()</code> function to easily clamp possible values between a maximum and a minimum.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">clamp()</code> function takes the following arguments:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">value</code>: Input number to convert</li>
+  <li><code class="language-plaintext highlighter-rouge">min</code>: Minimum output value.</li>
+  <li><code class="language-plaintext highlighter-rouge">max</code>: Maximum output value.</li>
+</ul>
+
+<p>The following example limits an incoming value between 5 and 15. If the incoming value is less than 5, it will output 5. If the incoming value is more than 15, it will output 15.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">input</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="kd">let</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">clamp</span><span class="p">(</span><span class="nx">input</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+<span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="map">Map</h4>
+
+<p>Use the <code class="language-plaintext highlighter-rouge">map()</code> function to map a value from one range of values to its equivalent, scaled in proportion to another range of values, using maximum and minimum.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">map()</code> function takes the following arguments:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">value</code>: Input number to convert</li>
+  <li><code class="language-plaintext highlighter-rouge">min1</code>: Minimum value in the range of the input.</li>
+  <li><code class="language-plaintext highlighter-rouge">max1</code>: Maximum value in the range of the input.</li>
+  <li><code class="language-plaintext highlighter-rouge">min2</code>: Minimum value in the range of the output.</li>
+  <li><code class="language-plaintext highlighter-rouge">max2</code>: Maximum value in the range of the output.</li>
+</ul>
+
+<p>The following example maps the value <em>5</em> from a scale of 0 to 10 to a scale of 300 to 400. The resulting value is 350, as it keeps the same proportion relative to the new maximum and minimum values.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">input</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="kd">let</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">input</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
+<span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="world-position">World position</h4>
+
+<p>If an entity is parented to another entity, or to the player, then its Transform position will be relative to its parent. To find what its global position is, taking into account any parents, use <code class="language-plaintext highlighter-rouge">getEntityWorldPosition()</code>.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">getEntityWorldPosition()</code> function takes a single argument:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">entity</code>: The entity from which to get the global position</li>
+</ul>
+
+<p>The function returns a <code class="language-plaintext highlighter-rouge">Vector3</code> object, with the resulting position of adding the given entity and all its chain of parents.</p>
+
+<p>The following example sets a cube as a child of the player, and logs its true position when clicked.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">cube</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+<span class="nx">cube</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">Transform</span><span class="p">({</span> <span class="na">position</span><span class="p">:</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="p">}))</span><span class="nx">cube</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">BoxShape</span><span class="p">())</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">cube</span><span class="p">)</span>
+<span class="nx">cube</span><span class="p">.</span><span class="nx">setParent</span><span class="p">(</span><span class="nx">Attachable</span><span class="p">.</span><span class="nx">FIRST_PERSON_CAMERA</span><span class="p">)</span>
+
+<span class="nx">cube</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">OnPointerDown</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+	<span class="nx">log</span><span class="p">(</span><span class="nx">getEntityWorldRotation</span><span class="p">(</span><span class="nx">myCube</span><span class="p">))</span>
+  <span class="p">}))</span>
+</code></pre></div></div>
+
+<h4 id="world-rotation">World rotation</h4>
+
+<p>If an entity is parented to another entity, or to the player, then its Transform rotation will be relative to its parent. To find what its global rotation is, taking into account any parents, use <code class="language-plaintext highlighter-rouge">getEntityWorldRotation()</code>.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">getEntityWorldRotation()</code> function takes a single argument:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">entity</code>: The entity from which to get the global rotation</li>
+</ul>
+
+<p>The function returns a <code class="language-plaintext highlighter-rouge">Quaternion</code> object, with the resulting rotation of multiplying the given entity to all its chain of parents.</p>
+
+<p>The following example sets a cube as a child of the player, and logs its true rotation when clicked.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">cube</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+<span class="nx">cube</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">Transform</span><span class="p">({</span> <span class="na">position</span><span class="p">:</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="p">}))</span><span class="nx">cube</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">BoxShape</span><span class="p">())</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">cube</span><span class="p">)</span>
+<span class="nx">cube</span><span class="p">.</span><span class="nx">setParent</span><span class="p">(</span><span class="nx">Attachable</span><span class="p">.</span><span class="nx">FIRST_PERSON_CAMERA</span><span class="p">)</span>
+
+<span class="nx">cube</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">OnPointerDown</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+	<span class="nx">log</span><span class="p">(</span><span class="nx">getEntityWorldRotation</span><span class="p">(</span><span class="nx">myCube</span><span class="p">))</span>
+  <span class="p">}))</span>
+</code></pre></div></div>
+
+<h2 id="send-requests">Send requests</h2>
+
+<p>Use the <code class="language-plaintext highlighter-rouge">sendRequest()</code> function to easily send HTTP requests to APIs.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">sendRequest()</code> function has a single required argument:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">url</code>: The URL to send the request</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">async</span> <span class="kd">function</span> <span class="nx">request</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">sendRequest</span><span class="p">(</span>
+    <span class="dl">'</span><span class="s1">https://events.decentraland.org/api/events/?limit=5</span><span class="dl">'</span>
+  <span class="p">)</span>
+
+  <span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>NOTE: The sendRequest() function is asynchronous, since it must wait for the external server to respond back before it can return a response. If you need your code to access the data on the request’s response, you must use the sendRequest() within an <code class="language-plaintext highlighter-rouge">async</code> block of code, and add an <code class="language-plaintext highlighter-rouge">await</code> to the function.</p>
+</blockquote>
+
+<p>The <code class="language-plaintext highlighter-rouge">sendRequest()</code> function also lets you use the following arguments, for sending more advanced requests:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">method</code>: The HTTP method to use. <code class="language-plaintext highlighter-rouge">GET</code> is the default, other common options are <code class="language-plaintext highlighter-rouge">POST</code>, <code class="language-plaintext highlighter-rouge">PUT</code>, and <code class="language-plaintext highlighter-rouge">DELETE</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">headers</code>: The HTTP headers of the request, as a JSON object.</li>
+  <li><code class="language-plaintext highlighter-rouge">body</code>: The body of the request, as a JSON object.</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">async</span> <span class="kd">function</span> <span class="nx">request</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">sendRequest</span><span class="p">(</span>
+  	<span class="dl">'</span><span class="s1">https://jsonplaceholder.typicode.com/posts</span><span class="dl">'</span><span class="p">,</span>
+    <span class="dl">'</span><span class="s1">POST</span><span class="dl">'</span><span class="p">,</span>
+    <span class="p">{</span>
+      <span class="dl">'</span><span class="s1">content-type</span><span class="dl">'</span><span class="p">:</span> <span class="dl">'</span><span class="s1">application/json</span><span class="dl">'</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="na">content</span><span class="p">:</span> <span class="dl">'</span><span class="s1">My test JSON</span><span class="dl">'</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="labels">Labels</h2>
+
+<p>Add a text label floating over an entity using <code class="language-plaintext highlighter-rouge">addLabel()</code>.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">addLabel()</code> function has just two required arguments:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">text</code>: The string of text to display</li>
+  <li><code class="language-plaintext highlighter-rouge">parent</code>: The entity to set the label on</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">cube</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+<span class="nx">cube</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">Transform</span><span class="p">({</span> <span class="na">position</span><span class="p">:</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span> <span class="p">}))</span>
+<span class="nx">cube</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">BoxShape</span><span class="p">())</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">cube</span><span class="p">)</span>
+
+<span class="nx">utils</span><span class="p">.</span><span class="nx">addLabel</span><span class="p">(</span><span class="dl">'</span><span class="s1">Random Cube</span><span class="dl">'</span><span class="p">,</span> <span class="nx">cube</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">addLabel()</code> function also lets you set the following:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">billboard</code>: If true, label turns to always face player. True by default.</li>
+  <li><code class="language-plaintext highlighter-rouge">color</code>: Text color. Black by default.</li>
+  <li><code class="language-plaintext highlighter-rouge">size</code>: Text font size, 3 by default.</li>
+  <li><code class="language-plaintext highlighter-rouge">textOffset</code>: Offset from parent entity’s position. By default 1.5 meters above the parent.</li>
+</ul>
+
+<blockquote>
+  <p>Tip: The <code class="language-plaintext highlighter-rouge">addLabel()</code> function returns the created entity used for the text. You can then tweak this entity in any way you choose.</p>
+</blockquote>
+
+<h2 id="debug-helpers">Debug helpers</h2>
+
+<h4 id="debug-cube">Debug cube</h4>
+
+<p>Render a simple clickable cube to use as a trigger when debugging a scene with <code class="language-plaintext highlighter-rouge">addTestCube()</code>.</p>
+
+<blockquote>
+  <p>NOTE: The test cube is only shown in preview, unless configured to appear also in production.</p>
+</blockquote>
+
+<p>The <code class="language-plaintext highlighter-rouge">addTestCube()</code> function has just two required arguments:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">pos</code>: The position, rotation and/or scale of the cube, expressed as a TransformConstructorArgs object, as gets passed when creating a <code class="language-plaintext highlighter-rouge">Transform</code> component.</li>
+  <li><code class="language-plaintext highlighter-rouge">triggeredFunction</code>: A function that gets called every time the cube is clicked.</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">utils</span><span class="p">.</span><span class="nx">addTestCube</span><span class="p">({</span> <span class="na">position</span><span class="p">:</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="p">},</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Cube clicked</span><span class="dl">'</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">addTestCube()</code> function also lets you set the following:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">label</code>: An optional label to display floating over the cube</li>
+  <li><code class="language-plaintext highlighter-rouge">color</code>: A color for the cube’s material.</li>
+  <li><code class="language-plaintext highlighter-rouge">sphere</code>: If true, it renders as a Sphere instead of a cube.</li>
+  <li><code class="language-plaintext highlighter-rouge">noCollider</code>: If true, the cube won’t have a collider and will let players walk through it.</li>
+  <li><code class="language-plaintext highlighter-rouge">keepInProduction</code>: If true, it will be visible for players in-world once the scene is deployed. Otherwise, the cube is only present when previewing he scene locally.</li>
+</ul>
+
+<blockquote>
+  <p>Tip: The <code class="language-plaintext highlighter-rouge">addTestCube()</code> function returns the created entity for the cube. You can then tweak this entity in any way you choose. <code class="language-plaintext highlighter-rouge">addTestCube()</code> is an async function (because the function first checks if you’re in preview or in production). If you need the function to return the cube (instead of a promise of a cube) use it inside an async block of code with an await on the <code class="language-plaintext highlighter-rouge">addTestCube()</code> function.</p>
+</blockquote>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">async</span> <span class="kd">function</span> <span class="nx">addMyCube</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">myCube</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">addTestCube</span><span class="p">({</span> <span class="na">position</span><span class="p">:</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="p">},</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Cube clicked</span><span class="dl">'</span><span class="p">)</span>
+  <span class="p">})</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="action-sequence">Action sequence</h2>
+
+<p>Use an action sequence to play a series of actions one after another.</p>
+
+<h3 id="iaction">IAction</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">IAction</code> interface defines the actions that can be added into a sequence. It includes:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">hasFinished</code>: Boolean for the state of the action, wether it has finished its execution or not.</li>
+  <li><code class="language-plaintext highlighter-rouge">onStart()</code>: First method that is called upon the execution of the action.</li>
+  <li><code class="language-plaintext highlighter-rouge">update()</code>: Called on every frame on the action’s internal update.</li>
+  <li><code class="language-plaintext highlighter-rouge">onFinish()</code>: Called when the action has finished executing.</li>
+</ul>
+
+<h3 id="action-sequence-builder">Action Sequence Builder</h3>
+
+<p>This object creates action sequences, using simple building blocks.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">SequenceBuilder</code> exposes the following methods:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">then()</code>: Enqueue an action so that it’s executed when the previous one finishes.</li>
+  <li><code class="language-plaintext highlighter-rouge">if()</code>: Use a condition to branch the sequence</li>
+  <li><code class="language-plaintext highlighter-rouge">else()</code>: Used with if() to create an alternative branch</li>
+  <li><code class="language-plaintext highlighter-rouge">endIf()</code>: Ends the definition of the conditional block</li>
+  <li><code class="language-plaintext highlighter-rouge">while()</code>: Keep running the actions defined in a block until a condition is no longer met.</li>
+  <li><code class="language-plaintext highlighter-rouge">breakWhile()</code>: Ends the definition of the while block</li>
+</ul>
+
+<h3 id="action-sequence-system">Action Sequence System</h3>
+
+<p>The action sequence system takes care of running the sequence of actions. The <code class="language-plaintext highlighter-rouge">ActionsSequenceSystem</code> exposes the following methods:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">startSequence()</code>: Starts a sequence of actions</li>
+  <li><code class="language-plaintext highlighter-rouge">setOnFinishCallback()</code>: Sets a callback for when the whole sequence is finished</li>
+  <li><code class="language-plaintext highlighter-rouge">isRunning()</code>: Returns a boolean that determines if the sequence is running</li>
+  <li><code class="language-plaintext highlighter-rouge">stop()</code>: Stops a running the sequence</li>
+  <li><code class="language-plaintext highlighter-rouge">resume()</code>: Resumes a stopped sequence</li>
+  <li><code class="language-plaintext highlighter-rouge">reset()</code>: Resets a sequence so that it starts over</li>
+</ul>
+
+<h3 id="full-example">Full example</h3>
+
+<p>The following example creates a box that changes its scale until clicked. Then it resets its scale and moves.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">utils</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@dcl/ecs-scene-utils</span><span class="dl">'</span>
+
+<span class="c1">//set clicked flag</span>
+<span class="kd">let</span> <span class="nx">boxClicked</span> <span class="o">=</span> <span class="kc">false</span>
+
+<span class="c1">//create box entity</span>
+<span class="kd">const</span> <span class="nx">box</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">BoxShape</span><span class="p">())</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">Transform</span><span class="p">({</span> <span class="na">position</span><span class="p">:</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span> <span class="p">}))</span>
+<span class="nx">box</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">OnClick</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">(</span><span class="nx">boxClicked</span> <span class="o">=</span> <span class="kc">true</span><span class="p">)))</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">box</span><span class="p">)</span>
+
+<span class="c1">//Use IAction to define action for scaling</span>
+<span class="kd">class</span> <span class="nx">ScaleAction</span> <span class="k">implements</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">ActionsSequenceSystem</span><span class="p">.</span><span class="nx">IAction</span> <span class="p">{</span>
+  <span class="nl">hasFinished</span><span class="p">:</span> <span class="nx">boolean</span> <span class="o">=</span> <span class="kc">false</span>
+  <span class="nx">entity</span><span class="p">:</span> <span class="nx">Entity</span>
+  <span class="nx">scale</span><span class="p">:</span> <span class="nx">Vector3</span>
+
+  <span class="kd">constructor</span><span class="p">(</span><span class="nx">entity</span><span class="p">:</span> <span class="nx">Entity</span><span class="p">,</span> <span class="nx">scale</span><span class="p">:</span> <span class="nx">Vector3</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">entity</span> <span class="o">=</span> <span class="nx">entity</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">scale</span> <span class="o">=</span> <span class="nx">scale</span>
+  <span class="p">}</span>
+
+  <span class="c1">//Method when action starts</span>
+  <span class="nx">onStart</span><span class="p">():</span> <span class="k">void</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">transform</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">entity</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">Transform</span><span class="p">)</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">hasFinished</span> <span class="o">=</span> <span class="kc">false</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">entity</span><span class="p">.</span><span class="nx">addComponentOrReplace</span><span class="p">(</span>
+      <span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">ScaleTransformComponent</span><span class="p">(</span>
+        <span class="nx">transform</span><span class="p">.</span><span class="nx">scale</span><span class="p">,</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">scale</span><span class="p">,</span>
+        <span class="mf">1.5</span><span class="p">,</span>
+        <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">hasFinished</span> <span class="o">=</span> <span class="kc">true</span>
+        <span class="p">},</span>
+        <span class="nx">utils</span><span class="p">.</span><span class="nx">InterpolationType</span><span class="p">.</span><span class="nx">EASEINQUAD</span>
+      <span class="p">)</span>
+    <span class="p">)</span>
+  <span class="p">}</span>
+  <span class="c1">//Method to run on every frame</span>
+  <span class="nx">update</span><span class="p">(</span><span class="nx">dt</span><span class="p">:</span> <span class="kr">number</span><span class="p">):</span> <span class="k">void</span> <span class="p">{}</span>
+  <span class="c1">//Method to run at the end</span>
+  <span class="nx">onFinish</span><span class="p">():</span> <span class="k">void</span> <span class="p">{}</span>
+<span class="p">}</span>
+
+<span class="c1">//Use IAction to define action for movement</span>
+<span class="kd">class</span> <span class="nx">MoveAction</span> <span class="k">implements</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">ActionsSequenceSystem</span><span class="p">.</span><span class="nx">IAction</span> <span class="p">{</span>
+  <span class="nl">hasFinished</span><span class="p">:</span> <span class="nx">boolean</span> <span class="o">=</span> <span class="kc">false</span>
+  <span class="nx">entity</span><span class="p">:</span> <span class="nx">Entity</span>
+  <span class="nx">position</span><span class="p">:</span> <span class="nx">Vector3</span>
+
+  <span class="kd">constructor</span><span class="p">(</span><span class="nx">entity</span><span class="p">:</span> <span class="nx">Entity</span><span class="p">,</span> <span class="nx">position</span><span class="p">:</span> <span class="nx">Vector3</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">entity</span> <span class="o">=</span> <span class="nx">entity</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">position</span> <span class="o">=</span> <span class="nx">position</span>
+  <span class="p">}</span>
+
+  <span class="c1">//Method when action starts</span>
+  <span class="nx">onStart</span><span class="p">():</span> <span class="k">void</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">transform</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">entity</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">Transform</span><span class="p">)</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">entity</span><span class="p">.</span><span class="nx">addComponentOrReplace</span><span class="p">(</span>
+      <span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">MoveTransformComponent</span><span class="p">(</span>
+        <span class="nx">transform</span><span class="p">.</span><span class="nx">position</span><span class="p">,</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">position</span><span class="p">,</span>
+        <span class="mi">4</span><span class="p">,</span>
+        <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">hasFinished</span> <span class="o">=</span> <span class="kc">true</span>
+        <span class="p">}</span>
+      <span class="p">)</span>
+    <span class="p">)</span>
+  <span class="p">}</span>
+  <span class="c1">//Method to run on every frame</span>
+  <span class="nx">update</span><span class="p">(</span><span class="nx">dt</span><span class="p">:</span> <span class="kr">number</span><span class="p">):</span> <span class="k">void</span> <span class="p">{}</span>
+  <span class="c1">//Method to run at the end</span>
+  <span class="nx">onFinish</span><span class="p">():</span> <span class="k">void</span> <span class="p">{}</span>
+<span class="p">}</span>
+
+<span class="c1">//Use sequence builder to create a sequence</span>
+<span class="kd">const</span> <span class="nx">sequence</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">ActionsSequenceSystem</span><span class="p">.</span><span class="nx">SequenceBuilder</span><span class="p">()</span>
+  <span class="p">.</span><span class="k">while</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="o">!</span><span class="nx">boxClicked</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="k">new</span> <span class="nx">ScaleAction</span><span class="p">(</span><span class="nx">box</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)))</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="k">new</span> <span class="nx">ScaleAction</span><span class="p">(</span><span class="nx">box</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)))</span>
+  <span class="p">.</span><span class="nx">endWhile</span><span class="p">()</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="k">new</span> <span class="nx">ScaleAction</span><span class="p">(</span><span class="nx">box</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="k">new</span> <span class="nx">MoveAction</span><span class="p">(</span><span class="nx">box</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+
+<span class="c1">//Create a sequence system, and add it to the engine to run the sequence</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addSystem</span><span class="p">(</span><span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">ActionsSequenceSystem</span><span class="p">(</span><span class="nx">sequence</span><span class="p">))</span>
+</code></pre></div></div>
+:ET

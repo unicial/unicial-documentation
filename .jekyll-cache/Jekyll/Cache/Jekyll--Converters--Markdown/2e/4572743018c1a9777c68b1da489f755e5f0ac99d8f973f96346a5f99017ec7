@@ -1,0 +1,152 @@
+I"~&<p>After <a href="https://docs.decentraland.org/#create-your-first-scene">creating a new scene</a> using the CLI, the scene folder will have a series of files with default content.</p>
+
+<h2 id="default-files-in-a-local-scene">Default files in a local scene</h2>
+
+<p>Scenes include the following files:</p>
+
+<ul>
+  <li><strong>src/game.ts</strong>: The entry point of the scene.</li>
+  <li><strong>scene.json</strong>: The manifest that contains metadata for the scene.</li>
+  <li><strong>package.json</strong> and <strong>package-lock.json</strong>: Specify the versions of all dependencies of the scene.</li>
+  <li><strong>tsconfig.json</strong>: Typescript configuration file.</li>
+  <li><strong>.dclignore</strong>: Lists what files in your project not to deploy to IPFS.</li>
+</ul>
+
+<h4 id="gamets">game.ts</h4>
+
+<p>This is the entry point to your scene’s code. You could fit your entire scene’s logic into this file, although for clarity in most cases we recommend spreading out your code over several other <em>.ts</em> files and importing them into <em>game.ts</em>.</p>
+
+<p>In most cases, you’ll only need to edit this file to create your scene. It contains the code that generates an entity tree, which is what end users of your parcel will see.</p>
+
+<p>Below is a basic example of a <em>game.ts</em> file:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Create a component group to track entities with Transform components</span>
+<span class="kd">let</span> <span class="nx">group</span> <span class="o">=</span> <span class="nx">engine</span><span class="p">.</span><span class="nx">getComponentGroup</span><span class="p">(</span><span class="nx">Transform</span><span class="p">)</span>
+
+<span class="c1">// Create a system</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">RotatorSystem</span> <span class="p">{</span>
+  <span class="c1">// The update() function runs on every frame.</span>
+  <span class="nx">update</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// Cycle over the entities in the component group</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">entity</span> <span class="k">of</span> <span class="nx">group</span><span class="p">.</span><span class="nx">entities</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">const</span> <span class="nx">transform</span> <span class="o">=</span> <span class="nx">entity</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">Transform</span><span class="p">)</span>
+      <span class="nx">transform</span><span class="p">.</span><span class="nx">rotation</span><span class="p">.</span><span class="nx">y</span> <span class="o">+=</span> <span class="mi">2</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Create an entity</span>
+<span class="kd">const</span> <span class="nx">cube</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+
+<span class="c1">// Add a cube shape to the entity</span>
+<span class="nx">cube</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">BoxShape</span><span class="p">())</span>
+
+<span class="c1">// Add a transform component to the entity</span>
+<span class="nx">cube</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">Transform</span><span class="p">({</span>
+    <span class="na">position</span><span class="p">:</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+  <span class="p">})</span>
+<span class="p">)</span>
+
+<span class="c1">// Add the entity to the engine</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">cube</span><span class="p">)</span>
+
+<span class="c1">// Add the system to the engine</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addSystem</span><span class="p">(</span><span class="k">new</span> <span class="nx">RotatorSystem</span><span class="p">())</span>
+</code></pre></div></div>
+
+<h4 id="scenejson">scene.json</h4>
+
+<p>The <em>scene.json</em> file is a JSON formatted manifest for a scene in the world. A scene can span a single or multiple LAND parcels. The <em>scene.json</em> manifest describes what objects exist in the scene, a list of any assets needed to render it.</p>
+
+<p>contact information for the parcel owner, and security settings. For more information and an example of a
+<em>scene.json</em> file, please visit the <a href="https://github.com/decentraland/proposals/blob/master/dsp/0020.mediawiki">Decentraland specification proposal</a>.</p>
+
+<p>All of this metadata is optional for previewing the scene locally, but part of it is needed for deploying. You can change this information manually at any time.</p>
+
+<h4 id="packagejson">package.json</h4>
+
+<p>This file provides information to NPM that allows it to identify the project, as well as handle the project’s dependencies. Decentraland scenes need two packages:</p>
+
+<ul>
+  <li><strong>decentraland-api</strong>: allows the scene to communicate with the world engine.</li>
+  <li><strong>typescript</strong>: used to compile the file <em>game.ts</em> to javascript.</li>
+</ul>
+
+<h4 id="package-lockjson">package-lock.json</h4>
+
+<p>This file lists the versions of all the other dependencies of the project. These versions are locked, meaning that the compiler will use literally the same minor release listed here.</p>
+
+<p>You can change any package version manually by editing this file.</p>
+
+<h4 id="tsconfigjson">tsconfig.json</h4>
+
+<p>Directories containing a <em>tsconfig.json</em> file are root directories for TypeScript Projects. The <em>tsconfig.json</em> file specifies the root files and options required to compile your project from TypeScript into JavaScript.</p>
+
+<blockquote>
+  <p>You can use another tool or language instead of TypeScript, so long as your scripts are contained within a single Javascript file (scene.js). All provided type declarations are made in TypeScript, and other languages and transpilers are not officially supported.</p>
+</blockquote>
+
+<h2 id="recommended-file-locations">Recommended file locations</h2>
+
+<p>Keep in mind that when you deploy your scene to Decentraland, any assets or external libraries that are needed to use your scene must be either packaged inside the scene folder or available via a remote server.</p>
+
+<p>Anything that is meant to run in the player’s client must located inside the scene folder. You shouldn’t reference files or libraries that are installed elsewhere in your local machine, because they won’t be available to the deployed scene.</p>
+
+<p>We suggest using these folder names consistently for storing the different types of assets that your scene might need:</p>
+
+<ul>
+  <li>3d models: <code class="language-plaintext highlighter-rouge">/models</code></li>
+  <li>Videos: <code class="language-plaintext highlighter-rouge">/videos</code></li>
+  <li>Sound files: <code class="language-plaintext highlighter-rouge">/sounds</code></li>
+  <li>Image files for textures (except for glTF models): <code class="language-plaintext highlighter-rouge">/materials</code></li>
+  <li><em>.ts</em> definitions for components <code class="language-plaintext highlighter-rouge">/src/components</code></li>
+  <li><em>.ts</em> definitions for systems <code class="language-plaintext highlighter-rouge">/src/systems</code></li>
+</ul>
+
+<blockquote>
+  <p>Note: Supporting files for glTF models, like their texture image files or <em>.bin</em> files, should always be placed in the same folder as the model’s <em>.gltf</em> or <em>.glb</em> file.</p>
+</blockquote>
+
+<blockquote>
+  <p>Note: We recommend using always lower case names for all folders and file names, to avoid possible issues.</p>
+</blockquote>
+
+<h2 id="the-dclignore-file">The dclignore file</h2>
+
+<p>All scenes include a <em>.dclignore</em> file, this file specifies what files in the scene folder to ignore when deploying a scene to Decentraland.</p>
+
+<p>For example, you might like to keep the Blender files for the 3D models in your scene inside the scene folder, but you want to prevent those files from being deployed to Decentraland. In that case, you could add <code class="language-plaintext highlighter-rouge">*.blend</code> to <em>.dclignore</em> to ignore all files with that extension.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>What to ignore</th>
+      <th>Example</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Specific files</td>
+      <td><code class="language-plaintext highlighter-rouge">BACKUP.ts</code></td>
+      <td>Ignores a specific file</td>
+    </tr>
+    <tr>
+      <td>Folders</td>
+      <td><code class="language-plaintext highlighter-rouge">drafts/</code></td>
+      <td>Ignores entire contents of a folder and its subfolders</td>
+    </tr>
+    <tr>
+      <td>Extensions</td>
+      <td><code class="language-plaintext highlighter-rouge">*.blend</code></td>
+      <td>Ignores all files with a given extension</td>
+    </tr>
+    <tr>
+      <td>Name sections</td>
+      <td><code class="language-plaintext highlighter-rouge">test*</code></td>
+      <td>Ignores all files with names that match the query. In this case, that start with <em>test</em></td>
+    </tr>
+  </tbody>
+</table>
+:ET

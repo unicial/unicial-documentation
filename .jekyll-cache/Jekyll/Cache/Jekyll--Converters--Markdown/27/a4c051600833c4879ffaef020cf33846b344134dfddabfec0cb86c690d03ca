@@ -1,0 +1,52 @@
+I"^<h3 id="dapp">dApp</h3>
+
+<p>Short for decentralized application, a dApp is any application that is designed to run on a blockchain network, like Ethereum.</p>
+
+<h3 id="district">District</h3>
+
+<p>Groups of adjacent parcels that share similar user interests. You can find a list of Districts with their documentation on our <a href="https://wiki.decentraland.org/index.php?title=About_Districts">Community Wiki</a>. For a record of the original district proposals, please see <a href="https://github.com/decentraland/districts">this GitHub repository</a>.</p>
+
+<h3 id="erc20-token">ERC20 Token</h3>
+
+<p>A fungible (reproducible or interchangeable) token built using an Ethereum smart contract according to the <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20-token-standard.md">ERC-20 Token Standard</a>. MANA is Decentraland’s ERC20 token.</p>
+
+<h3 id="ethereum">Ethereum</h3>
+
+<p>A decentralized platform for building applications based on smart contracts. Decentraland is being built on the Ethereum platform. For more information, please visit https://www.ethereum.org/</p>
+
+<h3 id="fungible-token">Fungible Token</h3>
+
+<p>A fungible token is any token whose fundamental unit or characteristic is interchangeable with other tokens of the same set. In other words, fungible tokens are not unique. Examples of fungible tokens are Decentraland’s MANA or Ethereum’s Ether.</p>
+
+<h3 id="genesis-city">Genesis City</h3>
+
+<p>The geographic center of Decentraland, set at an area of 90,000 parcels, with 36,041 parcels dedicated to community districts. The remaining parcels of Genesis City were auctioned to users during the Terraform Event, or LAND auction.</p>
+
+<h3 id="land">LAND</h3>
+
+<p>LAND is a scarce, non-fungible digital asset maintained in an Ethereum smart contract that represents the parcels of virtual land within Decentraland.</p>
+
+<h3 id="mana">MANA</h3>
+
+<p>MANA is Decentraland’s fungible, ERC20 cryptocurrency token limited to a total original supply of 2,805,886,393, and current total supply of 2,194,916,827. Back in November of 2018, the keys that had custody of the MANA smart contract were sent to a (self-destructed address)[https://etherscan.io/address/0xdf861993edbe95bafbfa7760838f8ebbd5afda9f], the recommended method to “throw away the keys” in Ethereum. This effectively made the MANA smart contract forever immutable, with no ability to mint more tokens or pause it. MANA’s purpose is to allow users of Decentraland to purchase LAND and goods and services from other users.</p>
+
+<h3 id="metamask">MetaMask</h3>
+
+<p>A browser extension that allows you to access and run dApps without running an entire node on the Ethereum blockchain. For more information, and to install MetaMask to begin using Decentraland’s features, please see https://metamask.io/</p>
+
+<h3 id="nft-non-fungible-token">NFT (Non-Fungible Token)</h3>
+
+<p>In contrast to a fungible token, non-fungible tokens are unique, distinguishable digital assets. The information contained within a non-fungible token is unique to that token, like a serial number or coordinates for a parcel of LAND in Decentraland. This means that one non-fungible token can never be swapped, or exchanged, for any other token. Decentraland’s LAND is one example of a non-fungible digital asset, along with CryptoKitties or CryptoPunks.</p>
+
+<h3 id="parcel">Parcel</h3>
+
+<p>A 16 meter by 16 meter piece of LAND within Decentraland.</p>
+
+<h3 id="scene">Scene</h3>
+
+<p>A scene within Decentraland comprises the 3D objects, textures, and audio content rendered on a LAND parcel or group of parcels.</p>
+
+<h3 id="smart-contract">Smart Contract</h3>
+
+<p>A smart contract is simply a program on the Ethereum blockchain that facilitates and verifies digital transactions. Ethereum smart contracts enable developers to build decentralized applications that can track and transfer ownership of digital assets on a trustless network.</p>
+:ET

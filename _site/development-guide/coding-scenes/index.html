@@ -1,0 +1,5745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, shrink-to-fit=no" />
+  <meta name="commit" content="0000000000000000000000000000000000000000" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"></link>
+  <link rel="stylesheet" href="/css/screen.css?1646639026201475600" type="text/css" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+
+  
+
+  
+
+  <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Coding scenes | Your awesome title</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Coding scenes" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This set will help you understand how things work in the client and SDK of decentraland." />
+<meta property="og:description" content="This set will help you understand how things work in the client and SDK of decentraland." />
+<link rel="canonical" href="http://localhost:4000/development-guide/coding-scenes/" />
+<meta property="og:url" content="http://localhost:4000/development-guide/coding-scenes/" />
+<meta property="og:site_name" content="Your awesome title" />
+<meta property="og:image" content="http://localhost:4000/images/favicon.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-01-01T00:00:00+08:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="http://localhost:4000/images/favicon.png" />
+<meta property="twitter:title" content="Coding scenes" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2018-01-01T00:00:00+08:00","datePublished":"2018-01-01T00:00:00+08:00","description":"This set will help you understand how things work in the client and SDK of decentraland.","headline":"Coding scenes","image":"http://localhost:4000/images/favicon.png","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/development-guide/coding-scenes/"},"url":"http://localhost:4000/development-guide/coding-scenes/"}</script>
+<!-- End Jekyll SEO tag -->
+
+  <link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Your awesome title" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/1.0.0/lunr.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min.js"></script>
+  <script src="/js/global.js?1646639026201475600"></script>
+</head>
+
+<body class="">
+  <div data-ad-slot="DOCS_TOP_BANNER" data-ad-type="full"></div>
+  
+  <header>
+  <div class="dropdown-overlay"></div>
+  <div class="search-overlay mobile"></div>
+  <div class="wrapper">
+    <nav>
+      <div class="topbar">
+        <div class="logo">
+          <a href="https://decentraland.org/"><img src="/images/logo.png" /></a>
+        </div>
+        <div class="dropdown-trigger">Docs</div>
+      </div>
+      <div class="dropdown-content">
+        <ul class="menu">
+          <li><a href="/" class="active">Documents</a></li>
+          <li><a href="#">Marketplace</a></li>
+          <li><a href="#">About Us</a></li>
+        </ul>
+      </div>
+    </nav>
+    <div class="header_search">
+      <div class="search-overlay desktop"></div>
+      <form action="/search/" method="get">
+        <input type="text" name="q"  placeholder="Search" autofocus autocomplete="off">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" class="search-icon">
+    <g fill="none" fill-rule="evenodd">
+        <path d="M-5-5v24h24V-5z"/>
+        <path fill="#5C5C6E" fill-rule="nonzero" d="M12.003 13.657L8.96 10.616c-.016-.016-.027-.035-.042-.052a5.756 5.756 0 1 1 1.645-1.645c.017.015.036.026.052.042l3.041 3.042a1.17 1.17 0 0 1-1.654 1.654zM9.516 5.756a3.76 3.76 0 1 0-7.52 0 3.76 3.76 0 0 0 7.52 0z"/>
+    </g>
+</svg>
+
+        <div class="loader"></div>
+        <div class="close">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" class="close-icon">
+  <g fill="none" fill-rule="evenodd" transform="translate(-4 -4)">
+    <rect width="24" height="24"/>
+    <path fill="#5C5C6E" d="M4,12 C4,7.581722 7.581722,4 12,4 C16.418278,4 20,7.581722 20,12 C20,16.418278 16.418278,20 12,20 C7.581722,20 4,16.418278 4,12 Z M15.79284,15.8319127 L15.8319127,15.79284 C16.0550694,15.5696832 16.0550694,15.2078747 15.8319127,14.9847179 L12.8471947,12 L15.8319127,9.01528207 C16.0550694,8.79212533 16.0550694,8.43031677 15.8319127,8.20716003 L15.79284,8.16808733 C15.5696832,7.94493059 15.2078747,7.94493059 14.9847179,8.16808733 L12,11.1528053 L9.0152821,8.16808733 C8.7921253,7.94493059 8.4303168,7.94493059 8.20716,8.16808733 L8.1680873,8.20716003 C7.9449306,8.43031677 7.9449306,8.79212533 8.1680873,9.01528207 L11.1528053,12 L8.1680873,14.9847179 C7.9449306,15.2078747 7.9449306,15.5696832 8.1680873,15.79284 L8.20716,15.8319127 C8.4303168,16.0550694 8.7921253,16.0550694 9.0152821,15.8319127 L12,12.8471947 L14.9847179,15.8319127 C15.2078747,16.0550694 15.5696832,16.0550694 15.79284,15.8319127 Z"/>
+  </g>
+</svg>
+
+        </div>
+        <input type="submit" value="Search" style="display: none;">
+      </form>
+      <ul class="search-results"></ul>
+    </div>
+    
+    <div class="header-lang-selector">
+      <select name="lang-selector" id="lang">
+        <option value="english">En</option>
+        <option value="chinese">中文</option>
+      </select>
+    </div>
+  </div>
+</header>
+
+  <main>
+    <div class="tutorial  wrapper post-wrapper">
+ 
+  <section class="main-container">
+    <aside class="sidebar">
+<ul>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/">
+        <span>
+        
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M11.0458 11.9167C11.0458 11.9258 11.0431 11.9347 11.038 11.9422C11.033 11.9497 11.0258 11.9556 11.0174 11.959C11.0091 11.9625 10.9999 11.9634 10.991 11.9616C10.9821 11.9599 10.9739 11.9555 10.9675 11.9491C10.9611 11.9427 10.9568 11.9345 10.955 11.9256C10.9532 11.9168 10.9541 11.9075 10.9576 11.8992C10.961 11.8908 10.9669 11.8836 10.9744 11.8786C10.982 11.8736 10.9908 11.8709 10.9999 11.8708C11.0059 11.8708 11.0119 11.872 11.0174 11.8743C11.023 11.8766 11.0281 11.88 11.0323 11.8843C11.0366 11.8885 11.04 11.8936 11.0423 11.8992C11.0446 11.9047 11.0458 11.9107 11.0458 11.9167" stroke="#96A1DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M14.6667 19.25H7.33333C6.11776 19.25 4.95197 18.7671 4.09243 17.9076C3.23289 17.048 2.75 15.8822 2.75 14.6667V10.2667C2.75001 9.57929 2.90461 8.90074 3.20237 8.28122C3.50013 7.6617 3.93342 7.11709 4.47015 6.6877L8.13682 3.75437C8.94951 3.10421 9.95927 2.75 11 2.75C12.0408 2.75 13.0505 3.10421 13.8632 3.75437L17.5299 6.6877C18.0666 7.1171 18.4999 7.66172 18.7977 8.28123C19.0954 8.90075 19.25 9.5793 19.25 10.2667V14.6667C19.25 15.8822 18.7671 17.048 17.9076 17.9076C17.048 18.7671 15.8822 19.25 14.6667 19.25Z" stroke="#96A1DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M14.2543 11.9167C14.2543 11.9258 14.2516 11.9347 14.2465 11.9422C14.2415 11.9497 14.2343 11.9556 14.2259 11.959C14.2176 11.9625 14.2084 11.9634 14.1995 11.9616C14.1906 11.9599 14.1824 11.9555 14.176 11.9491C14.1696 11.9427 14.1653 11.9345 14.1635 11.9256C14.1617 11.9168 14.1626 11.9075 14.1661 11.8992C14.1695 11.8908 14.1754 11.8836 14.1829 11.8786C14.1905 11.8736 14.1993 11.8709 14.2084 11.8708C14.2144 11.8708 14.2204 11.872 14.2259 11.8743C14.2315 11.8766 14.2366 11.88 14.2408 11.8843C14.2451 11.8885 14.2485 11.8936 14.2508 11.8992C14.2531 11.9047 14.2543 11.9107 14.2543 11.9167" stroke="#96A1DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M7.83727 11.9167C7.83726 11.9258 7.83457 11.9347 7.82953 11.9422C7.82449 11.9497 7.81733 11.9556 7.80896 11.959C7.80058 11.9625 7.79137 11.9634 7.78249 11.9616C7.7736 11.9599 7.76544 11.9555 7.75903 11.9491C7.75263 11.9427 7.74826 11.9345 7.74649 11.9256C7.74472 11.9168 7.74562 11.9075 7.74908 11.8992C7.75254 11.8908 7.75841 11.8836 7.76593 11.8786C7.77346 11.8736 7.78232 11.8709 7.79138 11.8708C7.7974 11.8708 7.80337 11.872 7.80895 11.8743C7.81452 11.8766 7.81958 11.88 7.82384 11.8843C7.82811 11.8885 7.83149 11.8936 7.83379 11.8992C7.8361 11.9047 7.83728 11.9107 7.83727 11.9167" stroke="#96A1DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+        
+
+        Home
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li class="toggle">
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <span class="" >
+        <span>
+        
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M18.3333 10.5417C18.3333 6.23792 14.8454 2.75 10.5417 2.75C6.23792 2.75 2.75 6.23792 2.75 10.5417C2.75 14.8454 6.23792 18.3333 10.5417 18.3333" stroke="url(#paint0_linear_459_571)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M17.6641 17.6642L19.2499 19.25" stroke="url(#paint1_linear_459_571)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M17.6621 14.4212C18.5571 15.3161 18.5571 16.7671 17.6621 17.6621C16.7672 18.557 15.3162 18.557 14.4212 17.6621C13.5263 16.7671 13.5263 15.3161 14.4212 14.4212C15.3162 13.5262 16.7672 13.5262 17.6621 14.4212Z" stroke="url(#paint2_linear_459_571)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M3.56299 14.0076H3.61615C6.21307 14.0076 7.94465 13.8591 7.94465 11.4106C7.94465 8.81372 10.5416 8.81372 10.5416 7.08214C10.5416 5.14614 7.0784 5.35056 7.0784 3.61897V3.55664" stroke="url(#paint3_linear_459_571)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M18.3335 10.5417H15.5212C13.5916 10.5417 12.5677 8.2619 13.8492 6.81907L15.7109 4.72357" stroke="url(#paint4_linear_459_571)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<defs>
+<linearGradient id="paint0_linear_459_571" x1="3.28472" y1="11.165" x2="17.8754" y2="11.1837" gradientUnits="userSpaceOnUse">
+<stop stop-color="#7F64E2"/>
+<stop offset="1" stop-color="#41A6EF"/>
+</linearGradient>
+<linearGradient id="paint1_linear_459_571" x1="17.7185" y1="18.5205" x2="19.2033" y2="18.5224" gradientUnits="userSpaceOnUse">
+<stop stop-color="#7F64E2"/>
+<stop offset="1" stop-color="#41A6EF"/>
+</linearGradient>
+<linearGradient id="paint2_linear_459_571" x1="13.9073" y1="16.2249" x2="18.1986" y2="16.2304" gradientUnits="userSpaceOnUse">
+<stop stop-color="#7F64E2"/>
+<stop offset="1" stop-color="#41A6EF"/>
+</linearGradient>
+<linearGradient id="paint3_linear_459_571" x1="3.80245" y1="9.20014" x2="10.3365" y2="9.20574" gradientUnits="userSpaceOnUse">
+<stop stop-color="#7F64E2"/>
+<stop offset="1" stop-color="#41A6EF"/>
+</linearGradient>
+<linearGradient id="paint4_linear_459_571" x1="13.4537" y1="7.86534" x2="18.185" y2="7.87061" gradientUnits="userSpaceOnUse">
+<stop stop-color="#7F64E2"/>
+<stop offset="1" stop-color="#41A6EF"/>
+</linearGradient>
+</defs>
+</svg>
+
+        
+
+        Universe
+        </span>
+        
+          <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="rotate">
+<path d="M1.5 1.5L5 5L1.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
+
+        
+      </span>
+    </div>
+
+    
+    <ul>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/decentraland/introduction/">
+        <span>
+        
+
+        Introduction
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/decentraland/faq/">
+        <span>
+        
+
+        FAQ
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li class="toggle">
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <span class="" >
+        <span>
+        
+
+        DAO
+        </span>
+        
+          <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="rotate">
+<path d="M1.5 1.5L5 5L1.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
+
+        
+      </span>
+    </div>
+
+    
+    <ul>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li class="toggle">
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <span class="" >
+        <span>
+        
+
+        Overview
+        </span>
+        
+          <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="rotate">
+<path d="M1.5 1.5L5 5L1.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
+
+        
+      </span>
+    </div>
+
+    
+    <ul>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/decentraland/what-is-the-dao/">
+        <span>
+        
+
+        What is the DAO?
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/decentraland/what-can-you-do-with-the-dao/">
+        <span>
+        
+
+        DAO Uses
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/decentraland/how-does-the-dao-work/">
+        <span>
+        
+
+        How the DAO works
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/decentraland/what-smart-contracts-does-the-dao-control/">
+        <span>
+        
+
+        The DAO's Smart Contracts
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/decentraland/the-dao-fund/">
+        <span>
+        
+
+        The DAO Fund
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/decentraland/the-daos-limitations/">
+        <span>
+        
+
+        DAO Limitations
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/decentraland/what-do-you-need-to-participate/">
+        <span>
+        
+
+        Participation Requirements
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+</ul>
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li class="toggle">
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <span class="" >
+        <span>
+        
+
+        Grants
+        </span>
+        
+          <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="rotate">
+<path d="M1.5 1.5L5 5L1.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
+
+        
+      </span>
+    </div>
+
+    
+    <ul>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/decentraland/community-grants/">
+        <span>
+        
+
+        Community Grants
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/decentraland/requesting-grants/">
+        <span>
+        
+
+        Requesting Grants
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/decentraland/receiving-grants/">
+        <span>
+        
+
+        Receiving Grants
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+</ul>
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/decentraland/dao-userguide/">
+        <span>
+        
+
+        DAO User Guide
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+</ul>
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/decentraland/whitepaper/">
+        <span>
+        
+
+        Whitepaper
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/decentraland/hardware-acceleration/">
+        <span>
+        
+
+        Hardware acceleration
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+</ul>
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li class="toggle">
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <span class="" >
+        <span>
+        
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M8.6665 19.25H16.4998C16.7406 19.2501 16.979 19.2027 17.2015 19.1106C17.424 19.0185 17.6261 18.8835 17.7963 18.7132C17.9666 18.5429 18.1016 18.3408 18.1937 18.1184C18.2859 17.8959 18.3332 17.6575 18.3332 17.4167V7.79169C18.333 7.42706 18.1881 7.0774 17.9303 6.81956C17.6725 6.56173 17.3228 6.41682 16.9582 6.41669H5.0415C4.67687 6.41682 4.32721 6.56173 4.06938 6.81956C3.81155 7.0774 3.66664 7.42706 3.6665 7.79169V15.5834" stroke="#96A1DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M7.7915 6.41669V5.50002C7.7915 4.64912 8.12952 3.83307 8.7312 3.23139C9.33288 2.62971 10.1489 2.29169 10.9998 2.29169V2.29169C11.8507 2.29169 12.6668 2.62971 13.2685 3.23139C13.8702 3.83307 14.2082 4.64912 14.2082 5.50002V5.50002V6.41669" stroke="#96A1DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M5.08727 19.2501C5.08726 19.2591 5.08456 19.268 5.07952 19.2755C5.07448 19.283 5.06733 19.2889 5.05895 19.2924C5.05058 19.2958 5.04137 19.2967 5.03248 19.2949C5.0236 19.2932 5.01544 19.2888 5.00903 19.2824C5.00262 19.276 4.99826 19.2678 4.99649 19.259C4.99472 19.2501 4.99562 19.2409 4.99908 19.2325C5.00255 19.2241 5.00841 19.217 5.01594 19.2119C5.02347 19.2069 5.03232 19.2042 5.04138 19.2042C5.04741 19.2042 5.05338 19.2053 5.05895 19.2076C5.06452 19.2099 5.06959 19.2133 5.07385 19.2176C5.07811 19.2218 5.08149 19.2269 5.08379 19.2325C5.0861 19.2381 5.08728 19.244 5.08727 19.2501" stroke="#96A1DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M2.33727 19.2501C2.33726 19.2591 2.33457 19.268 2.32952 19.2755C2.32448 19.283 2.31733 19.2889 2.30895 19.2924C2.30058 19.2958 2.29137 19.2967 2.28248 19.2949C2.2736 19.2932 2.26544 19.2888 2.25903 19.2824C2.25262 19.276 2.24826 19.2678 2.24649 19.259C2.24472 19.2501 2.24562 19.2409 2.24908 19.2325C2.25255 19.2241 2.25841 19.217 2.26594 19.2119C2.27347 19.2069 2.28232 19.2042 2.29138 19.2042C2.29741 19.2042 2.30338 19.2053 2.30895 19.2076C2.31452 19.2099 2.31959 19.2133 2.32385 19.2176C2.32811 19.2218 2.33149 19.2269 2.33379 19.2325C2.3361 19.2381 2.33728 19.244 2.33727 19.2501" stroke="#96A1DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+        
+
+        Market
+        </span>
+        
+          <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="rotate">
+<path d="M1.5 1.5L5 5L1.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
+
+        
+      </span>
+    </div>
+
+    
+    <ul>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/market/marketplace/">
+        <span>
+        
+
+        Marketplace
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/market/land-manager/">
+        <span>
+        
+
+        LAND Manager
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/market/mortgages/">
+        <span>
+        
+
+        LAND Mortgages (Deprecated)
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/market/info-from-land/">
+        <span>
+        
+
+        Get parcel info
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/market/api/">
+        <span>
+        
+
+        LAND API Reference
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/market/api-migration-guide/">
+        <span>
+        
+
+        LAND API 2.0 Migration Guide
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+</ul>
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li class="toggle">
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <span class="" >
+        <span>
+        
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M9.74521 15.9839L17.5268 8.20235C17.8852 7.84393 18.4655 7.84393 18.823 8.20235L19.8111 9.19051C20.1695 9.54893 20.1695 10.1292 19.8111 10.4867L12.0277 18.2701C11.7866 18.5112 11.4832 18.6798 11.1523 18.7578L9.64162 19.1143C9.19796 19.2188 8.79921 18.821 8.90279 18.3764L9.25662 16.863C9.33454 16.5303 9.50412 16.2259 9.74521 15.9839V15.9839Z" stroke="#96A1DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M16.0693 9.65253L18.361 11.9442" stroke="#96A1DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M6.41683 19.25H6.27841C3.82358 19.25 1.8335 17.2599 1.8335 14.8051C1.8335 13.0487 2.8675 11.4565 4.4735 10.7433L8.1035 9.13C9.308 8.59467 10.0835 7.40117 10.0835 6.08392C10.0835 4.24233 8.59116 2.75 6.74958 2.75H6.41683" stroke="#96A1DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+        
+
+        Create
+        </span>
+        
+          <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="rotate">
+<path d="M1.5 1.5L5 5L1.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
+
+        
+      </span>
+    </div>
+
+    
+    <ul>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/content-intro/">
+        <span>
+        
+
+        Creating content
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li class="toggle">
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <span class="" >
+        <span>
+        
+
+        Design experiences
+        </span>
+        
+          <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="rotate">
+<path d="M1.5 1.5L5 5L1.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
+
+        
+      </span>
+    </div>
+
+    
+    <ul>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/design-experience/mvp-guidelines/">
+        <span>
+        
+
+        Scene MVP Guidelines
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/design-experience/ux-ui-guide/">
+        <span>
+        
+
+        UX and UI Guide
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/design-experience/design-games/">
+        <span>
+        
+
+        Design constraints
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+</ul>
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li class="toggle">
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <span class="" >
+        <span>
+        
+
+        Builder
+        </span>
+        
+          <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="rotate">
+<path d="M1.5 1.5L5 5L1.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
+
+        
+      </span>
+    </div>
+
+    
+    <ul>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/builder/builder-101/">
+        <span>
+        
+
+        Builder 101
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/builder/smart-items/">
+        <span>
+        
+
+        Smart items
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/builder/nfts/">
+        <span>
+        
+
+        NFTs
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/builder/manage-scenes/">
+        <span>
+        
+
+        Manage Builder scenes
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/builder/scene-limitations/">
+        <span>
+        
+
+        Scene limitations
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/builder/import-items/">
+        <span>
+        
+
+        Import custom items
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/decentraland/builder-faq/">
+        <span>
+        
+
+        Builder FAQ
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/builder/export/">
+        <span>
+        
+
+        Export as code
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+</ul>
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li class="toggle">
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <span class="" >
+        <span>
+        
+
+        Wearables
+        </span>
+        
+          <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="rotate">
+<path d="M1.5 1.5L5 5L1.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
+
+        
+      </span>
+    </div>
+
+    
+    <ul>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/decentraland/wearables-overview/">
+        <span>
+        
+
+        Wearables Overview
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/decentraland/creating-wearables/">
+        <span>
+        
+
+        Creating Wearables
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/decentraland/publishing-wearables/">
+        <span>
+        
+
+        Publishing Wearables
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/decentraland/curation-committee/">
+        <span>
+        
+
+        Curation Committee
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/decentraland/wearables-editor-user-guide/">
+        <span>
+        
+
+        Wearables Editor User Guide
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+</ul>
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li class="toggle">
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <span class="" >
+        <span>
+        
+
+        SDK
+        </span>
+        
+          <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="rotate">
+<path d="M1.5 1.5L5 5L1.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
+
+        
+      </span>
+    </div>
+
+    
+    <ul>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li class="toggle">
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <span class="" >
+        <span>
+        
+
+        Getting started
+        </span>
+        
+          <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="rotate">
+<path d="M1.5 1.5L5 5L1.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
+
+        
+      </span>
+    </div>
+
+    
+    <ul>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/SDK-101/">
+        <span>
+        
+
+        SDK 101
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/installation-guide/">
+        <span>
+        
+
+        Installation guide
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="active current" href="/development-guide/coding-scenes/">
+        <span>
+        
+
+        Coding scenes
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/preview-scene/">
+        <span>
+        
+
+        Preview scene
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/dev-workflow/">
+        <span>
+        
+
+        Development Workflow
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+</ul>
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li class="toggle">
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <span class="" >
+        <span>
+        
+
+        Architecture overview
+        </span>
+        
+          <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="rotate">
+<path d="M1.5 1.5L5 5L1.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
+
+        
+      </span>
+    </div>
+
+    
+    <ul>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/entities-components/">
+        <span>
+        
+
+        Entities & Components
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/systems/">
+        <span>
+        
+
+        Systems
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/custom-components/">
+        <span>
+        
+
+        Custom Components
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/component-groups/">
+        <span>
+        
+
+        Component groups
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/scene-files/">
+        <span>
+        
+
+        Files in a scene
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+</ul>
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/entity-positioning/">
+        <span>
+        
+
+        Set Entity positions
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/shape-components/">
+        <span>
+        
+
+        Shape components
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/materials/">
+        <span>
+        
+
+        Materials via code
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/sounds/">
+        <span>
+        
+
+        Sounds
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/move-entities/">
+        <span>
+        
+
+        Move entities
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/3d-model-animations/">
+        <span>
+        
+
+        Handle animations
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/click-events/">
+        <span>
+        
+
+        Button events
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/event-listeners/">
+        <span>
+        
+
+        Event listeners
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/text/">
+        <span>
+        
+
+        Text shapes
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/onscreen-ui/">
+        <span>
+        
+
+        2D UI
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/user-data/">
+        <span>
+        
+
+        Player data
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/move-player/">
+        <span>
+        
+
+        Move a player
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/avatar-modifiers/">
+        <span>
+        
+
+        Modifier Areas
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/trigger-emotes/">
+        <span>
+        
+
+        Trigger emotes
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/raycasting/">
+        <span>
+        
+
+        Raycasting
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/video-playing/">
+        <span>
+        
+
+        Play Videos
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/external-links/">
+        <span>
+        
+
+        Outbound links
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/scene-metadata/">
+        <span>
+        
+
+        Scene metadata
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/scene-limitations/">
+        <span>
+        
+
+        Scene limitations
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/performance-optimization/">
+        <span>
+        
+
+        Performance Optimization
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li class="toggle">
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <span class="" >
+        <span>
+        
+
+        SDK Libraries
+        </span>
+        
+          <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="rotate">
+<path d="M1.5 1.5L5 5L1.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
+
+        
+      </span>
+    </div>
+
+    
+    <ul>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/utils/">
+        <span>
+        
+
+        Utils library
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="https://github.com/decentraland-scenes/Awesome-Repository#Libraries" target="_blank" rel="noopener noreferer">
+        <span>
+        
+
+        Other libraries
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+</ul>
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li class="toggle">
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <span class="" >
+        <span>
+        
+
+        Blockchain integration
+        </span>
+        
+          <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="rotate">
+<path d="M1.5 1.5L5 5L1.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
+
+        
+      </span>
+    </div>
+
+    
+    <ul>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/display-a-certified-nft/">
+        <span>
+        
+
+        Display an NFT
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/scene-blockchain-operations/">
+        <span>
+        
+
+        Blockchain operations
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/second-layer/">
+        <span>
+        
+
+        Second layer
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+</ul>
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li class="toggle">
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <span class="" >
+        <span>
+        
+
+        Advanced
+        </span>
+        
+          <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="rotate">
+<path d="M1.5 1.5L5 5L1.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
+
+        
+      </span>
+    </div>
+
+    
+    <ul>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/game-objects/">
+        <span>
+        
+
+        Game objects
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/custom-events/">
+        <span>
+        
+
+        Custom events
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/remote-scene-considerations/">
+        <span>
+        
+
+        Multiplayer sync
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/special-types/">
+        <span>
+        
+
+        Special types
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/network-connections/">
+        <span>
+        
+
+        Network connections
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/async-functions/">
+        <span>
+        
+
+        Async functions
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+</ul>
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li class="toggle">
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <span class="" >
+        <span>
+        
+
+        Publishing
+        </span>
+        
+          <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="rotate">
+<path d="M1.5 1.5L5 5L1.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
+
+        
+      </span>
+    </div>
+
+    
+    <ul>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/publishing/">
+        <span>
+        
+
+        Deploy a scene
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/deploy-to-now/">
+        <span>
+        
+
+        Share a preview
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+</ul>
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/smart-items/">
+        <span>
+        
+
+        Smart items
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/smart-wearables/">
+        <span>
+        
+
+        Smart Wearables
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/development-guide/workspaces/">
+        <span>
+        
+
+        Workspaces
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+</ul>
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li class="toggle">
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <span class="" >
+        <span>
+        
+
+        3D modeling
+        </span>
+        
+          <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="rotate">
+<path d="M1.5 1.5L5 5L1.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
+
+        
+      </span>
+    </div>
+
+    
+    <ul>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/3d-modeling/3d-models/">
+        <span>
+        
+
+        3D model essentials
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/3d-modeling/animations/">
+        <span>
+        
+
+        Animations
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/3d-modeling/colliders/">
+        <span>
+        
+
+        Colliders
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/3d-modeling/meshes/">
+        <span>
+        
+
+        Meshes
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/3d-modeling/materials/">
+        <span>
+        
+
+        Materials
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+</ul>
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li class="toggle">
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <span class="" >
+        <span>
+        
+
+        Tutorials
+        </span>
+        
+          <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="rotate">
+<path d="M1.5 1.5L5 5L1.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
+
+        
+      </span>
+    </div>
+
+    
+    <ul>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="https://github.com/decentraland-scenes/Awesome-Repository#Tutorials" target="_blank" rel="noopener noreferer">
+        <span>
+        
+
+        Written
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="https://www.youtube.com/playlist?list=PLAcRraQmr_GPi-8qgv17ewdGl50OHuOhH" target="_blank" rel="noopener noreferer">
+        <span>
+        
+
+        Video
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+</ul>
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li class="toggle">
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <span class="" >
+        <span>
+        
+
+        Scene examples
+        </span>
+        
+          <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="rotate">
+<path d="M1.5 1.5L5 5L1.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
+
+        
+      </span>
+    </div>
+
+    
+    <ul>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="https://github.com/decentraland-scenes/Awesome-Repository#examples" target="_blank" rel="noopener noreferer">
+        <span>
+        
+
+        Essentials
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="https://github.com/decentraland-scenes/Awesome-Repository#game-mechanics" target="_blank" rel="noopener noreferer">
+        <span>
+        
+
+        Game Mechanics
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="https://github.com/decentraland-scenes/Awesome-Repository#physics" target="_blank" rel="noopener noreferer">
+        <span>
+        
+
+        Physics
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="https://github.com/decentraland-scenes/Awesome-Repository#monetization--blockchain" target="_blank" rel="noopener noreferer">
+        <span>
+        
+
+        Blockchain Monetization
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="https://github.com/decentraland-scenes/Awesome-Repository#multiplayer--apis" target="_blank" rel="noopener noreferer">
+        <span>
+        
+
+        Multiplayer & APIs
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+</ul>
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li class="toggle">
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <span class="" >
+        <span>
+        
+
+        Release notes
+        </span>
+        
+          <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="rotate">
+<path d="M1.5 1.5L5 5L1.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
+
+        
+      </span>
+    </div>
+
+    
+    <ul>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/releases/sdk/6.0/">
+        <span>
+        
+
+        SDK Release 6.0.0
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/releases/sdk/5.0/">
+        <span>
+        
+
+        SDK Release 5.0.0
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/releases/sdk/sdk-roadmap/">
+        <span>
+        
+
+        SDK Roadmap
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/releases/sdk/4.1.0/">
+        <span>
+        
+
+        SDK Release 4.1.0
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/releases/sdk/4.0.0/">
+        <span>
+        
+
+        SDK Release 4.0.0
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/releases/sdk/cli/">
+        <span>
+        
+
+        CLI Release notes
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+</ul>
+    
+  </li>
+
+</ul>
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li class="toggle">
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <span class="" >
+        <span>
+        
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M17.9444 17.9465C18.5494 17.3434 18.5494 16.3662 17.9444 15.763C17.3394 15.1599 16.3595 15.1599 15.7545 15.763C15.1495 16.3662 15.1495 17.3434 15.7545 17.9465C16.3595 18.5497 17.3394 18.5497 17.9444 17.9465Z" stroke="#96A1DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M15.641 4.191C14.3145 3.2835 12.7113 2.75 10.9815 2.75C10.4838 2.75 9.99888 2.80133 9.52588 2.88567" stroke="#96A1DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M16.8481 3.60071C15.9929 3.60071 15.3008 4.29187 15.3008 5.14437C15.3008 5.99779 15.9947 6.68896 16.849 6.68988C17.7043 6.68988 18.3964 5.99871 18.3964 5.14621C18.3964 4.29279 17.7024 3.60071 16.8481 3.60071Z" stroke="#96A1DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M4.19375 6.35065C3.28442 7.67431 2.75 9.27481 2.75 11.0009C2.75 11.4977 2.80133 11.9817 2.88567 12.4538" stroke="#96A1DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M3.60254 5.14706C3.60254 6.00048 4.29462 6.69165 5.14987 6.69073C6.00512 6.69073 6.69812 5.99865 6.69812 5.14523C6.69812 4.29181 6.00604 3.60065 5.15079 3.60156C4.29554 3.60156 3.60254 4.29365 3.60254 5.14706" stroke="#96A1DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M17.8062 15.6502C18.7155 14.3266 19.2499 12.727 19.2499 11.0009C19.2499 10.5041 19.1986 10.0201 19.1142 9.54797" stroke="#96A1DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M18.3973 16.8547C18.3973 16.0013 17.7053 15.3101 16.85 15.311C15.9948 15.311 15.3018 16.0031 15.3018 16.8565C15.3018 17.71 15.9938 18.4011 16.8491 18.4002C17.7043 18.3993 18.3973 17.7072 18.3973 16.8547Z" stroke="#96A1DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M6.35889 17.809C7.6853 18.7165 9.28855 19.25 11.0183 19.25C11.5161 19.25 12.001 19.1987 12.474 19.1144" stroke="#96A1DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M5.15177 18.3993C6.00702 18.3993 6.6991 17.7082 6.6991 16.8557C6.6991 16.0023 6.00518 15.3111 5.15085 15.3102C4.2956 15.3102 3.60352 16.0013 3.60352 16.8538C3.60352 17.7073 4.29743 18.3993 5.15177 18.3993Z" stroke="#96A1DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+        
+
+        Blockchain essentials
+        </span>
+        
+          <svg width="6" height="10" viewBox="0 0 6 10" fill="none" class="rotate">
+<path d="M1.5 1.5L5 5L1.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
+
+        
+      </span>
+    </div>
+
+    
+    <ul>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/examples/get-a-wallet/">
+        <span>
+        
+
+        Get a wallet for beginners
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/decentraland/glossary/">
+        <span>
+        
+
+        Glossary
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/blockchain-integration/ethereum-essentials/">
+        <span>
+        
+
+        About the blockchain
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/blockchain-integration/create-a-dapp/">
+        <span>
+        
+
+        Create a dApp
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/blockchain-integration/transactions-in-polygon/">
+        <span>
+        
+
+        Transactions in Polygon
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <li>
+    <div>
+      
+      
+      
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <a class="" href="/blockchain-integration/estates-marketplace-integrations/">
+        <span>
+        
+
+        Integrating Decentraland's Estate in your Marketplace
+        </span>
+        
+      </a>
+    </div>
+
+    
+  </li>
+
+</ul>
+    
+  </li>
+
+</ul>
+</aside>
+
+    <section class="tutorial-content">
+      <div class="tutorial-main" data-swiftype-index="true">
+        <h1>Coding scenes</h1>
+        <h2 id="the-development-tools">The development tools</h2>
+
+<p>At a very high level, the <strong>Decentraland Software Development Kit</strong> (SDK) allows you to do the following:</p>
+
+<ul>
+  <li>Generate a default <em>project</em> containing a Decentraland scene, including all the assets needed to render and run your content.</li>
+  <li>Build, test, and preview the content of your scene locally in your web browser - completely offline, and without having to make any Ethereum transactions or own LAND.</li>
+  <li>Write TypeScript code using the Decentraland API to add interactive and dynamic behavior to the scene.</li>
+  <li>Upload the content of your scene to the content server.</li>
+  <li>Link your LAND tokens to the URL of the content you have uploaded.</li>
+</ul>
+
+<p>Our SDK includes the following components:</p>
+
+<!--
+- **The Decentraland Editor**: Use it to create and preview Decentraland scenes. You don't need to download any software to your machine, the editor runs entirely on your browser.
+-->
+
+<ul>
+  <li><strong>The Decentraland CLI</strong> (Command Line Interface): Use it to <a href="/development-guide/coding-scenes/">generate</a> new Decentraland scenes locally on your own machine, preview them and upload them to the content server.</li>
+  <li>
+    <p><strong>The Decentraland ECS</strong>: A TypeScript package containing the library of helper methods that allows you to create interactive experiences. Use it to create and manipulate objects in the scene and also to facilitate in-world transactions between players or other applications. ( <a href="https://github.com/decentraland/ecs-reference/blob/master/docs-latest/decentraland-ecs.md">latest ECS reference</a>)</p>
+  </li>
+  <li><strong>Scene examples</strong>: Take inspiration and coding best practices from the <a href="https://github.com/decentraland-scenes/Awesome-Repository#examples">scene examples</a>.</li>
+</ul>
+
+<h2 id="requirements">Requirements</h2>
+
+<p>To develop a scene locally, you don’t need to own LAND tokens. Developing and testing a scene can be done completely offline, without the need to deploy a scene to the Ethereum network (the system Decentraland uses to establish ownership of LAND), or the content server.</p>
+
+<p>You must have the following:</p>
+
+<ul>
+  <li>
+    <p><strong>npm</strong> (Node package manager): Used in the terminal to handle scene dependencies, required to install the Decentraland CLI. <a href="nodejs.org">Download link</a></p>
+  </li>
+  <li>
+    <p><strong>The Decentraland CLI</strong>: Used to build, preview and upload scenes. See <a href="/development-guide/installation-guide/">Installation guide</a></p>
+  </li>
+  <li>
+    <p><strong>A source code editor</strong>: Helps you create scenes a lot faster and with less errors. A source code editor marks syntax errors, autocompletes while you write and even shows you smart suggestions that depend on the context that you’re in. You can also click on an object in the code to see the full definition of its class and what attributes it supports. We recommend <a href="https://code.visualstudio.com/">Visual Studio Code</a> or <a href="https://atom.io/">Atom</a>.</p>
+  </li>
+</ul>
+
+<h2 id="supported-languages-and-syntax">Supported languages and syntax</h2>
+
+<h4 id="typescript-recommended">TypeScript (recommended)</h4>
+
+<p>We use <a href="https://www.typescriptlang.org/docs/handbook/jsx.html">TypeScript (.ts)</a>
+to create our scenes.</p>
+
+<p>TypeScript is a superset of JavaScript, so if you’re familiar with JavaScript you’ll find it’s almost the same, but TypeScript allows you to employ object-oriented programming and type declarations. Features like autocomplete and type-checking speed up development times and allow for the creation of a more solid codebase. These features are all key components to a positive developer experience.</p>
+
+<h4 id="other-languages">Other languages</h4>
+
+<p>You can use another tool or language instead of TypeScript and compile it into JavaScript, as long as your compiled scripts are contained within a single JavaScript file named <em>game.js</em>. All provided type declarations are made in TypeScript, and other languages and transpilers are not officially supported.</p>
+
+<h2 id="scenes">Scenes</h2>
+
+<p>The content you deploy to your LAND is called a <strong>scene</strong>. A scene is an interactive program that renders content, this could be a game, an interactive experience, an art gallery, whatever you want!</p>
+
+<p>Scenes are deployed to virtual LAND in Decentraland. LAND is a scarce and non-fungible asset maintained in an Ethereum smart contract. Deploy to a single <strong>parcel</strong>, a 16 meter by 16 meter piece of LAND, or to an <strong>estate</strong>, comprised of multiple adjacent parcels.</p>
+
+<p>We are developing the web client that will allow players to explore Decentraland. All of the content you upload to your LAND will be rendered and viewable through this client. We have included a preview tool in the SDK so that you can preview, test, and interact with your content in the meantime.</p>
+
+<h2 id="entities-and-components">Entities and Components</h2>
+
+<p>Three dimensional scenes in Decentraland are based on an <a href="https://en.wikipedia.org/wiki/Entity%E2%80%93component%E2%80%93system">Entity-Component-System</a> architecture, where everything in a scene is an <em>entity</em>, and each entity can include <em>components</em> that determine its characteristics.</p>
+
+<p><img src="/images/media/ecs-components.png" alt="nested entities" width="400" /></p>
+
+<p>Entities are nested inside other entities to form a tree structure. If you’re familiar with web development, you might find it useful to think of entities as elements in a DOM tree and of components as the attributes of each of these elements.</p>
+
+<p><img src="/images/media/ecs-nested-entities.png" alt="nested entities" width="400" /></p>
+
+<p>See <a href="/development-guide/entities-components/">Entities and components</a> for an in-depth look of both these concepts and how they’re used by Decentraland scenes.</p>
+
+<h2 id="the-game-loop">The game loop</h2>
+
+<p>The <a href="http://gameprogrammingpatterns.com/game-loop.html">game loop</a> is the backbone of a Decentraland scene’s code. It cycles through part of the code at a regular interval and does the following:</p>
+
+<ul>
+  <li>Listen for player input</li>
+  <li>Update the scene</li>
+  <li>Re-render the scene</li>
+</ul>
+
+<p>In most traditional software programs, all events are triggered directly by player actions. Nothing in the program’s state will change until the player clicks on a button, opens a menu, etc.</p>
+
+<p>But interactive environments and games are different from that. Not all changes to the scene are necessarily caused by a player’s actions. Your scene could have animated objects that move on their own or even non-player characters that have their own AI. Some player actions might also take multiple frames to be completed, for example if the opening of a door needs to take a whole second, the door’s rotation must be incrementally updated about 30 times as it moves.</p>
+
+<p>We call each iteration over the loop a <em>frame</em>. Decentraland scenes are rendered at 30 frames per second whenever possible. If a frame takes more time than that to be rendered, then less frames will be processed.</p>
+
+<p>In each frame, the scene is updated; then the scene is re-rendered, based on the updated values.</p>
+
+<p>In Decentraland scenes, there is no explicitly declared game loop, but rather the <code class="language-plaintext highlighter-rouge">update()</code> functions on the <a href="/development-guide/systems/">Systems</a> of the scene make up the game loop.</p>
+
+<p>The compiling and rendering of the scene is carried out in the backend, you don’t need to handle that while developing your scene.</p>
+
+<h2 id="systems">Systems</h2>
+
+<p>Entities and components are places to store information about the objects in a scene. <em>Systems</em> hold functions that change the information that’s stored in components.</p>
+
+<p><em>Systems</em> are what make a static scene dynamic, allowing things to change over time or in response to player interaction.</p>
+
+<p>Each System has an <code class="language-plaintext highlighter-rouge">update()</code> method that’s executed on every frame of the game loop, following the <a href="http://gameprogrammingpatterns.com/update-method.html"><em>update pattern</em></a>.</p>
+
+<p>See <a href="/development-guide/systems/">Systems</a> for more details about how systems are used in a scene.</p>
+
+<h2 id="component-groups">Component groups</h2>
+
+<p><a href="/development-guide/component-groups/">Component groups</a> keep track of all entities in the scene that have certain components in them. Once a component group is created, it automatically keeps its list up to date with each new entity or component that is added or removed.</p>
+
+<p>If you attempt to update all the entities in the scene on every frame, that could have a significant cost in performance. By referring only to the entities in a component group, you ensure you’re only dealing with those that are relevant.</p>
+
+<p>Component groups can be referenced by the functions in a <a href="/development-guide/systems/">system</a>. Typically an <code class="language-plaintext highlighter-rouge">update()</code> function will loop over the entities in the component group, performing the same actions on each.</p>
+
+<h2 id="putting-it-all-together">Putting it all together</h2>
+
+<p>The <em>engine</em> is what sits in between <em>entities</em>, <em>components</em> and <em>component groups</em> on one hand and <em>systems</em> on the other. It calls system’s functions, updates groups when entities are added, etc.</p>
+
+<p><img src="/images/media/ecs-big-picture.png" alt="" /></p>
+
+<p>All of the values stored in the components in the scene represent the scene’s state at that point in time. With every frame of the game loop, the engine runs the <code class="language-plaintext highlighter-rouge">update()</code> function of each of the systems to update the values stored in the components.</p>
+
+<p>After all the systems run, the components on each entity will have new values. When the engine renders the scene, it will use these new updated values and players will see the entities change to match their new states.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Create a group to track all entities with a Transform component</span>
+<span class="kd">const</span> <span class="nx">myGroup</span> <span class="o">=</span> <span class="nx">engine</span><span class="p">.</span><span class="nx">getComponentGroup</span><span class="p">(</span><span class="nx">Transform</span><span class="p">)</span>
+
+<span class="c1">// Define a System</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">RotatorSystem</span> <span class="k">implements</span> <span class="nx">ISystem</span> <span class="p">{</span>
+  <span class="c1">// The update function runs on every frame of the game loop</span>
+  <span class="nx">update</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// The function iterates over all the entities in myGroup</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">entity</span> <span class="k">of</span> <span class="nx">myGroup</span><span class="p">.</span><span class="nx">entities</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">const</span> <span class="nx">transform</span> <span class="o">=</span> <span class="nx">entity</span><span class="p">.</span><span class="nx">getComponent</span><span class="p">(</span><span class="nx">Transform</span><span class="p">)</span>
+      <span class="nx">transform</span><span class="p">.</span><span class="nx">rotate</span><span class="p">(</span><span class="nx">Vector3</span><span class="p">.</span><span class="nx">Left</span><span class="p">(),</span> <span class="mf">0.1</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Add the system to the engine</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addSystem</span><span class="p">(</span><span class="k">new</span> <span class="nx">RotatorSystem</span><span class="p">())</span>
+
+<span class="c1">// Create an entity</span>
+<span class="kd">const</span> <span class="nx">cube</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">()</span>
+
+<span class="c1">// Give the entity a transform component</span>
+<span class="nx">cube</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">Transform</span><span class="p">({</span>
+    <span class="na">position</span><span class="p">:</span> <span class="k">new</span> <span class="nx">Vector3</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+  <span class="p">})</span>
+<span class="p">)</span>
+
+<span class="c1">// Give the entity a box shape</span>
+<span class="nx">cube</span><span class="p">.</span><span class="nx">addComponent</span><span class="p">(</span><span class="k">new</span> <span class="nx">BoxShape</span><span class="p">())</span>
+
+<span class="c1">// Add the entity to the engine</span>
+<span class="nx">engine</span><span class="p">.</span><span class="nx">addEntity</span><span class="p">(</span><span class="nx">cube</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>In the example above, a <code class="language-plaintext highlighter-rouge">cube</code> entity and a <code class="language-plaintext highlighter-rouge">RotatorSystem</code> system are added to the engine. The <code class="language-plaintext highlighter-rouge">cube</code> entity has a <code class="language-plaintext highlighter-rouge">Transform</code>, and a <code class="language-plaintext highlighter-rouge">BoxShape</code> component. In every frame of the game loop, the <code class="language-plaintext highlighter-rouge">update()</code> function of <code class="language-plaintext highlighter-rouge">RotationSystem</code> is called, and it changes the rotation values in the <code class="language-plaintext highlighter-rouge">Transform</code> component of the <code class="language-plaintext highlighter-rouge">cube</code> entity.</p>
+
+<p>Note that most of the code above is executed just once, when loading the scene. The exception is the <code class="language-plaintext highlighter-rouge">update()</code> method of the system, which is called on every frame of the game loop.</p>
+
+<h2 id="scene-decoupling">Scene Decoupling</h2>
+
+<p>Your scenes don’t run in the same context as the engine
+(a.k.a. the main thread). We created the SDK in a way that is
+entirely decoupled from the rendering engine. We designed it to be like this for both safety and performance reasons.</p>
+
+<p>Because of this decoupling, your scene’s code doesn’t have access to the DOM or the <code class="language-plaintext highlighter-rouge">window</code> object, so you can’t access data like the player’s browser or geographical location.</p>
+
+<p>The decoupling works by using RPC protocol, this protocol assigns a small part of the client to only render the scene and control events.</p>
+
+<p>We have also abstracted the communication protocol. This allows us to run the scenes locally in a WebWorker.</p>
+
+<p>We don’t want developers to intervene with the internals of the engine or even need to know what lies inside the engine. We need to ensure a consistent experience for players throughout the Decentraland map, and mistakes are more likely to happen at that “low” level.</p>
+
+      </div>
+
+      
+
+      
+      <div class="feedback">
+  <div class="feedback-overlay"></div>
+  <div class="box step-1">
+    <div class="title">Was this article useful?</div>
+    <div class="buttons">
+      <button class="yes">Yes</button>
+      <button class="no">No</button>
+    </div>
+  </div>
+  <div class="box step-2">
+    <div class="feedback-yes">
+      <div class="title">Awesome!</div>
+      <div class="subtitle">Anything we can do to make it even better?</div>
+    </div>
+    <div class="feedback-no">
+      <div class="title">We're sorry!</div>
+      <div class="subtitle">Please let us know how we can improve our documentation.</div>
+    </div>
+    <div class="form">
+      <div class="textarea">
+        <textarea placeholder="Write a comment"></textarea>
+        <div class="mirror"></div>
+      </div>
+      <div class="options">
+        <button class="skip">Skip Comment</button>
+        <button class="send" disabled>Send Feedback</button>
+      </div>
+    </div>
+  </div>
+  <div class="box step-3">
+    <div class="title">Thank you!</div>
+    <div class="subtitle">Your feedback helps us improve everyone's experience in Decentraland.</div>
+  </div>
+
+    </section>
+  </section>
+</div><style>
+
+</style>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.1/clipboard.min.js" integrity="sha256-hIvIxeqhGZF+VVeM55k0mJvWpQ6gTkWk3Emc+NmowYA=" crossorigin="anonymous"></script>
+  <script>
+    $('.highlighter-rouge code').each(function(i) {
+      const currentId = 'codeblock' + (i + 1)
+      $(this).attr('id', currentId)
+      const clipButton = (
+        '<div class="copy-code">' +
+          '<button class="codeblock-btn" data-clipboard-target="#' + currentId + '">' +
+            '<span class="status-copy"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="16" viewBox="0 0 14 16"><g fill="none" fill-rule="evenodd"><path d="M-3-2v20h20V-2z"/><path class="main" fill="#F04" d="M3.25 3h-.5a2 2 0 0 0-2 2v8.5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V13h.5a2 2 0 0 0 2-2V2.5a2 2 0 0 0-2-2h-6a2 2 0 0 0-2 2V3zM4.5 3v-.25a1 1 0 0 1 1-1H11a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1h-.25V5a2 2 0 0 0-2-2H4.5zM2 5.25a1 1 0 0 1 1-1h5.5a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-8z"/></g></svg> Copy Code</span>' +
+            '<span class="status-copied"><svg width="12" height="9" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M-4-6h20v20H-4z"/><path class="main" d="M.17 5.037A.565.565 0 0 1 0 4.661c0-.107.057-.268.17-.376l.796-.752a.571.571 0 0 1 .795 0l2.258 2.35a.286.286 0 0 0 .398 0L10.239.162a.571.571 0 0 1 .795 0l.796.752a.5.5 0 0 1 0 .753L4.587 8.839A.53.53 0 0 1 4.189 9a.53.53 0 0 1-.397-.161L.17 5.037z" fill="#F04" fill-rule="nonzero"/></g></svg> Copied</span>' +
+          '</button>' +
+        '</div>'
+      )
+      $(this).parent().after(clipButton)
+    })
+
+    const clipboard = new ClipboardJS('.codeblock-btn')
+    clipboard.on('success', function(e) { e.clearSelection() })
+
+    $('.codeblock-btn').on('click', function () {
+      const $this = $(this)
+      $this.addClass('copied')
+      window.setTimeout(function() {
+        $this.removeClass('copied')
+      }, 3000)
+    })
+  </script>
+
+  </main>
+  <footer>
+	<div class="footer-wrapper">
+		<div class="copyright">
+			© 2022 Unicial
+		</div>
+		<div class="social-copyright-wrapper">
+		  <a
+            target="_blank"
+            href="mailto:tsimafei@zilionixx.com"
+            rel="noreferrer"
+          >
+            <img src="/images/links/znx.png"></img>
+          </a>
+          <a target="_blank" href="https://t.me/zilionixx" rel="noreferrer">
+            <img src="/images/links/skype.png"></img>
+          </a>
+          <a
+            target="_blank"
+            rel="noreferrer"
+            href="https://www.facebook.com/groups/4354141514692375/"
+          >
+		  	<img src="/images/links/facebook.png"></img>
+          </a>
+          <a
+            target="_blank"
+            rel="noreferrer"
+            href="https://twitter.com/zilionixx"
+          >
+		  	<img src="/images/links/twitter.png"></img>
+          </a>
+          <a
+            target="_blank"
+            rel="noreferrer"
+            href="https://www.linkedin.com/company/zilionixx "
+          >
+		  	<img src="/images/links/linkedin.png"></img>
+          </a>
+          <a
+            target="_blank"
+            rel="noreferrer"
+            href="https://discord.gg/JEPcm4YD "
+          >
+		 	 <img src="/images/links/discord.png"></img>
+          </a>
+		</div>
+	</div>
+</footer>
+
+</body>
+
+</html>
