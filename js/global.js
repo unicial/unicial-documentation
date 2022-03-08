@@ -267,16 +267,6 @@ $(function() {
     })
   })
 
-  // HOME ==>
-
-  const $shortcuts = $('.shortcuts')
-  const $remove = $shortcuts.find('.gradient')
-  $shortcuts.find('a').hover(function(event) {
-    console.log('---------------------------')
-    event.preventDefault()
-    this.addClass('gradient')
-    $remove.removeClass('gradient')  
-  })
   // SIDEBAR ==>
 
   const $sidebar = $('.sidebar')

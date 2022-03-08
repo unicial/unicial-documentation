@@ -3,10 +3,6 @@
   padding: 0 16px;
   margin: 0 auto;
 
-  @media #{$mid-point} {
-    padding: 0 48px;
-  }
-
   @media #{$desktop} {
     padding: 0 16px;
   }

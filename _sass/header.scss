@@ -279,7 +279,7 @@ header {
       list-style-type: none;
 
       &.selected a {
-        background-color:aquamarine;
+        background-color: #303863;
       }
 
       &.more-results a {
@@ -526,41 +526,6 @@ header {
         }
       }
     }
-  }
-}
-
-.header-lang-selector {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 22;
-
-  @media #{$mid-point} {
-    margin-bottom: 0;
-    margin-right: 16px;
-  }
-
-  select {
-    margin: 0;
-    border: 0;
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 20px;
-    letter-spacing: -0.1px;
-    color: $docs_primary_black;
-    background-color: transparent;
-    outline: none;
-    color: white;
-
-    _:-ms-lang(x),
-    & {
-      font-weight: 600;
-    }
-  }
-
-  option {
-    padding: 0;
-    color:#96A1DB;
   }
 }
 

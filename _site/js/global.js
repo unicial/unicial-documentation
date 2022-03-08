@@ -16,7 +16,7 @@ function indexData(data) {
 }
 
 if (!document.location.pathname.match('/search')) {
-  $.getJSON('/data.json?1646639026201475600', function(data) {
+  $.getJSON('/data.json?1646701888960269500', function(data) {
     indexData(data)
   })
 }
@@ -254,7 +254,7 @@ $(function() {
     fetching = true
     $headerSearch.addClass('fetching')
 
-    $.getJSON('/data.json?1646639026201475600', function(data) {
+    $.getJSON('/data.json?1646701888960269500', function(data) {
       fetching = false
       $headerSearch.removeClass('fetching')
 
@@ -263,16 +263,6 @@ $(function() {
     })
   })
 
-  // HOME ==>
-
-  const $shortcuts = $('.shortcuts')
-  const $remove = $shortcuts.find('.gradient')
-  $shortcuts.find('a').hover(function(event) {
-    console.log('---------------------------')
-    event.preventDefault()
-    this.addClass('gradient')
-    $remove.removeClass('gradient')  
-  })
   // SIDEBAR ==>
 
   const $sidebar = $('.sidebar')
