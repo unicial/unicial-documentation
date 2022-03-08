@@ -3,9 +3,6 @@ date: 2022-03-07
 title: Introduction
 description: UCC is a Unicial Metaverse main utility token
 redirect_from:
-  - /login?redirect=docs
-  - /docs
-  - /docs/
 categories:
   - Unicial
 type: Document

@@ -3,9 +3,6 @@ date: 2022-03-06
 title: Introduction
 description: Unicial is a Metaverse platform powered by Zilionixx blockchain.
 redirect_from:
-  - /login?redirect=docs
-  - /docs
-  - /docs/
 categories:
   - Unicial
 type: Document

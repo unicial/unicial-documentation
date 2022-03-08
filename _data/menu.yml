@@ -44,9 +44,9 @@
 - title: Universe
   image: sets/universe.svg
   children:
-    - post: "universe/2022-03-06-overview.md"
+    - post: "universe/2022-03-06-introduction.md"
 
-- title: UCC
+- title: Market
   image: sets/ucc.svg
   children:
-    - post: "token/ucc/2022-03-07-overview.md"
+    - post: "market/2022-03-08-market-overview.md"
