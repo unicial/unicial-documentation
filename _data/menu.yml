@@ -45,8 +45,12 @@
   image: sets/universe.svg
   children:
     - post: "universe/2022-03-06-introduction.md"
+    - post: "universe/2022-03-08-whitepaper.md"
 
 - title: Market
   image: sets/ucc.svg
   children:
     - post: "market/2022-03-08-market-overview.md"
+    - post: "market/2022-03-07-ucc.md"
+    - post: "market/2022-03-08-space.md"
+    - post: "market/2022-03-08-estate.md"
