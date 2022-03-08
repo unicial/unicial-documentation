@@ -1,11 +1,10 @@
 .newsletter {
-  margin-top: 100px;
+  margin-top: 200px;
   padding: 64px 24px;
   background-color: #1A1E32;
 
   width: 100%;
   text-align: center;
-  position: relative;
   border-radius: 8px;
 
   .newsletter__form-sent {
@@ -39,11 +38,12 @@
     max-width: 1064px;
     margin: auto;
     width: 100%;
+    height: 100%;
     display: flex;
     justify-content: space-between;
     padding: 0 10px;
 
-    @media (max-width: 1000px) {
+    @media (max-width: 1100px) {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -51,6 +51,13 @@
     .newscontent {
       display: flex;
       flex-direction: column;
+      width: 48%;
+      margin-top: 40px;
+
+      @media (max-width: 1100px) {
+        width: 90%;
+        margin-top: 20px;
+      }
     }
 
     .title {
@@ -74,27 +81,30 @@
     }
 
     .description {
-      margin-top: 20px;
+      margin: 20px 0 40px 0;
       font-style: normal;
       font-weight: normal;
       font-family: sans-serif;
-      font-size: 15px;
-      line-height: 18px;
+      font-size: 16px;
+      line-height: 30px;
       color: #96A1DB;
       word-wrap: break-word;
       text-align: left;
       display: flex;
       justify-content: space-between;
 
-      @media (max-width: 600px) {
+      @media (max-width: 1100px) {
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        align-items: center;
+        margin-bottom: 0;
+
+        > span {
+          max-width: 100% !important; 
+        }
       }
 
       > span {
-        width: 55%;
+        max-width: 270px;
       }
     }
 
@@ -104,6 +114,7 @@
       background-color: #1A1E32;
       border-radius: 100px;
       border: 1px solid #5c5c6e;
+      padding: 10px 40px;
       color: white;
     }
     ::placeholder {
@@ -115,10 +126,14 @@
       width: 200px;
       height: 56px;
       color: white;
-      border-radius: 100px;
+      border-radius: 50px;
       border-width: 0;
       background: linear-gradient(90deg, #FF7C4C 20%, #FFB03A 101.82%);
-      width: 35%;
+
+      @media (max-width: 1100px) {
+        margin-top: 15px;
+      }
+
       > span {
         display: flex;
         justify-content: center;
@@ -130,7 +145,7 @@
     .submit {
       width: 20%;
       height: 54px;
-      border-radius: 100px;
+      border-radius: 50px;
       border-width: 0;
       background: linear-gradient(90deg, #FF7C4C 20%, #FFB03A 101.82%);
       position: absolute;
@@ -154,13 +169,8 @@
 
 @media #{$mid-point} {
   .newsletter {
-    height: 400px;
     display: flex;
     align-items: center;
     padding: 0;
-
-    .container {
-      max-width: 1064px;
-    }
   }
 }

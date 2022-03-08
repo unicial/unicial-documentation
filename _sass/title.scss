@@ -1,5 +1,15 @@
 .heading {
     padding: 50px 36px 0 0;
+
+    @media (max-width: 1064px) {
+      padding: 50px 36px 0 20px;
+    }
+
+    @media (max-width: 435px) {
+      .description {
+        margin-top: 40px;
+      }
+    }
 }
 .title {
     color: white;

@@ -22,7 +22,7 @@
     letter-spacing: normal;
     color: white;
     display: flex;
-    padding: 6px 12px 14px;
+    padding: 6px 12px 6px;
     align-items: center;
     text-transform: capitalize;
     justify-content: space-between;
@@ -189,7 +189,7 @@
 
     > div:hover > span,
     > div:hover > a {
-      background: #96A1DB;
+      background: #343c5f;
       ;
     }
 
@@ -248,7 +248,7 @@
 
       a,
       span {
-        padding: 6px 12px 2px;
+        padding: 2px 12px 2px;
         display: flex;
         justify-content: space-between;
         align-items: center;
