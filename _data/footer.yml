@@ -1,15 +1,12 @@
-# - link: https://facebook.com/decentraland
-#   new_window: true
-#   social_icon: Facebook
-- link: https://dcl.gg/discord
+- link: https://discord.gg/JEPcm4YD
   social_icon: Discord
   new_window: true
-- link: https://reddit.com/r/decentraland
+- link: https://www.reddit.com/r/ZilionixxBlockchain/
   new_window: true
   social_icon: Reddit
-- link: https://github.com/decentraland
+- link: https://github.com/unicial
   social_icon: Github
   new_window: true
-- link: https://twitter.com/decentraland
+- link: https://twitter.com/zilionixx
   social_icon: Twitter
   new_window: true
