@@ -8,7 +8,7 @@
 # For technical reasons, this file is *NOT* reloaded automatically when you use
 # 'bundle exec jekyll serve'. If you change this file, please restart the server process.
 #
-# If you need help with YAML syntax, here are some quick references for you: 
+# If you need help with YAML syntax, here are some quick references for you:
 # https://learn-the-web.algonquindesign.ca/topics/markdown-yaml-cheat-sheet/#yaml
 # https://learnxinyminutes.com/docs/yaml/
 #
@@ -18,27 +18,23 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: Your awesome title
+title: Unicial
 url: "https://docs.decentraland.org"
 baseurl: ""
 email: your-email@example.com
 description: >- # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
-twitter_username: jekyllrb
-github_username:  jekyll
+  Unicial Documentation
+twitter_username: zilionixx
+github_username: unicial
 
-twitter_url: "https://twitter.com/decentraland"
-discord_url: "https://dcl.gg/discord"
-github_url: "https://github.com/decentraland"
-sdk_url: "https://docs.decentraland.org/"
-reddit_url: "https://reddit.com/r/decentraland"
-fb_url: "https://www.facebook.com/decentraland/"
-faq_url: "https://decentraland.org/#faqs"
-telegram_url: "https://t.me/decentralandTG"
-legal_url: "https://decentraland.org/legal"
-press_url: "https://decentraland.org/press"
+twitter_url: "https://twitter.com/zilionixx"
+discord_url: "https://discord.gg/JEPcm4YD"
+github_url: "https://github.com/unicial"
+sdk_url: "https://docs.unicial.org/"
+reddit_url: "https://www.reddit.com/r/ZilionixxBlockchain/"
+fb_url: "https://www.facebook.com/Zilionixx"
+faq_url: "https://unicial.org/#faqs"
+telegram_url: "https://t.me/zilionixxcommunity"
 
 # Build settings
 theme: minima
@@ -61,7 +57,7 @@ defaults:
       path: ""
     values:
       layout: "default"
-      image: "/images/favicon.png"
+      image: "/images/logo.svg"
   - scope:
       type: "posts"
     values:
@@ -93,7 +89,6 @@ types:
   - Video
 
 _comments:
-
 # Exclude from processing.
 # The following items will not be processed, by default.
 # Any item listed under the `exclude:` key here will be automatically added to
