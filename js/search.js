@@ -27,7 +27,7 @@ layout: null
 					titlePreview = getPreview(query, item.title);
 
 				let category = item.categories.split(',')[0]
-				if (category === 'Decentraland') {
+				if (category === 'Unicial') {
 					category = 'general'
 				}
 

@@ -155,7 +155,7 @@ $(function() {
       var result = results[i]
       var category = result.categories.split(',')[0]
 
-      if (category === 'Decentraland') {
+      if (category === 'Unicial') {
         category = 'general'
       }
 
@@ -426,7 +426,7 @@ $(function() {
   const cliDiv = document.getElementById('cli-releases')
 
   if(cliDiv) {
-    fetch('https://api.github.com/repos/decentraland/cli/releases')
+    fetch('https://api.github.com/repos/unicial/cli/releases')
     .then(response => {
       return response.json()
     })
