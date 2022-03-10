@@ -12,6 +12,7 @@ header {
     padding: 12px 0;
     z-index: 22;
     position: relative;
+    margin-right: 35px;
 
     @media #{$mid-point} {
       padding: 14px 0;
@@ -22,15 +23,22 @@ header {
     margin-right: 16px;
     height: 78px;
     align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     img {
-      width: 200px;
+      min-width: 78px;
+    }
+    div {
+      font-size: 25px;
+      color: white;
     }
 
     @media #{$mid-point} {
       height: 78px;
 
       img {
-        width: 200px;
+        min-width: 78px;
       }
     }
   }
