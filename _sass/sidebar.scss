@@ -1,5 +1,6 @@
 .sidebar {
   min-height: 56px;
+  margin-right: 45px;
 
   > ul > li > div svg {
     margin: 0 8px 2px 0;
@@ -24,7 +25,7 @@
     justify-content: space-between;
     align-items: center;
     @media #{$tablet-landscape} {
-      margin-left: 4px;
+      margin: 10px 0;
     }
   }
 
@@ -244,10 +245,14 @@
 
       a,
       span {
-        padding: 2px 12px 2px;
+        padding: 4px 12px 4px;
         display: flex;
         justify-content: space-between;
         align-items: center;
+      }
+
+      a{
+        margin: 10px 0;
       }
     }
   }
