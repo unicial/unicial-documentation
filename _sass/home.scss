@@ -1,6 +1,5 @@
 .home {
   position: relative;
-  
 
   min-height: 370px;
   padding: 0 15px;
@@ -23,7 +22,6 @@
   .home-content {
     @media #{$tablet-landscape} {
     }
-
 
     a {
       &:hover {
@@ -79,9 +77,13 @@
       font-size: 18px;
       line-height: 1.6;
       letter-spacing: -0.3px;
-      color: #96A1DB;
+      color: #96a1db;
       > a {
-        background: -webkit-linear-gradient(90.07deg, #7F64E2 3.5%, #41A6EF 97.01%);
+        background: -webkit-linear-gradient(
+          90.07deg,
+          #7f64e2 3.5%,
+          #41a6ef 97.01%
+        );
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
       }
@@ -118,7 +120,7 @@
         top: -1px;
         left: 3px;
         font-size: 1.6em;
-        color: #96A1DB;
+        color: #96a1db;
       }
     }
   }
@@ -130,7 +132,9 @@
     grid-column-gap: 10px;
     grid-row-gap: 10px;
     margin: 6px 0 10px;
-
+    @media (max-width: 500px) {
+      display: block;
+    }
     @media #{$tablet} {
       grid-template-columns: 1fr 1fr;
     }
@@ -249,7 +253,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: #2D324F;
+      background-color: #2d324f;
       border-radius: 20px;
       margin: 0 auto;
       text-align: center;
@@ -258,9 +262,8 @@
       left: 0;
       z-index: 0;
       overflow: hidden;
-      height: 238px;
-      max-width: 194px;
-
+      height: 210px;
+      // max-width: 194px;
       top: 0;
       left: 0;
       z-index: 0;
@@ -275,7 +278,19 @@
       @media #{$mid-point} {
         width: 100%;
       }
-
+      span {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: linear-gradient(90.07deg, #7f64e2 3.5%, #41a6ef 97.01%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-family: "Lato";
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 15px;
+      }
       img {
         display: block;
         max-height: 150px;
@@ -301,7 +316,10 @@
         // width: 128px;
       }
       &:hover {
-        background: linear-gradient(90.07deg, #7F64E2 3.5%, #41A6EF 97.01%);
+        background: linear-gradient(90.07deg, #7f64e2 3.5%, #41a6ef 97.01%);
+      }
+      &:hover > span {
+        display: none;
       }
     }
 
@@ -313,8 +331,6 @@
       font-size: 24px;
       line-height: 30px;
       text-transform: capitalize;
-      height: 50px;
-      width: 150px;
       display: flex;
       //align-items: center;
       justify-content: left;
@@ -330,12 +346,12 @@
       margin-top: 20px;
       font-style: normal;
       font-weight: normal;
-      font-family: sans-serif;
+      font-family: "Lato";
       font-size: 16px;
       line-height: 24px;
       position: relative;
       top: -10px;
-      color: #96A1DB;
+      color: #96a1db;
       word-wrap: break-word;
       margin: 20px 10px 10px 10px;
     }

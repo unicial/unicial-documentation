@@ -48,7 +48,7 @@
     - post: "universe/2022-03-08-whitepaper.md"
 
 - title: Market
-  image: sets/ucc.svg
+  image: sets/market.svg
   children:
     - post: "market/2022-03-08-market-overview.md"
     - post: "market/2022-03-07-ucc.md"

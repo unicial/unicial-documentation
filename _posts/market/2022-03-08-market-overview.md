@@ -15,7 +15,7 @@ As the marketplace is implemented by smart contract on Zilionixx blockchain, you
 The main utility token in Unicial is UCC(Unicial Cash Coin) so you will have to own some UCC tokens.
 Having UCC token you can trade following assets.
 
-[Join UCC crowdsale](https://start.unicial.org)
+[Join UCC crowdsale](https://start.unicial.org){:target="\_blank"}
 
 - **SPACE**: A Non-fungible token that indicates a unique parcel of Unicial map which is identified by (x, y) coordinate.
 - **ESTATE**: A Non-fungible token which is consisted of several Spaces to form a bigger area on Unicial map.

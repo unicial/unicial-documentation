@@ -11,4 +11,4 @@ type: Document
 
 The Unicial whitepaper presents a detailed explanation of motivation, technical implementation and economy of Unicial project. As the Unicial project is continuously evolving, so there will be continuouly modified.
 
-[Goto the whitepaper](https://unicial.org/whitepaper.pdf)
+[Goto the whitepaper](https://unicial.org/whitepaper.pdf){:target="\_blank"}
