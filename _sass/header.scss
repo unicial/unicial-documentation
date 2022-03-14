@@ -1,8 +1,8 @@
 header {
   position: relative;
   border-bottom: solid 1px rgba(92, 92, 110, 0.16);
-  
-  background: #21263F;
+
+  background: #21263f;
   height: 79px;
 
   .topbar {
@@ -14,6 +14,9 @@ header {
     position: relative;
     margin-right: 35px;
 
+    @media (max-width: 500px) {
+      margin-right: 5px;
+    }
     @media #{$mid-point} {
       padding: 14px 0;
     }
@@ -26,19 +29,26 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    img {
-      min-width: 50px;
+    a {
+      text-decoration: none;
+      line-height: 0px;
+      display: flex;
+      align-items: center;
     }
-    div {
-      font-size: 25px;
+    img {
+      width: 36px;
+    }
+    span {
+      font-size: 20px;
       color: white;
+      margin: 0px 10px;
     }
 
     @media #{$mid-point} {
       height: 78px;
 
       img {
-        min-width: 50px;
+        width: 36px;
       }
     }
   }
@@ -69,7 +79,8 @@ header {
 
   nav {
     position: relative;
-
+    height: 100%;
+    font-family: "Lato";
     &::before {
       content: "";
       position: absolute;
@@ -85,7 +96,7 @@ header {
     padding-bottom: 12px;
     position: relative;
     height: 78px;
-    
+
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -97,7 +108,7 @@ header {
       left: 0;
       right: 0;
       bottom: 0;
-      background: #21263F;
+      background: #21263f;
       z-index: 20;
     }
   }
@@ -135,18 +146,24 @@ header {
     background: $white-color;
     width: 100vw;
     z-index: 21;
-    top: 110px;
-    left: -16px;
-    right: 0;
+    top: 79px;
+    left: -150px;
     transform: translate(0, -16px);
     box-shadow: 0 16px 32px 0 rgba(0, 0, 0, 0.16);
-
+    height: 100%;
     &.open {
+      height: auto;
       pointer-events: auto;
       opacity: 1;
       transform: translate(0, 0);
-      background-color: #21263F;
+      background-color: #21263f;
       z-index: 22;
+      .border-active {
+        display: none;
+      }
+      .border-none {
+        display: none;
+      }
     }
   }
 
@@ -154,30 +171,39 @@ header {
     margin: 0;
     padding: 0;
     white-space: nowrap;
-
+    height: 100%;
     li {
-      height: 56px;
+      height: 100%;
       margin: 0;
       list-style-type: none;
+      .border-none {
+        width: 34px;
+        height: 2px;
+        background: transparent;
+        display: block;
+      }
+      .border-active {
+        width: 34px;
+        height: 2px;
+        background: #7f64e2;
+        display: block;
+        margin: -4px auto;
+      }
     }
 
     a {
+      font-family: "Lato";
       display: flex;
       align-items: center;
       height: 100%;
       padding: 12px 15px 12px 64px;
-      color: white;
+      color: #96a1db;
       font-size: 16px;
       -webkit-tap-highlight-color: transparent;
       text-decoration: none;
-
       &:hover,
       &.active {
-        background-color:#96A1DB;
-      }
-
-      &.active {
-        font-weight: 700;
+        background-color: white;
       }
     }
   }
@@ -188,7 +214,6 @@ header {
   width: 300px;
 
   form {
-    
     display: flex;
     position: relative;
     justify-content: space-between;
@@ -202,6 +227,9 @@ header {
     left: 14px;
     transform: translateY(-50%);
     pointer-events: none;
+    path:nth-child(2) {
+      fill: #96a1db;
+    }
   }
 
   .loader {
@@ -251,20 +279,23 @@ header {
     font-size: 16px;
     line-height: 24px;
     letter-spacing: -0.3px;
-    color: #5c5c6e;
-    
-    background-color: #21263F;
+    color: #96a1db;
+
+    background-color: #21263f;
     width: 100%;
     box-sizing: border-box;
     -webkit-appearance: none;
     border-bottom: transparent 1px solid;
 
+    border: 1px solid #96a1db29;
+    box-sizing: border-box;
+    border-radius: 100px;
     &::-ms-clear {
       display: none;
     }
 
     &::placeholder {
-      color: #5c5c6e;
+      color: rgb(92, 92, 110);
     }
   }
 
@@ -281,8 +312,8 @@ header {
     pointer-events: none;
     opacity: 0;
     transform: translate(0, -16px);
-    background-color: #21263F;
-    top: 106px;
+    background-color: #21263f;
+    top: 78px;
 
     li {
       padding: 0 20px;
@@ -309,7 +340,7 @@ header {
         span {
           display: block;
           font-size: 15px;
-          color:#96A1DB;
+          color: #96a1db;
         }
 
         strong {
@@ -377,7 +408,7 @@ header {
 
       &:hover {
         opacity: 0.48;
-        background-color: #96A1DB;
+        // background-color: #96a1db;
       }
     }
 
@@ -385,7 +416,7 @@ header {
       pointer-events: auto;
       opacity: 1;
       transform: translate(0, 0);
-      background-color:#21263F;
+      background-color: #21263f;
     }
   }
 }
@@ -396,12 +427,8 @@ header {
       z-index: 23;
     }
 
-    input[type="text"] {
-      width: 280px;
-    }
-
     .search-results {
-      top: 56px;
+      top: 79px;
     }
   }
 
@@ -437,16 +464,16 @@ header {
 
     &.open {
       input[type="text"] {
-        border-radius: 6px 6px 0 0;
+        border-radius: 100px;
       }
     }
 
     .search-results {
       border-radius: 6px;
       left: auto;
-      right: 16px;
+      right: -5px;
       width: 420px;
-      top: 12px;
+      top: 10px;
       padding-top: 50px;
       overflow: hidden;
       z-index: 22;
@@ -455,7 +482,7 @@ header {
 
   header {
     .wrapper {
-      padding: 0 16px;
+      padding: 0px 20px;
       display: flex;
       align-items: center;
     }
@@ -490,7 +517,7 @@ header {
       margin-right: 12px;
     }
 
-    .wrapper{
+    .wrapper {
       display: flex;
       align-items: center;
     }
@@ -525,17 +552,28 @@ header {
 
       a {
         padding: 0 12px;
-        color: white;
         text-decoration: none;
 
         &:hover,
         &.active {
           background-color: transparent;
-          color: #96A1DB;
-          ;
+          color: white;
         }
       }
     }
   }
 }
 
+*::-webkit-scrollbar {
+  width: 5px !important;
+  height: 6px;
+  background: #000;
+}
+*::-webkit-scrollbar-track {
+  border-radius: 0px;
+  background: rgba(0, 0, 0, 0.05);
+}
+*::-webkit-scrollbar-thumb {
+  background: #3d3a46;
+  border-radius: 3px;
+}

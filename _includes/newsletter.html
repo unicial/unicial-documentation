@@ -1,62 +1,65 @@
 <div class="newsletter">
   <div class="container">
     <div class="newscontent">
-      <div class="title">
-        Contact Us
-      </div>
+      <div class="title">Contact Us</div>
       <div class="description">
-        <span class="desc">UCC Token is the base currentcy used for all transactions in the Unicial market.</span>
-        <button class="get"><span>Get in Touch<img src="../images/arrow.png"/></span></button>
+        <span class="desc"
+          >UCC Token is the base currentcy used for all transactions in the
+          Unicial market.</span
+        >
+        <button class="get">
+          <span>Get in Touch &nbsp;<img src="../images/arrow.png" /></span>
+        </button>
       </div>
     </div>
     <div class="newscontent">
-      <div class="title">
-        Subscribe the Events
-      </div>
+      <div class="title">Subscribe the Events</div>
       <div class="description">
-        <input class="email" type="text" placeholder="Your email"/>
-        <button class="submit"><span><img src="../images/arrow.png"/></span></button>
+        <input class="email" type="text" placeholder="Your email" />
+        <button class="submit">
+          <span><img src="../images/arrow.png" /></span>
+        </button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-$('#email').on('keyup', function() {
-  $('#subscribe').prop({
-    disabled: $('#email').val().trim().length === 0
+  $('#email').on('keyup', function() {
+    $('#subscribe').prop({
+      disabled: $('#email').val().trim().length === 0
+    })
   })
-})
 
-$('form.newsletter__form').on('submit', function(event) {
-  event.preventDefault()
-  const $email = $('#email')
-  $email.blur()
-  cta($email.val().trim())
-  $('.newsletter').addClass('sent')
-  return false
-})
+  $('form.newsletter__form').on('submit', function(event) {
+    event.preventDefault()
+    const $email = $('#email')
+    $email.blur()
+    cta($email.val().trim())
+    $('.newsletter').addClass('sent')
+    return false
+  })
 
-function cta(email) {
-  $('#subscribe').prop({ disabled: true })
-  if (email) {
-    {% if jekyll.environment == 'production' and site.segment_write_key != '' %}
-      analytics.identify({ email: email })
-      analytics.track('Subscribe Newsletter', { email: email })
+  function cta(email) {
+    $('#subscribe').prop({ disabled: true })
+    if (email) {
+      {% if jekyll.environment == 'production' and site.segment_write_key != '' %}
+        analytics.identify({ email: email })
+        analytics.track('Subscribe Newsletter', { email: email })
 
-      $.ajax({
-        type: 'POST',
-        url: 'https://decentraland.org/subscribe',
-        data: {
-          email: email,
-          interest: 'docs'
-        },
-        crossDomain: true,
-        success: console.log
-      })
-    {% else %}
-      console.log(email)
-    {% endif %}
+        $.ajax({
+          type: 'POST',
+          url: 'https://decentraland.org/subscribe',
+          data: {
+            email: email,
+            interest: 'docs'
+          },
+          crossDomain: true,
+          success: console.log
+        })
+      {% else %}
+        console.log(email)
+      {% endif %}
+    }
   }
-}
 </script>

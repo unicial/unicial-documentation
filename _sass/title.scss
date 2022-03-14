@@ -1,46 +1,51 @@
 .heading {
-    padding: 50px 36px 0 0;
+  padding: 50px 36px 0 20px;
+  position: relative;
+  @media (max-width: 1064px) {
+    padding: 50px 36px 0 20px;
+  }
 
-    @media (max-width: 1064px) {
-      padding: 50px 36px 0 20px;
+  @media (max-width: 435px) {
+    .description {
+      margin-top: 40px;
     }
-
-    @media (max-width: 435px) {
-      .description {
-        margin-top: 40px;
-      }
-    }
+  }
+}
+.title-ellipse {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  top: 0px;
+  left: -20px;
 }
 .title {
-    color: white;
-    position: relative;
-    font-style: normal;
-    font-weight: 700;
-    font-size: 35px;
-    line-height: 24px;
-    text-transform: capitalize;
-    height: 40px;
-    display: flex;
-    //align-items: center;
-    justify-content: left;
-    -webkit-font-smoothing: auto;
+  color: white;
+  position: relative;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 35px;
+  line-height: 60px;
+  display: flex;
+  //align-items: center;
+  justify-content: left;
+  -webkit-font-smoothing: auto;
 
-    _:-ms-lang(x),
-    & {
-      font-weight: 600;
-    }
+  _:-ms-lang(x),
+  & {
+    font-weight: 600;
   }
+}
 
-  .description {
-    margin-top: 20px;
-    margin-bottom: 40px;
-    font-style: normal;
-    font-weight: normal;
-    font-family: sans-serif;
-    font-size: 15px;
-    line-height: 18px;
-    position: relative;
-    top: -10px;
-    color: #96A1DB;
-    word-wrap: break-word;
-  }
+.description {
+  margin-top: 20px;
+  margin-bottom: 40px;
+  font-style: normal;
+  font-weight: normal;
+  font-family: "Lato";
+  font-size: 18px;
+  line-height: 30px;
+  position: relative;
+  top: -10px;
+  color: #96a1db;
+  word-wrap: break-word;
+}

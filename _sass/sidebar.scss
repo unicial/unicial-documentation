@@ -19,7 +19,9 @@
     letter-spacing: normal;
     color: white;
     display: flex;
-    padding: 6px 12px 6px;
+    // padding: 6px 12px 6px;
+    height: 36px;
+    padding-left: 12px;
     align-items: center;
     text-transform: capitalize;
     justify-content: space-between;
@@ -132,7 +134,8 @@
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     width: 100%;
-
+    font-family: "Lato";
+    font-weight: 400;
     @media #{$mid-point} {
       padding: 32px 48px 32px 40px;
     }
@@ -159,7 +162,6 @@
         width: 100%;
       }
     }
-
   }
 
   &.open {
@@ -187,7 +189,6 @@
     > div:hover > span,
     > div:hover > a {
       background: #343c5f;
-      ;
     }
 
     &.open > div svg.rotate {
@@ -202,7 +203,7 @@
       > div a,
       > div span {
         color: white;
-        font-weight: 500;
+        font-weight: 400;
 
         _:-ms-lang(x),
         & {
@@ -251,7 +252,7 @@
         align-items: center;
       }
 
-      a{
+      a {
         margin: 10px 0;
       }
     }
@@ -268,10 +269,9 @@
     width: 100%;
     border-radius: 100px;
 
-    &:hover,
     &.current {
       color: white;
-      background: rgba(0, 0, 0, 0.03);
+      background: #96a2db1f;
       font-weight: 500;
 
       _:-ms-lang(x),
@@ -294,19 +294,18 @@
   ul > li li > div > a,
   ul > li li > div > span {
     font-size: 16px;
-    color: #96A1DB;
-    ;
+    color: #96a1db;
   }
 
   ul > li li li > div > a,
   ul > li li li > div > span {
     font-size: 15px;
-    color: #96A1DB;
+    color: #96a1db;
   }
 
   ul > li li li li div > a,
   ul > li li li li div > span {
     font-size: 14px;
-    color: #96A1DB;
+    color: #96a1db;
   }
 }

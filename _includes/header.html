@@ -4,24 +4,38 @@
   <div class="wrapper">
     <div class="topbar">
       <div class="logo">
-        <a href="https://unicial.org/"><img src="{{ site.baseurl }}/images/logo.svg" /></a>
-        <div>Unicial</div>
+        <a  href="https://unicial.org/" target="_blank" rel="noreferrer">
+          <img src="{{ site.baseurl }}/images/logo.svg" />
+          <span>Unicial</span>
+        </a>
       </div>
-      <div class="dropdown-trigger">Docs {% include sets/downarrow.svg %}</div>
+      <div class="dropdown-trigger">Documents {% include sets/downarrow.svg %}</div>
     </div>
     <nav>
       <div class="dropdown-content">
         <ul class="menu">
-          <li><a href="/" class="active">Documents</a></li>
-          <li><a href="#">Marketplace</a></li>
-          <li><a href="#">About Us</a></li>
+          <li>
+            <span class="border-none"></span>
+            <a href="https://marketplace.unicial.org/" target="_blank" rel="noreferrer">Marketplace</a>
+            <span class="border-none"></span>
+          </li>
+          <li>
+            <span class="border-none"></span>
+            <a href="/" class="active">Documents</a>
+            <span class="border-active"></span>
+          </li>
+          <li>
+            <span class="border-none"></span>
+            <a href="https://blog.unicial.org/" target="_blank" rel='noreferrer'>Blog</a>
+            <span class="border-none"></span>
+          </li>
         </ul>
       </div>
     </nav>
     <div class="header_search">
       <div class="search-overlay desktop"></div>
       <form action="{{ site.baseurl }}/search/" method="get">
-        <input type="text" name="q" {% if include.add_id %}id="search-input"{% endif %} placeholder="Search" autofocus autocomplete="off">
+        <input type="text" name="q" {% if include.add_id %}id="search-input"{% endif %} placeholder="Search" autocomplete="off">
         {% include search.svg %}
         <div class="loader"></div>
         <div class="close">
