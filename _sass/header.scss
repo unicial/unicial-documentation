@@ -30,12 +30,15 @@ header {
     justify-content: space-between;
     align-items: center;
     a {
+      text-decoration: none;
       line-height: 0px;
+      display: flex;
+      align-items: center;
     }
     img {
-      min-width: 36px;
+      width: 36px;
     }
-    div {
+    span {
       font-size: 20px;
       color: white;
       margin: 0px 10px;
@@ -45,7 +48,7 @@ header {
       height: 78px;
 
       img {
-        min-width: 36px;
+        width: 36px;
       }
     }
   }
