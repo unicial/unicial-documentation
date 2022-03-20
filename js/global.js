@@ -163,8 +163,8 @@ $(function() {
         '<li>' +
           '<a href="' + result.url + '">' +
             '<div>' +
-              '<span class="title">' + result.title + '</span>' +
-              '<span class="description">' + getPreview(userInput, result.content, 120) + '</span>' +
+              '<span class="search_title">' + result.title + '</span>' +
+              '<span class="search_description">' + getPreview(userInput, result.content, 120) + '</span>' +
             '</div>' +
           '</a>' +
         '</li>'
