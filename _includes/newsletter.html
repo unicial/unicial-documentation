@@ -59,6 +59,7 @@
           dataType: "jsonp",
           headers: headers,
         }).done(function (data) {
+          console.log("data---", data);
           const tagUrl = `https://zilionixx.api-us1.com/api/3/contactTags`;
           const tagData = {
             contactTag: {
