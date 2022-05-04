@@ -26,18 +26,18 @@
 
 <script>
   function getInTouch() {
-    window.open('mailto:tsimafei@zilionixx.com')
+    window.open("mailto:tsimafei@zilionixx.com");
   }
   function handleSubscribe() {
-    var email = $('.email').val()
-    if (email=='') {
-      window.alert('Please enter your Email')
+    var email = $(".email").val();
+    if (email == "") {
+      window.alert("Please enter your Email");
     } else {
       try {
         const API_KEY =
           "0d8edc054a6bd06495937a23b76913f0e0bf3bb430209e2b4094eeaf61a372b50a68b772";
         const url = `https://zilionixx.api-us1.com/api/3/contact/sync`;
-  
+
         const data = {
           contact: {
             email: email,
@@ -50,11 +50,13 @@
           "Content-Type": "application/json",
           "Api-Token": `${API_KEY}`,
         };
-  
+
         $.ajax({
-          type: 'POST',
+          type: "POST",
           url: url,
           data: data,
+          crossDomain: true,
+          dataType: "jsonp",
           headers: headers,
         }).done(function (data) {
           const tagUrl = `https://zilionixx.api-us1.com/api/3/contactTags`;
@@ -65,16 +67,18 @@
             },
           };
           $.ajax({
-            type: 'POST',
+            type: "POST",
             url: tagUrl,
             data: tagData,
+            crossDomain: true,
+            dataType: "jsonp",
             headers: headers,
-          })
-        })
+          });
+        });
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
-      console.log('Submitted successfully')
+      console.log("Submitted successfully");
     }
   }
 </script>
