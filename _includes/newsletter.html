@@ -50,16 +50,31 @@
           "Content-Type": "application/json",
           "Api-Token": `${API_KEY}`,
         };
-        const response = await $.post(url, data, { headers });
-        console.log('-----',response)
+
+        const response = $.ajax({
+          type: "POST",
+          url: url,
+          data: data,
+          crossDomain: true,
+          dataType: "jsonp",
+          headers: headers,
+        });
+        console.log("response", response);
         const tagUrl = `https://zilionixx.api-us1.com/api/3/contactTags`;
-          const tagData = {
-            contactTag: {
-              contact: data.data.contact.id,
-              tag: "1",
-            },
-          };
-        const respTag = await $.post(tagUrl, tagData, { headers });
+        const tagData = {
+          contactTag: {
+            contact: response.data.contact.id,
+            tag: "1",
+          },
+        };
+        $.ajax({
+          type: "POST",
+          url: tagUrl,
+          data: tagData,
+          crossDomain: true,
+          dataType: "jsonp",
+          headers: headers,
+        });
       } catch (error) {
         console.error(error);
       }
