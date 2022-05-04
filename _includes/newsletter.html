@@ -7,7 +7,7 @@
           >UCC Token is the base currentcy used for all transactions in the
           Unicial market.</span
         >
-        <button class="get">
+        <button class="get" onclick="getInTouch()">
           <span>Get in Touch &nbsp;<img src="../images/arrow.png" /></span>
         </button>
       </div>
@@ -16,7 +16,7 @@
       <div class="title">Subscribe the Events</div>
       <div class="description">
         <input class="email" type="text" placeholder="Your email" />
-        <button class="submit">
+        <button class="submit" onclick="handleSubscribe()">
           <span><img src="../images/arrow.png" /></span>
         </button>
       </div>
@@ -25,41 +25,56 @@
 </div>
 
 <script>
-  $('#email').on('keyup', function() {
-    $('#subscribe').prop({
-      disabled: $('#email').val().trim().length === 0
-    })
-  })
-
-  $('form.newsletter__form').on('submit', function(event) {
-    event.preventDefault()
-    const $email = $('#email')
-    $email.blur()
-    cta($email.val().trim())
-    $('.newsletter').addClass('sent')
-    return false
-  })
-
-  function cta(email) {
-    $('#subscribe').prop({ disabled: true })
-    if (email) {
-      {% if jekyll.environment == 'production' and site.segment_write_key != '' %}
-        analytics.identify({ email: email })
-        analytics.track('Subscribe Newsletter', { email: email })
-
+  function getInTouch() {
+    window.open('mailto:tsimafei@zilionixx.com')
+  }
+  function handleSubscribe() {
+    var email = $('.email').val()
+    if (email=='') {
+      window.alert('Please enter your Email')
+    } else {
+      try {
+        const API_KEY =
+          "0d8edc054a6bd06495937a23b76913f0e0bf3bb430209e2b4094eeaf61a372b50a68b772";
+        const url = `https://zilionixx.api-us1.com/api/3/contact/sync`;
+  
+        const data = {
+          contact: {
+            email: email,
+            firstName: "",
+            lastName: "",
+            phone: "",
+          },
+        };
+        const headers = {
+          "Content-Type": "application/json",
+          "Api-Token": `${API_KEY}`,
+        };
+  
         $.ajax({
           type: 'POST',
-          url: 'https://decentraland.org/subscribe',
-          data: {
-            email: email,
-            interest: 'docs'
-          },
-          crossDomain: true,
-          success: console.log
+          url: url,
+          data: data,
+          headers: headers,
+        }).done(function (data) {
+          const tagUrl = `https://zilionixx.api-us1.com/api/3/contactTags`;
+          const tagData = {
+            contactTag: {
+              contact: data.data.contact.id,
+              tag: "0",
+            },
+          };
+          $.ajax({
+            type: 'POST',
+            url: tagUrl,
+            data: tagData,
+            headers: headers,
+          })
         })
-      {% else %}
-        console.log(email)
-      {% endif %}
+      } catch (error) {
+        console.error(error)
+      }
+      console.log('Submitted successfully')
     }
   }
 </script>
