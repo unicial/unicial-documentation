@@ -50,35 +50,47 @@
           "Content-Type": "application/json",
           "Api-Token": `${API_KEY}`,
         };
-        const settings = {
-          async: true,
-          crossDomain: true,
-          url: url,
+        const options = {
           method: "POST",
-          data: data,
-          headers: headers,
-          processData: false,
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
         };
 
-        $.ajax(settings).done(function (response) {
-          console.log("response", response);
-          const tagUrl = `https://zilionixx.api-us1.com/api/3/contactTags`;
-          const tagData = {
-            contactTag: {
-              contact: response.data.contact.id,
-              tag: "1",
-            },
-          };
-          const tagsettings = {
-            async: true,
-            crossDomain: true,
-            url: tagUrl,
-            method: "POST",
-            data: tagData,
-            headers: headers,
-            processData: false,
-          };
-        });
+        fetch(url, options)
+          .then((response) => response.json())
+          .then((response) => console.log(response))
+          .catch((err) => console.error(err));
+        // const settings = {
+        //   async: true,
+        //   crossDomain: true,
+        //   url: url,
+        //   method: "POST",
+        //   data: data,
+        //   headers: headers,
+        //   processData: false,
+        // };
+
+        // $.ajax(settings).done(function (response) {
+        //   console.log("response", response);
+        //   const tagUrl = `https://zilionixx.api-us1.com/api/3/contactTags`;
+        //   const tagData = {
+        //     contactTag: {
+        //       contact: response.data.contact.id,
+        //       tag: "1",
+        //     },
+        //   };
+        //   const tagsettings = {
+        //     async: true,
+        //     crossDomain: true,
+        //     url: tagUrl,
+        //     method: "POST",
+        //     data: tagData,
+        //     headers: headers,
+        //     processData: false,
+        //   };
+        // });
       } catch (error) {
         console.error(error);
       }
