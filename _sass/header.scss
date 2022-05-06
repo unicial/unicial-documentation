@@ -26,20 +26,24 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    img {
-      min-width: 50px;
+    a {
+      text-decoration: none;
     }
-    div {
-      font-size: 25px;
-      color: white;
+    img {
+      width: 36px;
+      height: 36px;
+    }
+    span {
+      color: #fff;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      line-height: 20px;
+      margin: 0 10px;
     }
 
     @media #{$mid-point} {
       height: 78px;
-
-      img {
-        min-width: 50px;
-      }
     }
   }
 

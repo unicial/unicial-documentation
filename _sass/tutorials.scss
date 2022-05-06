@@ -149,6 +149,11 @@
       transition: color $base-duration $base-timing;
       &:hover {
         text-decoration: underline;
+        background: linear-gradient(to left, #7f64e2 20%, #41a6ef 80%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-decoration: none;
+        transition: color $base-duration $base-timing;
       }
     }
 
